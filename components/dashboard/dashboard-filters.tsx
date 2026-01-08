@@ -46,7 +46,7 @@ export function DashboardFiltersComponent({
               <span className="font-medium">Filter:</span>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
+            <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1 items-end ${hasActiveFilters ? 'lg:grid-cols-5' : 'lg:grid-cols-4'}`}>
               <Select
                 label="Periode"
                 options={filterOptions.periods}
@@ -71,19 +71,26 @@ export function DashboardFiltersComponent({
                 value={filters.status}
                 onChange={(value) => handleChange("status", value)}
               />
-            </div>
 
-            {hasActiveFilters && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                onClick={handleReset}
-                className="ml-auto flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 interactive"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset
-              </motion.button>
-            )}
+              {/* Reset button - only shown when filters are active */}
+              {hasActiveFilters && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="flex flex-col"
+                >
+                  <span className="text-xs font-medium text-transparent mb-1.5 select-none hidden lg:block">Reset</span>
+                  <button
+                    onClick={handleReset}
+                    className="h-[42px] flex items-center justify-center gap-2 px-4 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </button>
+                </motion.div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

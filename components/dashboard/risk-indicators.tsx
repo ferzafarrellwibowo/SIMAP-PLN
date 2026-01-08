@@ -105,7 +105,11 @@ export function RiskIndicators({ delayed, overBudget, noUpdate }: RiskIndicators
 
         {totalRisks === 0 && (
           <div className="mt-4 text-center text-gray-500 dark:text-gray-400">
-            <span className="text-2xl">✅</span>
+            <div className="w-10 h-10 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
             <p className="mt-2">Tidak ada indikator risiko aktif</p>
           </div>
         )}

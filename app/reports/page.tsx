@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { useProjectStore, STATUS_LABELS, STATUS_COLORS, HEALTH_LABELS, HEALTH_COLORS, filterOptions } from "@/lib/store";
 import { useAuth } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
+import { exportToPDF, exportToExcel, exportAllToPDF, exportAllToExcel } from "@/lib/export";
 import { Project, ProjectMetrics, HealthStatus, ProjectLifecycleStatus } from "@/lib/types";
 
 type ReportType = "summary" | "progress" | "budget" | "problems";
@@ -20,6 +21,9 @@ export default function ReportsPage() {
   const [reportType, setReportType] = useState<ReportType>("summary");
   const [unitFilter, setUnitFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [exportAllReports, setExportAllReports] = useState(false);
 
   // Get filtered projects
   const filteredProjects = useMemo(() => {
@@ -85,16 +89,51 @@ export default function ReportsPage() {
     };
   }, [filteredProjects, getProjectMetrics]);
 
-  const reportTypes: { id: ReportType; label: string; icon: string }[] = [
-    { id: "summary", label: "Ringkasan Eksekutif", icon: "📊" },
-    { id: "progress", label: "Progress Proyek", icon: "📈" },
-    { id: "budget", label: "Realisasi Anggaran", icon: "💰" },
-    { id: "problems", label: "Proyek Bermasalah", icon: "⚠️" },
+  const reportTypes: { id: ReportType; label: string }[] = [
+    { id: "summary", label: "Ringkasan Eksekutif" },
+    { id: "progress", label: "Progress Proyek" },
+    { id: "budget", label: "Realisasi Anggaran" },
+    { id: "problems", label: "Proyek Bermasalah" },
   ];
 
-  const exportReport = () => {
-    // Simulate export
-    alert("Fitur export akan mengunduh laporan dalam format PDF/Excel");
+  // Prepare export data
+  const exportProjectData = useMemo(() => {
+    return filteredProjects.map((project) => ({
+      project,
+      metrics: getProjectMetrics(project.id),
+    }));
+  }, [filteredProjects, getProjectMetrics]);
+
+  const handleExport = async (format: "pdf" | "excel") => {
+    setIsExporting(true);
+    
+    try {
+      const filters = { unit: unitFilter, status: statusFilter };
+      
+      if (exportAllReports) {
+        // Export all 4 reports at once
+        if (format === "pdf") {
+          exportAllToPDF(exportProjectData, filteredStats, filters);
+        } else {
+          exportAllToExcel(exportProjectData, filteredStats, filters);
+        }
+      } else {
+        // Export single report
+        if (format === "pdf") {
+          exportToPDF(reportType, exportProjectData, filteredStats, filters);
+        } else {
+          exportToExcel(reportType, exportProjectData, filteredStats, filters);
+        }
+      }
+      
+      setShowExportModal(false);
+      setExportAllReports(false);
+    } catch (error) {
+      console.error("Export error:", error);
+      alert("Terjadi kesalahan saat export. Silakan coba lagi.");
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   // Get unit options as string array
@@ -115,7 +154,7 @@ export default function ReportsPage() {
           </p>
         </div>
         <button
-          onClick={exportReport}
+          onClick={() => setShowExportModal(true)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -125,20 +164,185 @@ export default function ReportsPage() {
         </button>
       </div>
 
+      {/* Export Modal */}
+      <AnimatePresence>
+        {showExportModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+            onClick={() => { if (!isExporting) { setShowExportModal(false); setExportAllReports(false); } }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 w-full max-w-md mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Export Laporan
+                </h3>
+                <button
+                  onClick={() => { if (!isExporting) { setShowExportModal(false); setExportAllReports(false); } }}
+                  disabled={isExporting}
+                  className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+                >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {exportAllReports 
+                    ? "Export semua laporan dalam satu file (4 laporan)"
+                    : <>Pilih format file untuk export laporan <span className="font-medium text-gray-900 dark:text-gray-100">{reportTypes.find(r => r.id === reportType)?.label}</span></>
+                  }
+                </p>
+
+                {/* Toggle: Export Current vs Export All */}
+                <div className="flex items-center gap-3 mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                  <button
+                    onClick={() => setExportAllReports(false)}
+                    className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                      !exportAllReports 
+                        ? "bg-blue-600 text-white shadow-md" 
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Laporan Aktif
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setExportAllReports(true)}
+                    className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
+                      exportAllReports 
+                        ? "bg-blue-600 text-white shadow-md" 
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    }`}
+                  >
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                      </svg>
+                      Semua Laporan
+                    </div>
+                  </button>
+                </div>
+
+                {/* Show what will be exported */}
+                {exportAllReports && (
+                  <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-xs font-medium text-blue-800 dark:text-blue-300 mb-2">Laporan yang akan diekspor:</p>
+                    <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                      <li className="flex items-center gap-1.5">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Ringkasan Eksekutif
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Progress Proyek
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Realisasi Anggaran
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                        Proyek Bermasalah
+                      </li>
+                    </ul>
+                  </div>
+                )}
+                
+                <div className="grid grid-cols-2 gap-4">
+                  {/* PDF Option */}
+                  <button
+                    onClick={() => handleExport("pdf")}
+                    disabled={isExporting}
+                    className="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-red-500 dark:hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <div className="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-9 h-9" viewBox="0 0 32 32" fill="none">
+                        <rect x="4" y="2" width="24" height="28" rx="2" fill="#DC2626"/>
+                        <path d="M20 2L28 10H22C20.8954 10 20 9.10457 20 8V2Z" fill="#FCA5A5"/>
+                        <rect x="7" y="14" width="18" height="12" rx="1" fill="white"/>
+                        <text x="16" y="23" textAnchor="middle" fontSize="7" fontWeight="bold" fill="#DC2626">PDF</text>
+                      </svg>
+                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">PDF</span>
+                    <span className="text-xs text-gray-500">Format dokumen</span>
+                  </button>
+
+                  {/* Excel Option */}
+                  <button
+                    onClick={() => handleExport("excel")}
+                    disabled={isExporting}
+                    className="flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-green-500 dark:hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-900/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                  >
+                    <div className="w-16 h-16 rounded-2xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-9 h-9" viewBox="0 0 32 32" fill="none">
+                        <rect x="4" y="2" width="24" height="28" rx="2" fill="#16A34A"/>
+                        <path d="M20 2L28 10H22C20.8954 10 20 9.10457 20 8V2Z" fill="#86EFAC"/>
+                        <rect x="7" y="14" width="18" height="12" rx="1" fill="white"/>
+                        <text x="16" y="23" textAnchor="middle" fontSize="6" fontWeight="bold" fill="#16A34A">XLSX</text>
+                      </svg>
+                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">Excel</span>
+                    <span className="text-xs text-gray-500">Format spreadsheet</span>
+                  </button>
+                </div>
+              </div>
+
+              {isExporting && (
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  <span>Sedang membuat laporan...</span>
+                </div>
+              )}
+
+              <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <p className="text-xs text-gray-500 text-center">
+                  Data: {filteredProjects.length} proyek | Filter: {unitFilter === "all" ? "Semua Unit" : unitFilter}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Report Type Selector */}
       <div className="flex flex-wrap gap-2">
         {reportTypes.map((type) => (
           <button
             key={type.id}
             onClick={() => setReportType(type.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${
+            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
               reportType === type.id
                 ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
-                : "border-gray-200 dark:border-gray-700"
-            } interactive`}
+                : "border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+            }`}
           >
-            <span>{type.icon}</span>
-            <span className="font-medium">{type.label}</span>
+            {type.label}
           </button>
         ))}
       </div>
@@ -221,7 +425,9 @@ function SummaryReport({ stats }: { stats: ReturnType<typeof useMemo<any>> }) {
               </p>
             </div>
             <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <span className="text-2xl">📁</span>
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
             </div>
           </div>
         </Card>
@@ -233,7 +439,9 @@ function SummaryReport({ stats }: { stats: ReturnType<typeof useMemo<any>> }) {
               <p className="text-3xl font-bold text-blue-600">{stats.onProgress}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-              <span className="text-2xl">🔄</span>
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
             </div>
           </div>
         </Card>
@@ -245,7 +453,9 @@ function SummaryReport({ stats }: { stats: ReturnType<typeof useMemo<any>> }) {
               <p className="text-3xl font-bold text-green-600">{stats.completed}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <span className="text-2xl">✅</span>
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
           </div>
         </Card>
@@ -257,7 +467,9 @@ function SummaryReport({ stats }: { stats: ReturnType<typeof useMemo<any>> }) {
               <p className="text-3xl font-bold text-red-600">{stats.problematic}</p>
             </div>
             <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-              <span className="text-2xl">⚠️</span>
+              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
             </div>
           </div>
         </Card>
@@ -544,7 +756,9 @@ function ProblemsReport({ projects, getMetrics }: { projects: Project[]; getMetr
       <Card className="p-6 bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-800">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-            <span className="text-2xl">⚠️</span>
+            <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
           </div>
           <div>
             <p className="text-lg font-semibold text-red-700 dark:text-red-300">
@@ -638,7 +852,9 @@ function ProblemsReport({ projects, getMetrics }: { projects: Project[]; getMetr
         {problematicProjects.length === 0 && (
           <Card className="p-8 text-center">
             <div className="w-16 h-16 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-              <span className="text-3xl">✅</span>
+              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
               Semua Proyek Berjalan Baik

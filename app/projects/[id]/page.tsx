@@ -290,51 +290,69 @@ export default function ProjectDetailPage() {
 
               {/* Project Status Flow */}
               <Card className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-6">
                   Status Lifecycle
                 </h3>
-                <div className="flex items-center justify-between">
-                  {["draft", "initiated", "planned", "on_progress", "completed"].map((status, index) => {
-                    const isActive = project.status === status;
-                    const isPast = ["draft", "initiated", "planned", "on_progress", "completed"]
-                      .indexOf(project.status) > index;
-                    
-                    return (
-                      <div key={status} className="flex items-center">
-                        <div className="flex flex-col items-center">
+                <div className="relative">
+                  {/* Background Connection Line */}
+                  <div className="absolute top-5 left-[10%] right-[10%] h-0.5 bg-gray-200 dark:bg-gray-700" />
+                  
+                  {/* Progress Line */}
+                  <div 
+                    className="absolute top-5 left-[10%] h-0.5 bg-green-500 transition-all duration-500"
+                    style={{
+                      width: `${Math.max(0, (["draft", "initiated", "planned", "on_progress", "completed"].indexOf(project.status)) * 20)}%`
+                    }}
+                  />
+
+                  {/* Status Steps */}
+                  <div className="relative flex justify-between">
+                    {["draft", "initiated", "planned", "on_progress", "completed"].map((status, index) => {
+                      const isActive = project.status === status;
+                      const isPast = ["draft", "initiated", "planned", "on_progress", "completed"]
+                        .indexOf(project.status) > index;
+                      
+                      return (
+                        <motion.div 
+                          key={status} 
+                          className="flex flex-col items-center flex-1"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          {/* Circle Indicator */}
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                               isActive
-                                ? "bg-blue-500 text-white"
+                                ? "bg-blue-500 border-blue-500 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-100 dark:ring-blue-900"
                                 : isPast
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-200 dark:bg-gray-700 text-gray-500"
+                                ? "bg-green-500 border-green-500 text-white"
+                                : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500"
                             }`}
                           >
                             {isPast ? (
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                               </svg>
                             ) : (
-                              index + 1
+                              <span className="text-sm font-semibold">{index + 1}</span>
                             )}
                           </div>
-                          <p className={`mt-2 text-xs font-medium ${
-                            isActive ? "text-blue-600" : "text-gray-500"
+                          
+                          {/* Label */}
+                          <p className={`mt-3 text-xs font-medium text-center transition-colors ${
+                            isActive 
+                              ? "text-blue-600 dark:text-blue-400" 
+                              : isPast 
+                              ? "text-green-600 dark:text-green-400" 
+                              : "text-gray-500 dark:text-gray-400"
                           }`}>
                             {STATUS_LABELS[status as keyof typeof STATUS_LABELS]}
                           </p>
-                        </div>
-                        {index < 4 && (
-                          <div
-                            className={`w-12 h-0.5 mx-2 ${
-                              isPast ? "bg-green-500" : "bg-gray-200 dark:bg-gray-700"
-                            }`}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
               </Card>
             </div>
@@ -731,12 +749,14 @@ export default function ProjectDetailPage() {
                   </span>
                 </div>
                 <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {metrics.spiValue >= 1 
-                      ? "✅ Proyek berjalan sesuai atau lebih cepat dari jadwal"
-                      : metrics.spiValue >= 0.9
-                      ? "⚠️ Proyek sedikit terlambat dari jadwal"
-                      : "🔴 Proyek sangat terlambat dari jadwal"}
+                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                    {metrics.spiValue >= 1 ? (
+                      <><svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Proyek berjalan sesuai atau lebih cepat dari jadwal</>
+                    ) : metrics.spiValue >= 0.9 ? (
+                      <><svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Proyek sedikit terlambat dari jadwal</>
+                    ) : (
+                      <><svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Proyek sangat terlambat dari jadwal</>
+                    )}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -768,12 +788,14 @@ export default function ProjectDetailPage() {
                   </span>
                 </div>
                 <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {metrics.cpiValue >= 1 
-                      ? "✅ Biaya efisien, sesuai atau di bawah anggaran"
-                      : metrics.cpiValue >= 0.9
-                      ? "⚠️ Biaya sedikit melebihi rencana"
-                      : "🔴 Biaya jauh melebihi rencana"}
+                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                    {metrics.cpiValue >= 1 ? (
+                      <><svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg> Biaya efisien, sesuai atau di bawah anggaran</>
+                    ) : metrics.cpiValue >= 0.9 ? (
+                      <><svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg> Biaya sedikit melebihi rencana</>
+                    ) : (
+                      <><svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> Biaya jauh melebihi rencana</>
+                    )}
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">

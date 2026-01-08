@@ -37,16 +37,16 @@ export function Badge({ children, variant, className }: BadgeProps) {
 
 export function StatusBadge({ status }: { status: "green" | "yellow" | "red" }) {
   const config = {
-    green: { variant: "success" as const, label: "Sesuai Rencana", emoji: "🟢" },
-    yellow: { variant: "warning" as const, label: "Ada Deviasi", emoji: "🟡" },
-    red: { variant: "danger" as const, label: "Masalah Serius", emoji: "🔴" },
+    green: { variant: "success" as const, label: "Sesuai Rencana", dotColor: "bg-emerald-500" },
+    yellow: { variant: "warning" as const, label: "Ada Deviasi", dotColor: "bg-amber-500" },
+    red: { variant: "danger" as const, label: "Masalah Serius", dotColor: "bg-red-500" },
   };
 
-  const { variant, label, emoji } = config[status];
+  const { variant, label, dotColor } = config[status];
 
   return (
-    <Badge variant={variant} className="gap-1">
-      <span>{emoji}</span>
+    <Badge variant={variant} className="gap-1.5">
+      <span className={`w-2 h-2 rounded-full ${dotColor}`} />
       <span>{label}</span>
     </Badge>
   );

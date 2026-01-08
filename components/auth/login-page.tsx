@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useAuth, ROLE_LABELS } from "@/lib/auth";
 
 export default function LoginPage() {
+  const router = useRouter();
   const { login, isLoading } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +24,9 @@ export default function LoginPage() {
     }
 
     const success = await login(username, password);
-    if (!success) {
+    if (success) {
+      router.push("/"); // Selalu redirect ke dashboard setelah login
+    } else {
       setError("Username atau password salah");
     }
   };

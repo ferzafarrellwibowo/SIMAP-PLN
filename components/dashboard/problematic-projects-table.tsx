@@ -24,7 +24,11 @@ export function ProblematicProjectsTable({ projects }: ProblematicProjectsTableP
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-10 text-gray-500">
-            <span className="text-4xl mb-2">✅</span>
+            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
             <p>Tidak ada proyek bermasalah saat ini</p>
           </div>
         </CardContent>
