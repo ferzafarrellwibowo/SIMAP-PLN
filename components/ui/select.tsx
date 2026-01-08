@@ -37,7 +37,7 @@ export function Select({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-              "w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10",
+              "custom-select w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10",
               "text-sm text-gray-900 shadow-sm",
               "focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
               "dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100",
