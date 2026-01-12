@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useContractStore, INVOICE_STATUS_LABELS, INVOICE_STATUS_COLORS, invoiceStatusOptions } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
-import type { InvoiceStatus } from "@/lib/types-new";
+import type { InvoiceStatus, Invoice } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(1)} M`;
@@ -18,6 +18,32 @@ function daysAgo(date: string): number {
   return Math.floor((now.getTime() - target.getTime()) / (1000 * 60 * 60 * 24));
 }
 
+// Helper function untuk mendapatkan opsi status berdasarkan status saat ini
+function getAvailableStatusOptions(currentStatus: InvoiceStatus) {
+  // Jika status ditolak atau dibayar, tidak bisa diubah
+  if (currentStatus === "ditolak" || currentStatus === "dibayar") {
+    return [];
+  }
+  
+  // Jika status diajukan, hanya bisa pilih Diterima atau Ditolak
+  if (currentStatus === "diajukan") {
+    return [
+      { value: "diterima", label: "Diterima" },
+      { value: "ditolak", label: "Ditolak" },
+    ];
+  }
+  
+  // Jika status diterima, bisa pilih Ditolak atau Dibayar
+  if (currentStatus === "diterima") {
+    return [
+      { value: "ditolak", label: "Ditolak" },
+      { value: "dibayar", label: "Dibayar" },
+    ];
+  }
+  
+  return [];
+}
+
 export default function TagihanPage() {
   const { user } = useAuth();
   const { contracts, invoices, updateInvoiceStatus } = useContractStore();
@@ -25,6 +51,8 @@ export default function TagihanPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
+  const [pendingStatus, setPendingStatus] = useState<InvoiceStatus | null>(null);
+  const [dibayarOleh, setDibayarOleh] = useState("");
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter((inv) => {
@@ -42,9 +70,53 @@ export default function TagihanPage() {
     return contracts.find((c) => c.id === contractId);
   };
 
-  const handleStatusChange = (invoiceId: string, newStatus: InvoiceStatus) => {
-    updateInvoiceStatus(invoiceId, newStatus, user?.id || "system");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleStatusChange = async (invoiceId: string, newStatus: InvoiceStatus) => {
+    // Jika memilih dibayar, tampilkan input dibayar oleh
+    if (newStatus === "dibayar") {
+      setPendingStatus(newStatus);
+      return;
+    }
+    
+    setIsUpdating(true);
+    try {
+      await updateInvoiceStatus(invoiceId, newStatus);
+      setSelectedInvoice(null);
+      setPendingStatus(null);
+      setDibayarOleh("");
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Gagal mengubah status tagihan');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleConfirmDibayar = async (invoiceId: string) => {
+    if (!dibayarOleh.trim()) {
+      alert('Harap isi nama pembayar');
+      return;
+    }
+    
+    setIsUpdating(true);
+    try {
+      await updateInvoiceStatus(invoiceId, "dibayar", dibayarOleh);
+      setSelectedInvoice(null);
+      setPendingStatus(null);
+      setDibayarOleh("");
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Gagal mengubah status tagihan');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
     setSelectedInvoice(null);
+    setPendingStatus(null);
+    setDibayarOleh("");
   };
 
   const canEditStatus = user?.role === "admin";
@@ -52,11 +124,12 @@ export default function TagihanPage() {
   const statusStats = useMemo(() => {
     return {
       diajukan: invoices.filter((i) => i.status === "diajukan").length,
-      diverifikasi: invoices.filter((i) => i.status === "diverifikasi").length,
+      diterima: invoices.filter((i) => i.status === "diterima").length,
       dibayar: invoices.filter((i) => i.status === "dibayar").length,
       ditolak: invoices.filter((i) => i.status === "ditolak").length,
     };
   }, [invoices]);
+
 
   return (
     <div className="space-y-6">
@@ -77,8 +150,8 @@ export default function TagihanPage() {
           <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{statusStats.diajukan}</p>
         </div>
         <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Diverifikasi</p>
-          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{statusStats.diverifikasi}</p>
+          <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Diterima</p>
+          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{statusStats.diterima}</p>
         </div>
         <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
           <p className="text-sm text-green-600 dark:text-green-400 font-medium">Dibayar</p>
@@ -145,7 +218,7 @@ export default function TagihanPage() {
                 filteredInvoices.map((invoice, index) => {
                   const contract = getContractInfo(invoice.contractId);
                   const age = daysAgo(invoice.tanggalDiajukan);
-                  const isPending = invoice.status === "diajukan" || invoice.status === "diverifikasi";
+                  const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
                   
                   return (
                     <motion.tr
@@ -189,46 +262,111 @@ export default function TagihanPage() {
                             {age} hari
                           </span>
                         )}
-                        {invoice.status === "dibayar" && invoice.tanggalDibayar && (
+                        {invoice.status === "dibayar" && invoice.tanggalVerifikasi && (
                           <span className="text-sm text-green-600">
-                            {new Date(invoice.tanggalDibayar).toLocaleDateString("id-ID")}
+                            {new Date(invoice.tanggalVerifikasi).toLocaleDateString("id-ID")}
                           </span>
                         )}
                       </td>
                       {canEditStatus && (
                         <td className="px-6 py-4">
-                          {selectedInvoice === invoice.id ? (
-                            <div className="flex items-center gap-2 min-w-[180px]">
-                              <select
-                                className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                                defaultValue={invoice.status}
-                                onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
-                              >
-                                {invoiceStatusOptions.filter(opt => opt.value !== "all").map((opt) => (
-                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                                ))}
-                              </select>
+                          {(() => {
+                            const availableOptions = getAvailableStatusOptions(invoice.status);
+                            const canEdit = availableOptions.length > 0;
+                            
+                            // Status ditolak atau dibayar tidak bisa diubah
+                            if (!canEdit) {
+                              return (
+                                <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                                  {invoice.status === "ditolak" ? "Final" : invoice.status === "dibayar" ? (
+                                    <span className="flex flex-col">
+                                      <span>Final</span>
+                                      {invoice.dibayarOleh && (
+                                        <span className="text-green-600 dark:text-green-400 not-italic">
+                                          oleh: {invoice.dibayarOleh}
+                                        </span>
+                                      )}
+                                    </span>
+                                  ) : "-"}
+                                </span>
+                              );
+                            }
+                            
+                            // Mode edit aktif
+                            if (selectedInvoice === invoice.id) {
+                              // Jika pending status adalah dibayar, tampilkan form dibayar oleh
+                              if (pendingStatus === "dibayar") {
+                                return (
+                                  <div className="flex flex-col gap-2 min-w-[200px]">
+                                    <input
+                                      type="text"
+                                      value={dibayarOleh}
+                                      onChange={(e) => setDibayarOleh(e.target.value)}
+                                      placeholder="Nama pembayar..."
+                                      className="text-sm px-3 py-1.5 border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm"
+                                      autoFocus
+                                    />
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={() => handleConfirmDibayar(invoice.id)}
+                                        disabled={isUpdating || !dibayarOleh.trim()}
+                                        className="flex-1 text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                      >
+                                        {isUpdating ? "..." : "Konfirmasi"}
+                                      </button>
+                                      <button
+                                        onClick={handleCancelEdit}
+                                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                        title="Batal"
+                                      >
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              
+                              // Dropdown untuk pilih status
+                              return (
+                                <div className="flex items-center gap-2 min-w-[180px]">
+                                  <select
+                                    className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                                    defaultValue=""
+                                    onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
+                                  >
+                                    <option value="" disabled>Pilih status...</option>
+                                    {availableOptions.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                    title="Batal"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              );
+                            }
+                            
+                            // Tombol ubah status
+                            return (
                               <button
-                                onClick={() => setSelectedInvoice(null)}
-                                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                title="Batal"
+                                onClick={() => setSelectedInvoice(invoice.id)}
+                                className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
                               >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
+                                Ubah
                               </button>
-                            </div>
-                          ) : (
-                            <button
-                              onClick={() => setSelectedInvoice(invoice.id)}
-                              className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-                            >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              Ubah
-                            </button>
-                          )}
+                            );
+                          })()}
                         </td>
                       )}
                     </motion.tr>

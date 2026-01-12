@@ -29,7 +29,7 @@ export default function LaporanPage() {
       const totalDibayar = catContracts.reduce((sum, c) => sum + c.totalTagihanDibayar, 0);
       const totalTagihan = catInvoices.length;
       const tagihanDibayar = catInvoices.filter((i) => i.status === "dibayar").length;
-      const tagihanPending = catInvoices.filter((i) => i.status === "diajukan" || i.status === "diverifikasi").length;
+      const tagihanPending = catInvoices.filter((i) => i.status === "diajukan" || i.status === "diterima").length;
       
       return {
         kategori: cat,
@@ -56,7 +56,7 @@ export default function LaporanPage() {
     persentaseRealisasi: summary.persentaseRealisasiGlobal,
     totalTagihan: invoices.length,
     tagihanDibayar: summary.tagihanDibayar,
-    tagihanPending: summary.tagihanDiajukan + summary.tagihanDiverifikasi,
+    tagihanPending: summary.tagihanDiajukan + summary.tagihanDiterima,
   }), [contracts, invoices, summary]);
 
   const handleExport = () => {

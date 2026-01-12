@@ -115,10 +115,10 @@ export interface Contract {
 // ============================================
 
 export type InvoiceStatus = 
-  | "diajukan"      // Baru diinput, menunggu verifikasi
-  | "diverifikasi"  // Sudah diverifikasi, menunggu pembayaran
-  | "dibayar"       // Sudah dibayar
-  | "ditolak";      // Ditolak, perlu revisi
+  | "diajukan"      // Baru diinput, menunggu verifikasi (DEFAULT)
+  | "diterima"      // Sudah diterima/diverifikasi
+  | "ditolak"       // Ditolak
+  | "dibayar";      // Sudah dibayar
 
 export interface Invoice {
   id: string;
@@ -142,25 +142,19 @@ export interface Invoice {
   tanggalXPS?: string;            // Tanggal XPS
   
   // Status & tracking
-  status: InvoiceStatus;
+  status: InvoiceStatus;          // diajukan (default), diterima, ditolak, dibayar
   
-  // Tanggal status changes
-  tanggalDiajukan: string;
-  tanggalDiverifikasi?: string;
-  tanggalDibayar?: string;
-  tanggalDitolak?: string;
+  // Tanggal tracking
+  tanggalDiajukan: string;        // Tanggal pertama kali diajukan
+  tanggalVerifikasi?: string;     // Tanggal saat status berubah (auto-update)
   
   // Notes
   keterangan?: string;
-  alasanPenolakan?: string;
   
   // User tracking
   diajukanOleh: string;
   diajukanOlehName: string;
-  diverifikasiOleh?: string;
-  diverifikasiOlehName?: string;
-  dibayarOleh?: string;
-  dibayarOlehName?: string;
+  dibayarOleh?: string;           // Nama orang yang membayar (diisi saat status = dibayar)
   
   // Dokumen pendukung
   dokumenTagihan?: string;        // URL/path dokumen
@@ -193,7 +187,7 @@ export interface DashboardSummary {
   // Tagihan
   totalTagihan: number;
   tagihanDiajukan: number;
-  tagihanDiverifikasi: number;
+  tagihanDiterima: number;
   tagihanDibayar: number;
   tagihanDitolak: number;
   

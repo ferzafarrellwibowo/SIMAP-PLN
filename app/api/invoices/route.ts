@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Transform camelCase to snake_case untuk database
+    // Status default: 'diajukan', tanggal_verifikasi akan auto-update via trigger
     const invoiceData = {
       contract_id: body.contractId,
       no_perjanjian: body.noPerjanjian,
@@ -38,19 +39,12 @@ export async function POST(request: Request) {
       tanggal_arsip: body.tanggalArsip,
       no_xps: body.noXPS,
       tanggal_xps: body.tanggalXPS,
-      status: body.status || 'diajukan',
+      status: body.status || 'diajukan', // Default status saat membuat tagihan baru
       tanggal_diajukan: body.tanggalDiajukan || new Date().toISOString(),
-      tanggal_diverifikasi: body.tanggalDiverifikasi,
-      tanggal_dibayar: body.tanggalDibayar,
-      tanggal_ditolak: body.tanggalDitolak,
       keterangan: body.keterangan,
-      alasan_penolakan: body.alasanPenolakan,
       diajukan_oleh: body.diajukanOleh,
       diajukan_oleh_name: body.diajukanOlehName,
-      diverifikasi_oleh: body.diverifikasiOleh,
-      diverifikasi_oleh_name: body.diverifikasiOlehName,
       dibayar_oleh: body.dibayarOleh,
-      dibayar_oleh_name: body.dibayarOlehName,
       dokumen_tagihan: body.dokumenTagihan,
     };
 

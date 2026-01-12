@@ -116,10 +116,13 @@ Kolom utama yang **wajib** diisi:
 - `nomor_tagihan` - Nomor tagihan/berita acara (text)
 - `tanggal_tagihan` - Tanggal tagihan (date)
 - `nilai_tagihan` - Nilai tagihan (bigint)
-- `status` - 'diajukan' | 'diverifikasi' | 'dibayar' | 'ditolak'
+- `status` - 'diajukan' | 'diterima' | 'ditolak' | 'dibayar' (default: 'diajukan')
 - `tanggal_diajukan` - Timestamp diajukan
+- `tanggal_verifikasi` - Timestamp verifikasi (auto-update saat status berubah)
 - `diajukan_oleh` - User ID yang mengajukan
 - `diajukan_oleh_name` - Nama user yang mengajukan
+
+**Catatan:** Kolom `tanggal_verifikasi` akan otomatis di-update oleh database trigger setiap kali status invoice berubah (selain ke 'diajukan').
 
 ---
 

@@ -133,10 +133,12 @@ export interface SupabaseInvoice {
   nomor_tagihan: string;
   tanggal_tagihan: string;
   nilai_tagihan: number;
-  status: 'diajukan' | 'diverifikasi' | 'dibayar' | 'ditolak';
+  status: 'diajukan' | 'diterima' | 'dibayar' | 'ditolak';
   tanggal_diajukan: string;
+  tanggal_verifikasi: string | null;
   diajukan_oleh: string;
   diajukan_oleh_name: string;
+  dibayar_oleh: string | null;
   keterangan: string | null;
   created_at: string;
   updated_at: string;
@@ -689,7 +691,7 @@ export const invoiceService = {
     return data || [];
   },
 
-  async getByStatus(status: 'diajukan' | 'diverifikasi' | 'dibayar' | 'ditolak'): Promise<SupabaseInvoice[]> {
+  async getByStatus(status: 'diajukan' | 'diterima' | 'dibayar' | 'ditolak'): Promise<SupabaseInvoice[]> {
     const { data, error } = await supabase
       .from('invoices')
       .select('*')

@@ -168,21 +168,27 @@ function generateMockInvoices(contracts: Contract[]): Invoice[] {
       const nilaiTagihan = Math.floor((contract.nilaiKontrak / numInvoices) * (0.8 + Math.random() * 0.4));
       
       // Determine status based on random and position
+      // Status: diajukan, diterima, ditolak, dibayar
       let status: InvoiceStatus;
       if (i < numInvoices - 2) {
         status = "dibayar";
       } else if (i === numInvoices - 2) {
-        status = Math.random() > 0.3 ? "diverifikasi" : "dibayar";
+        status = Math.random() > 0.3 ? "diterima" : "dibayar";
       } else {
         const rand = Math.random();
         if (rand < 0.4) status = "diajukan";
-        else if (rand < 0.7) status = "diverifikasi";
+        else if (rand < 0.7) status = "diterima";
         else if (rand < 0.9) status = "dibayar";
         else status = "ditolak";
       }
 
       const tanggalDiajukan = new Date(2025, i * 2, 15 + Math.floor(Math.random() * 10));
       const tahun = tanggalDiajukan.getFullYear();
+      
+      // Hitung tanggalVerifikasi jika status bukan diajukan
+      const tanggalVerifikasi = status !== "diajukan" 
+        ? new Date(tanggalDiajukan.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+        : undefined;
       
       invoices.push({
         id: `INV-${String(invoiceIndex).padStart(4, "0")}`,
@@ -194,27 +200,15 @@ function generateMockInvoices(contracts: Contract[]): Invoice[] {
         noBeritaAcara: status !== "diajukan" ? `BA-${String(invoiceIndex).padStart(4, "0")}/${tahun}` : undefined,
         tanggalBeritaAcara: status !== "diajukan" ? new Date(tanggalDiajukan.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : undefined,
         tanggalArsip: status === "dibayar" ? new Date(tanggalDiajukan.getTime() + 20 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : undefined,
-        noXPS: ["diverifikasi", "dibayar"].includes(status) ? `XPS/${String(invoiceIndex).padStart(4, "0")}/${tahun}` : undefined,
-        tanggalXPS: ["diverifikasi", "dibayar"].includes(status) ? new Date(tanggalDiajukan.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : undefined,
+        noXPS: ["diterima", "dibayar"].includes(status) ? `XPS/${String(invoiceIndex).padStart(4, "0")}/${tahun}` : undefined,
+        tanggalXPS: ["diterima", "dibayar"].includes(status) ? new Date(tanggalDiajukan.getTime() + 10 * 24 * 60 * 60 * 1000).toISOString().split("T")[0] : undefined,
         status,
         tanggalDiajukan: tanggalDiajukan.toISOString(),
-        tanggalDiverifikasi: ["diverifikasi", "dibayar"].includes(status)
-          ? new Date(tanggalDiajukan.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
-          : undefined,
-        tanggalDibayar: status === "dibayar"
-          ? new Date(tanggalDiajukan.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString()
-          : undefined,
-        tanggalDitolak: status === "ditolak"
-          ? new Date(tanggalDiajukan.getTime() + 5 * 24 * 60 * 60 * 1000).toISOString()
-          : undefined,
+        tanggalVerifikasi,
         keterangan: `Pembayaran termin ke-${i + 1}`,
-        alasanPenolakan: status === "ditolak" ? "Dokumen pendukung tidak lengkap" : undefined,
         diajukanOleh: "USR-002",
         diajukanOlehName: "Budi Santoso",
-        diverifikasiOleh: ["diverifikasi", "dibayar"].includes(status) ? "USR-003" : undefined,
-        diverifikasiOlehName: ["diverifikasi", "dibayar"].includes(status) ? "Siti Rahayu" : undefined,
-        dibayarOleh: status === "dibayar" ? "USR-001" : undefined,
-        dibayarOlehName: status === "dibayar" ? "Administrator" : undefined,
+        dibayarOleh: status === "dibayar" ? "Administrator Keuangan" : undefined,
         createdAt: tanggalDiajukan.toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -266,14 +260,14 @@ export const CONTRACT_CATEGORY_COLORS: Record<ContractCategory, string> = {
 
 export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
   diajukan: "Diajukan",
-  diverifikasi: "Diverifikasi",
+  diterima: "Diterima",
   dibayar: "Dibayar",
   ditolak: "Ditolak",
 };
 
 export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
   diajukan: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  diverifikasi: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  diterima: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
   dibayar: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
   ditolak: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
 };
@@ -305,7 +299,7 @@ export const contractCategoryOptions = [
 export const invoiceStatusOptions = [
   { value: "all", label: "Semua Status" },
   { value: "diajukan", label: "Diajukan" },
-  { value: "diverifikasi", label: "Diverifikasi" },
+  { value: "diterima", label: "Diterima" },
   { value: "dibayar", label: "Dibayar" },
   { value: "ditolak", label: "Ditolak" },
 ];
@@ -427,10 +421,10 @@ function generateAlerts(contracts: Contract[], invoices: Invoice[]): Alert[] {
         type: "tagihan_ditolak",
         severity: "warning",
         title: "Tagihan Ditolak",
-        message: `Tagihan "${invoice.nomorTagihan}" ditolak. Alasan: ${invoice.alasanPenolakan || "Tidak ada keterangan"}.`,
+        message: `Tagihan "${invoice.nomorTagihan}" ditolak. Keterangan: ${invoice.keterangan || "Tidak ada keterangan"}.`,
         contractId: invoice.contractId,
         invoiceId: invoice.id,
-        createdAt: invoice.tanggalDitolak || new Date().toISOString(),
+        createdAt: invoice.tanggalVerifikasi || new Date().toISOString(),
       });
     }
   });
@@ -537,17 +531,11 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
             tanggalXPS: data.tanggal_xps,
             status: data.status,
             tanggalDiajukan: data.tanggal_diajukan,
-            tanggalDiverifikasi: data.tanggal_diverifikasi,
-            tanggalDibayar: data.tanggal_dibayar,
-            tanggalDitolak: data.tanggal_ditolak,
+            tanggalVerifikasi: data.tanggal_verifikasi,
             keterangan: data.keterangan,
-            alasanPenolakan: data.alasan_penolakan,
             diajukanOleh: data.diajukan_oleh,
             diajukanOlehName: data.diajukan_oleh_name,
-            diverifikasiOleh: data.diverifikasi_oleh,
-            diverifikasiOlehName: data.diverifikasi_oleh_name,
             dibayarOleh: data.dibayar_oleh,
-            dibayarOlehName: data.dibayar_oleh_name,
             dokumenTagihan: data.dokumen_tagihan,
             createdAt: data.created_at,
             updatedAt: data.updated_at,
@@ -699,7 +687,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       
       totalTagihan: invoices.length,
       tagihanDiajukan: invoices.filter((inv) => inv.status === "diajukan").length,
-      tagihanDiverifikasi: invoices.filter((inv) => inv.status === "diverifikasi").length,
+      tagihanDiterima: invoices.filter((inv) => inv.status === "diterima").length,
       tagihanDibayar: invoices.filter((inv) => inv.status === "dibayar").length,
       tagihanDitolak: invoices.filter((inv) => inv.status === "ditolak").length,
       
@@ -847,17 +835,11 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           tanggalXPS: data.tanggal_xps,
           status: data.status,
           tanggalDiajukan: data.tanggal_diajukan,
-          tanggalDiverifikasi: data.tanggal_diverifikasi,
-          tanggalDibayar: data.tanggal_dibayar,
-          tanggalDitolak: data.tanggal_ditolak,
+          tanggalVerifikasi: data.tanggal_verifikasi,
           keterangan: data.keterangan,
-          alasanPenolakan: data.alasan_penolakan,
           diajukanOleh: data.diajukan_oleh,
           diajukanOlehName: data.diajukan_oleh_name,
-          diverifikasiOleh: data.diverifikasi_oleh,
-          diverifikasiOlehName: data.diverifikasi_oleh_name,
           dibayarOleh: data.dibayar_oleh,
-          dibayarOlehName: data.dibayar_oleh_name,
           dokumenTagihan: data.dokumen_tagihan,
           createdAt: data.created_at,
           updatedAt: data.updated_at,
@@ -874,37 +856,73 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  // Update invoice
+  // Update invoice - DENGAN SUPABASE
   const updateInvoice = useCallback(
-    (id: string, updates: Partial<Invoice>) => {
-      let updated: Invoice | undefined;
-      setInvoices((prev) =>
-        prev.map((inv) => {
-          if (inv.id === id) {
-            updated = { ...inv, ...updates, updatedAt: new Date().toISOString() };
-            return updated;
-          }
-          return inv;
-        })
-      );
-      return updated;
+    async (id: string, updates: Partial<Invoice>) => {
+      try {
+        // Call API to update in Supabase
+        const response = await fetch('/api/invoices', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, ...updates }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to update invoice');
+        }
+
+        const { data } = await response.json();
+        
+        // Transform snake_case to camelCase
+        const transformedData: Invoice = {
+          id: data.id,
+          contractId: data.contract_id,
+          noPerjanjian: data.no_perjanjian,
+          nomorTagihan: data.nomor_tagihan,
+          tanggalTagihan: data.tanggal_tagihan,
+          nilaiTagihan: data.nilai_tagihan,
+          noBeritaAcara: data.no_berita_acara,
+          tanggalBeritaAcara: data.tanggal_berita_acara,
+          tanggalArsip: data.tanggal_arsip,
+          noXPS: data.no_xps,
+          tanggalXPS: data.tanggal_xps,
+          status: data.status,
+          tanggalDiajukan: data.tanggal_diajukan,
+          tanggalVerifikasi: data.tanggal_verifikasi,
+          keterangan: data.keterangan,
+          diajukanOleh: data.diajukan_oleh,
+          diajukanOlehName: data.diajukan_oleh_name,
+          dibayarOleh: data.dibayar_oleh,
+          dokumenTagihan: data.dokumen_tagihan,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+
+        // Update local state
+        setInvoices((prev) =>
+          prev.map((inv) => (inv.id === id ? transformedData : inv))
+        );
+        
+        return transformedData;
+      } catch (error) {
+        console.error('Error updating invoice:', error);
+        throw error;
+      }
     },
     []
   );
 
-  // Update invoice status
+  // Update invoice status - DENGAN SUPABASE
+  // Note: tanggal_verifikasi akan auto-update via database trigger saat status berubah
+  // dibayarOleh hanya diisi saat status = dibayar
   const updateInvoiceStatus = useCallback(
-    (id: string, status: InvoiceStatus, notes?: string) => {
-      const now = new Date().toISOString();
+    async (id: string, status: InvoiceStatus, dibayarOleh?: string) => {
       const updates: Partial<Invoice> = { status };
 
-      if (status === "diverifikasi") {
-        updates.tanggalDiverifikasi = now;
-      } else if (status === "dibayar") {
-        updates.tanggalDibayar = now;
-      } else if (status === "ditolak") {
-        updates.tanggalDitolak = now;
-        updates.alasanPenolakan = notes;
+      // Tambahkan dibayarOleh jika status dibayar
+      if (status === "dibayar" && dibayarOleh) {
+        updates.dibayarOleh = dibayarOleh;
       }
 
       return updateInvoice(id, updates);
