@@ -329,6 +329,7 @@ interface ContractStoreContextType {
   contracts: Contract[];
   invoices: Invoice[];
   alerts: Alert[];
+  isLoading: boolean;
   
   // Getters
   getContractById: (id: string) => Contract | undefined;
@@ -340,12 +341,12 @@ interface ContractStoreContextType {
   filterContracts: (filters: ContractFilters) => Contract[];
   filterInvoices: (filters: InvoiceFilters) => Invoice[];
   
-  // Mutations
-  createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Contract;
-  addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Contract; // Alias
+  // Mutations - ASYNC karena menggunakan Supabase
+  createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Promise<Contract>;
+  addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Promise<Contract>; // Alias
   updateContract: (id: string, updates: Partial<Contract>) => Contract | undefined;
   
-  createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Invoice;
+  createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Promise<Invoice>;
   updateInvoice: (id: string, updates: Partial<Invoice>) => Invoice | undefined;
   updateInvoiceStatus: (id: string, status: InvoiceStatus, notes?: string) => Invoice | undefined;
   
@@ -443,9 +444,129 @@ function generateAlerts(contracts: Contract[], invoices: Invoice[]): Alert[] {
 // ============================================
 
 export function ContractStoreProvider({ children }: { children: ReactNode }) {
-  const [contracts, setContracts] = useState<Contract[]>(() => generateMockContracts());
-  const [invoices, setInvoices] = useState<Invoice[]>(() => generateMockInvoices(contracts));
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // LOAD DATA DARI SUPABASE saat pertama kali mount
+  useEffect(() => {
+    async function loadDataFromSupabase() {
+      try {
+        setIsLoading(true);
+        
+        // Fetch contracts
+        const contractsRes = await fetch('/api/contracts');
+        if (contractsRes.ok) {
+          const { data: contractsData } = await contractsRes.json();
+          
+          // Transform snake_case to camelCase
+          const transformedContracts: Contract[] = contractsData.map((data: any) => ({
+            id: data.id,
+            no: data.no,
+            uraianKegiatan: data.uraian_kegiatan,
+            noPerjanjian: data.no_perjanjian,
+            tanggalPerjanjian: data.tanggal_perjanjian,
+            tanggalBerakhir: data.tanggal_berakhir,
+            judulPekerjaan: data.judul_pekerjaan,
+            nilaiKontrak: data.nilai_kontrak,
+            vendor: data.vendor,
+            nilaiTagihanKontrakPusat: data.nilai_tagihan_kontrak_pusat,
+            nilaiTagihanUnitInduk: data.nilai_tagihan_unit_induk,
+            nilaiBeritaAcara: data.nilai_berita_acara,
+            noBeritaAcara: data.no_berita_acara,
+            tanggalBeritaAcara: data.tanggal_berita_acara,
+            noBeritaAcaraSKRelasi: data.no_berita_acara_sk_relasi,
+            tanggalArsip: data.tanggal_arsip,
+            noXPS: data.no_xps,
+            tanggalXPS: data.tanggal_xps,
+            kategori: data.kategori,
+            jenisAnggaran: data.jenis_anggaran,
+            unit: data.unit,
+            unitSektorK: data.unit_sektor_k,
+            noSKWE: data.no_sk_we,
+            posAngg: data.pos_angg,
+            noSKUSKKO: data.no_sku_skko,
+            requestTanggalSERelasi: data.request_tanggal_se_relasi,
+            noSE: data.no_se,
+            noPO: data.no_po,
+            submissionId: data.submission_id,
+            jenisPekerjaan: data.jenis_pekerjaan,
+            bebanTahun: data.beban_tahun,
+            batasPaguTerbayar: data.batas_pagu_terbayar,
+            unitTerbayar: data.unit_terbayar,
+            konfirmasiNonRutin: data.konfirmasi_non_rutin,
+            bidang: data.bidang,
+            picId: data.pic_id,
+            picName: data.pic_name,
+            entryBy: data.entry_by,
+            status: data.status,
+            totalTagihanDibayar: data.total_tagihan_dibayar,
+            sisaAnggaran: data.sisa_anggaran,
+            persentaseRealisasi: parseFloat(data.persentase_realisasi),
+            oldFlag: data.old_flag,
+            clickCB: data.click_cb,
+            createdAt: data.created_at,
+            createdBy: data.created_by,
+            updatedAt: data.updated_at,
+            updatedBy: data.updated_by,
+            keterangan: data.keterangan,
+            dokumenKontrak: data.dokumen_kontrak,
+          }));
+          
+          setContracts(transformedContracts);
+        }
+
+        // Fetch invoices
+        const invoicesRes = await fetch('/api/invoices');
+        if (invoicesRes.ok) {
+          const { data: invoicesData } = await invoicesRes.json();
+          
+          // Transform snake_case to camelCase
+          const transformedInvoices: Invoice[] = invoicesData.map((data: any) => ({
+            id: data.id,
+            contractId: data.contract_id,
+            noPerjanjian: data.no_perjanjian,
+            nomorTagihan: data.nomor_tagihan,
+            tanggalTagihan: data.tanggal_tagihan,
+            nilaiTagihan: data.nilai_tagihan,
+            noBeritaAcara: data.no_berita_acara,
+            tanggalBeritaAcara: data.tanggal_berita_acara,
+            tanggalArsip: data.tanggal_arsip,
+            noXPS: data.no_xps,
+            tanggalXPS: data.tanggal_xps,
+            status: data.status,
+            tanggalDiajukan: data.tanggal_diajukan,
+            tanggalDiverifikasi: data.tanggal_diverifikasi,
+            tanggalDibayar: data.tanggal_dibayar,
+            tanggalDitolak: data.tanggal_ditolak,
+            keterangan: data.keterangan,
+            alasanPenolakan: data.alasan_penolakan,
+            diajukanOleh: data.diajukan_oleh,
+            diajukanOlehName: data.diajukan_oleh_name,
+            diverifikasiOleh: data.diverifikasi_oleh,
+            diverifikasiOlehName: data.diverifikasi_oleh_name,
+            dibayarOleh: data.dibayar_oleh,
+            dibayarOlehName: data.dibayar_oleh_name,
+            dokumenTagihan: data.dokumen_tagihan,
+            createdAt: data.created_at,
+            updatedAt: data.updated_at,
+          }));
+          
+          setInvoices(transformedInvoices);
+        }
+      } catch (error) {
+        console.error('Error loading data from Supabase:', error);
+        // Fallback ke mock data jika gagal
+        setContracts(generateMockContracts());
+        setInvoices(generateMockInvoices(contracts));
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    loadDataFromSupabase();
+  }, []); // Run once on mount
 
   // Generate alerts on mount and when contracts/invoices change
   useEffect(() => {
@@ -592,22 +713,87 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     };
   }, [contracts, invoices]);
 
-  // Create contract
+  // Create contract - DENGAN SUPABASE
   const createContract = useCallback(
-    (contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => {
-      const newContract: Contract = {
-        ...contractData,
-        id: `CTR-${String(contracts.length + 1).padStart(3, "0")}`,
-        totalTagihanDibayar: 0,
-        sisaAnggaran: contractData.nilaiKontrak,
-        persentaseRealisasi: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      setContracts((prev) => [...prev, newContract]);
-      return newContract;
+    async (contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => {
+      try {
+        // Call API to save to Supabase
+        const response = await fetch('/api/contracts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(contractData),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to create contract');
+        }
+
+        const { data } = await response.json();
+        
+        // Transform snake_case to camelCase
+        const transformedData: Contract = {
+          id: data.id,
+          no: data.no,
+          uraianKegiatan: data.uraian_kegiatan,
+          noPerjanjian: data.no_perjanjian,
+          tanggalPerjanjian: data.tanggal_perjanjian,
+          tanggalBerakhir: data.tanggal_berakhir,
+          judulPekerjaan: data.judul_pekerjaan,
+          nilaiKontrak: data.nilai_kontrak,
+          vendor: data.vendor,
+          nilaiTagihanKontrakPusat: data.nilai_tagihan_kontrak_pusat,
+          nilaiTagihanUnitInduk: data.nilai_tagihan_unit_induk,
+          nilaiBeritaAcara: data.nilai_berita_acara,
+          noBeritaAcara: data.no_berita_acara,
+          tanggalBeritaAcara: data.tanggal_berita_acara,
+          noBeritaAcaraSKRelasi: data.no_berita_acara_sk_relasi,
+          tanggalArsip: data.tanggal_arsip,
+          noXPS: data.no_xps,
+          tanggalXPS: data.tanggal_xps,
+          kategori: data.kategori,
+          jenisAnggaran: data.jenis_anggaran,
+          unit: data.unit,
+          unitSektorK: data.unit_sektor_k,
+          noSKWE: data.no_sk_we,
+          posAngg: data.pos_angg,
+          noSKUSKKO: data.no_sku_skko,
+          requestTanggalSERelasi: data.request_tanggal_se_relasi,
+          noSE: data.no_se,
+          noPO: data.no_po,
+          submissionId: data.submission_id,
+          jenisPekerjaan: data.jenis_pekerjaan,
+          bebanTahun: data.beban_tahun,
+          batasPaguTerbayar: data.batas_pagu_terbayar,
+          unitTerbayar: data.unit_terbayar,
+          konfirmasiNonRutin: data.konfirmasi_non_rutin,
+          bidang: data.bidang,
+          picId: data.pic_id,
+          picName: data.pic_name,
+          entryBy: data.entry_by,
+          status: data.status,
+          totalTagihanDibayar: data.total_tagihan_dibayar,
+          sisaAnggaran: data.sisa_anggaran,
+          persentaseRealisasi: data.persentase_realisasi,
+          oldFlag: data.old_flag,
+          clickCB: data.click_cb,
+          createdAt: data.created_at,
+          createdBy: data.created_by,
+          updatedAt: data.updated_at,
+          updatedBy: data.updated_by,
+          keterangan: data.keterangan,
+          dokumenKontrak: data.dokumen_kontrak,
+        };
+
+        // Update local state
+        setContracts((prev) => [...prev, transformedData]);
+        return transformedData;
+      } catch (error) {
+        console.error('Error creating contract:', error);
+        throw error;
+      }
     },
-    [contracts.length]
+    []
   );
 
   // Update contract
@@ -628,19 +814,64 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  // Create invoice
+  // Create invoice - DENGAN SUPABASE
   const createInvoice = useCallback(
-    (invoiceData: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => {
-      const newInvoice: Invoice = {
-        ...invoiceData,
-        id: `INV-${String(invoices.length + 1).padStart(4, "0")}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      setInvoices((prev) => [...prev, newInvoice]);
-      return newInvoice;
+    async (invoiceData: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => {
+      try {
+        // Call API to save to Supabase
+        const response = await fetch('/api/invoices', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invoiceData),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to create invoice');
+        }
+
+        const { data } = await response.json();
+        
+        // Transform snake_case to camelCase
+        const transformedData: Invoice = {
+          id: data.id,
+          contractId: data.contract_id,
+          noPerjanjian: data.no_perjanjian,
+          nomorTagihan: data.nomor_tagihan,
+          tanggalTagihan: data.tanggal_tagihan,
+          nilaiTagihan: data.nilai_tagihan,
+          noBeritaAcara: data.no_berita_acara,
+          tanggalBeritaAcara: data.tanggal_berita_acara,
+          tanggalArsip: data.tanggal_arsip,
+          noXPS: data.no_xps,
+          tanggalXPS: data.tanggal_xps,
+          status: data.status,
+          tanggalDiajukan: data.tanggal_diajukan,
+          tanggalDiverifikasi: data.tanggal_diverifikasi,
+          tanggalDibayar: data.tanggal_dibayar,
+          tanggalDitolak: data.tanggal_ditolak,
+          keterangan: data.keterangan,
+          alasanPenolakan: data.alasan_penolakan,
+          diajukanOleh: data.diajukan_oleh,
+          diajukanOlehName: data.diajukan_oleh_name,
+          diverifikasiOleh: data.diverifikasi_oleh,
+          diverifikasiOlehName: data.diverifikasi_oleh_name,
+          dibayarOleh: data.dibayar_oleh,
+          dibayarOlehName: data.dibayar_oleh_name,
+          dokumenTagihan: data.dokumen_tagihan,
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+
+        // Update local state
+        setInvoices((prev) => [...prev, transformedData]);
+        return transformedData;
+      } catch (error) {
+        console.error('Error creating invoice:', error);
+        throw error;
+      }
     },
-    [invoices.length]
+    []
   );
 
   // Update invoice
@@ -712,6 +943,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       contracts,
       invoices,
       alerts,
+      isLoading,
       getContractById,
       getInvoiceById,
       getInvoicesByContract,
@@ -732,6 +964,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       contracts,
       invoices,
       alerts,
+      isLoading,
       getContractById,
       getInvoiceById,
       getInvoicesByContract,

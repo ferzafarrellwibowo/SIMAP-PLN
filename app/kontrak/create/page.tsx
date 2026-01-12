@@ -21,10 +21,12 @@ export default function CreateContractPage() {
     judulPekerjaan: "",
     nilaiKontrak: "",
     vendor: "",
+    picName: "",
     kategori: "investasi" as ContractCategory,
     jenisAnggaran: "AI" as JenisAnggaran,
     unit: "",
     unitSektorK: "",
+    unitTerbayar: "",
     noSKWE: "",
     posAngg: "",
     noSKUSKKO: "",
@@ -36,6 +38,14 @@ export default function CreateContractPage() {
     konfirmasiNonRutin: "Rutin",
     bidang: "",
     keterangan: "",
+    // New fields
+    requestTanggalSERelasi: "",
+    noXPS: "",
+    tanggalXPS: "",
+    noBeritaAcara: "",
+    tanggalBeritaAcara: "",
+    noBeritaAcaraSKRelasi: "",
+    tanggalArsip: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -78,12 +88,14 @@ export default function CreateContractPage() {
         judulPekerjaan: formData.judulPekerjaan,
         nilaiKontrak: parseFloat(formData.nilaiKontrak),
         vendor: formData.vendor,
+        picName: formData.picName,
         nilaiTagihanKontrakPusat: 0,
         nilaiTagihanUnitInduk: 0,
         kategori: formData.kategori,
         jenisAnggaran: formData.jenisAnggaran,
         unit: formData.unit || user?.unit || "",
         unitSektorK: formData.unitSektorK,
+        unitTerbayar: formData.unitTerbayar,
         noSKWE: formData.noSKWE,
         posAngg: formData.posAngg,
         noSKUSKKO: formData.noSKUSKKO,
@@ -95,6 +107,15 @@ export default function CreateContractPage() {
         konfirmasiNonRutin: formData.konfirmasiNonRutin,
         bidang: formData.bidang,
         keterangan: formData.keterangan,
+        // New fields
+        requestTanggalSERelasi: formData.requestTanggalSERelasi || null,
+        noXPS: formData.noXPS,
+        tanggalXPS: formData.tanggalXPS || null,
+        noBeritaAcara: formData.noBeritaAcara,
+        tanggalBeritaAcara: formData.tanggalBeritaAcara || null,
+        noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
+        tanggalArsip: formData.tanggalArsip || null,
+        entryBy: user?.name || "Admin", // Auto-filled dengan nama user
         status: "aktif" as const,
       };
 
@@ -210,6 +231,19 @@ export default function CreateContractPage() {
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Contoh: PT Wijaya Karya"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                PIC (Person In Charge)
+              </label>
+              <input
+                type="text"
+                name="picName"
+                value={formData.picName}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Contoh: Budi Santoso"
               />
             </div>
           </div>
@@ -353,6 +387,19 @@ export default function CreateContractPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Unit Terbayar
+              </label>
+              <input
+                type="text"
+                name="unitTerbayar"
+                value={formData.unitTerbayar}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Contoh: PLN UP3 Jakarta Selatan"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Bidang
               </label>
               <input
@@ -456,6 +503,111 @@ export default function CreateContractPage() {
                 <option value="Rutin">Rutin</option>
                 <option value="Non Rutin">Non Rutin</option>
               </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Berita Acara & Arsip */}
+        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara & Arsip</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Request Tgl SE
+              </label>
+              <input
+                type="date"
+                name="requestTanggalSERelasi"
+                value={formData.requestTanggalSERelasi}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                No. XPS
+              </label>
+              <input
+                type="text"
+                name="noXPS"
+                value={formData.noXPS}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Contoh: XPS/2026/001"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tanggal XPS
+              </label>
+              <input
+                type="date"
+                name="tanggalXPS"
+                value={formData.tanggalXPS}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                No. Berita Acara
+              </label>
+              <input
+                type="text"
+                name="noBeritaAcara"
+                value={formData.noBeritaAcara}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Contoh: BA/2026/001"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tanggal Berita Acara
+              </label>
+              <input
+                type="date"
+                name="tanggalBeritaAcara"
+                value={formData.tanggalBeritaAcara}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                No. BA SK/Relasi
+              </label>
+              <input
+                type="text"
+                name="noBeritaAcaraSKRelasi"
+                value={formData.noBeritaAcaraSKRelasi}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Contoh: BA-SK/2026/001"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Tanggal Arsip
+              </label>
+              <input
+                type="date"
+                name="tanggalArsip"
+                value={formData.tanggalArsip}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Entry By
+              </label>
+              <input
+                type="text"
+                value={user?.name || "Admin"}
+                disabled
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed"
+              />
             </div>
           </div>
         </div>

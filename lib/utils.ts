@@ -66,3 +66,58 @@ export function formatCurrency(amount: number): string {
 export function formatPercentage(value: number): string {
   return `${value.toFixed(1)}%`;
 }
+
+// ============================================
+// DATA TRANSFORMATION UTILITIES
+// Untuk transformasi antara camelCase (TS) dan snake_case (DB)
+// ============================================
+
+/**
+ * Convert snake_case to camelCase
+ */
+export function toCamelCase(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
+ * Convert camelCase to snake_case
+ */
+export function toSnakeCase(str: string): string {
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+}
+
+/**
+ * Transform object keys from snake_case to camelCase
+ */
+export function transformToCamelCase<T = any>(obj: any): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((item) => transformToCamelCase(item)) as any;
+  }
+  if (typeof obj !== 'object') return obj;
+
+  const result: any = {};
+  Object.keys(obj).forEach((key) => {
+    const camelKey = toCamelCase(key);
+    result[camelKey] = transformToCamelCase(obj[key]);
+  });
+  return result;
+}
+
+/**
+ * Transform object keys from camelCase to snake_case
+ */
+export function transformToSnakeCase<T = any>(obj: any): T {
+  if (obj === null || obj === undefined) return obj;
+  if (Array.isArray(obj)) {
+    return obj.map((item) => transformToSnakeCase(item)) as any;
+  }
+  if (typeof obj !== 'object') return obj;
+
+  const result: any = {};
+  Object.keys(obj).forEach((key) => {
+    const snakeKey = toSnakeCase(key);
+    result[snakeKey] = transformToSnakeCase(obj[key]);
+  });
+  return result;
+}

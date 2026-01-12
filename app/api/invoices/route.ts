@@ -1,0 +1,136 @@
+import { NextResponse } from 'next/server';
+import { supabaseServer } from '../../../lib/supabaseServer';
+
+// GET - Ambil semua invoices
+export async function GET() {
+  try {
+    const { data, error } = await supabaseServer
+      .from('invoices')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching invoices:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ data }, { status: 200 });
+  } catch (error: any) {
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// POST - Tambah invoice baru
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+
+    // Transform camelCase to snake_case untuk database
+    const invoiceData = {
+      contract_id: body.contractId,
+      no_perjanjian: body.noPerjanjian,
+      nomor_tagihan: body.nomorTagihan,
+      tanggal_tagihan: body.tanggalTagihan,
+      nilai_tagihan: body.nilaiTagihan,
+      no_berita_acara: body.noBeritaAcara,
+      tanggal_berita_acara: body.tanggalBeritaAcara,
+      tanggal_arsip: body.tanggalArsip,
+      no_xps: body.noXPS,
+      tanggal_xps: body.tanggalXPS,
+      status: body.status || 'diajukan',
+      tanggal_diajukan: body.tanggalDiajukan || new Date().toISOString(),
+      tanggal_diverifikasi: body.tanggalDiverifikasi,
+      tanggal_dibayar: body.tanggalDibayar,
+      tanggal_ditolak: body.tanggalDitolak,
+      keterangan: body.keterangan,
+      alasan_penolakan: body.alasanPenolakan,
+      diajukan_oleh: body.diajukanOleh,
+      diajukan_oleh_name: body.diajukanOlehName,
+      diverifikasi_oleh: body.diverifikasiOleh,
+      diverifikasi_oleh_name: body.diverifikasiOlehName,
+      dibayar_oleh: body.dibayarOleh,
+      dibayar_oleh_name: body.dibayarOlehName,
+      dokumen_tagihan: body.dokumenTagihan,
+    };
+
+    const { data, error } = await supabaseServer
+      .from('invoices')
+      .insert([invoiceData])
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating invoice:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ data }, { status: 201 });
+  } catch (error: any) {
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// PUT - Update invoice
+export async function PUT(request: Request) {
+  try {
+    const body = await request.json();
+    const { id, ...updates } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: 'Invoice ID is required' }, { status: 400 });
+    }
+
+    // Transform camelCase to snake_case
+    const updateData: any = {};
+    Object.keys(updates).forEach((key) => {
+      const snakeKey = key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+      updateData[snakeKey] = updates[key];
+    });
+
+    const { data, error } = await supabaseServer
+      .from('invoices')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating invoice:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ data }, { status: 200 });
+  } catch (error: any) {
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// DELETE - Hapus invoice
+export async function DELETE(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Invoice ID is required' }, { status: 400 });
+    }
+
+    const { error } = await supabaseServer
+      .from('invoices')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting invoice:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error: any) {
+    console.error('Server error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
