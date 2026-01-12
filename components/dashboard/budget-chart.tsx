@@ -53,15 +53,15 @@ export function BudgetChart({ data }: BudgetChartProps) {
   };
 
   const barData = [
-    { name: "Total Anggaran", value: data.total, fill: "#e5e7eb" },
-    { name: "Realisasi", value: data.used, fill: "#3b82f6" },
+    { name: "Pagu", value: data.total, fill: "#e5e7eb" },
+    { name: "Serapan", value: data.used, fill: "#3b82f6" },
     { name: "Sisa", value: data.remaining, fill: "#10b981" },
   ];
 
   return (
     <Card className="h-full" hover={false}>
       <CardHeader>
-        <CardTitle>Anggaran Global</CardTitle>
+        <CardTitle>Pagu & Serapan</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -92,7 +92,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
                 {usedPercentage.toFixed(1)}%
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Terpakai
+                Serapan
               </p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
           <div className="space-y-4">
             <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800/50">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Total Anggaran
+                Pagu
               </p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">
                 {formatCurrency(data.total)}
@@ -109,7 +109,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
             </div>
             <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950/30">
               <p className="text-sm text-blue-600 dark:text-blue-400">
-                Realisasi
+                Serapan
               </p>
               <p className="text-xl font-bold text-blue-700 dark:text-blue-300">
                 {formatCurrency(data.used)}

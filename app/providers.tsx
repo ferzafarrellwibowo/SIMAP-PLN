@@ -1,16 +1,27 @@
 "use client";
 
 import { ReactNode } from "react";
-import { AuthProvider } from "@/lib/auth";
-import { ProjectStoreProvider } from "@/lib/store";
-import { AuthWrapper } from "@/components/auth/auth-wrapper";
+import { usePathname } from "next/navigation";
+import { AuthProvider } from "@/lib/auth-new";
+import { ContractStoreProvider } from "@/lib/store-new";
+import { SidebarLayout } from "@/components/layout/sidebar-layout";
 
 export function Providers({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  
+  // Pages that don't need sidebar layout
+  const noLayoutPages = ["/login"];
+  const needsLayout = !noLayoutPages.includes(pathname);
+
   return (
     <AuthProvider>
-      <ProjectStoreProvider>
-        <AuthWrapper>{children}</AuthWrapper>
-      </ProjectStoreProvider>
+      <ContractStoreProvider>
+        {needsLayout ? (
+          <SidebarLayout>{children}</SidebarLayout>
+        ) : (
+          children
+        )}
+      </ContractStoreProvider>
     </AuthProvider>
   );
 }

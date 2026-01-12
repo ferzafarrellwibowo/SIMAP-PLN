@@ -54,7 +54,7 @@ export function exportToPDF(
   const reportTitles: Record<ReportType, string> = {
     summary: "Ringkasan Eksekutif",
     progress: "Progress Proyek",
-    budget: "Realisasi Anggaran",
+    budget: "Serapan Anggaran",
     problems: "Proyek Bermasalah",
   };
   
@@ -141,8 +141,8 @@ function generateSummaryPDF(doc: jsPDF, stats: SummaryStats, startY: number) {
     startY: finalY + 20,
     head: [["Indikator", "Nilai"]],
     body: [
-      ["Total Anggaran", formatCurrencyShort(stats.totalBudget)],
-      ["Total Terpakai", formatCurrencyShort(stats.totalSpent)],
+      ["Pagu", formatCurrencyShort(stats.totalBudget)],
+      ["Serapan", formatCurrencyShort(stats.totalSpent)],
       ["Utilisasi Anggaran", `${stats.budgetUtilization.toFixed(1)}%`],
     ],
     theme: "grid",
@@ -204,7 +204,7 @@ function generateProgressPDF(doc: jsPDF, projects: ExportProjectData[], startY: 
 function generateBudgetPDF(doc: jsPDF, projects: ExportProjectData[], stats: SummaryStats, startY: number) {
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("Realisasi Anggaran per Proyek", 14, startY);
+  doc.text("Serapan Anggaran per Proyek", 14, startY);
 
   const tableData = projects.map((p) => {
     const spent = p.metrics?.actualCost || 0;
@@ -301,7 +301,7 @@ export function exportToExcel(
   const reportTitles: Record<ReportType, string> = {
     summary: "Ringkasan Eksekutif",
     progress: "Progress Proyek",
-    budget: "Realisasi Anggaran",
+    budget: "Serapan Anggaran",
     problems: "Proyek Bermasalah",
   };
 
@@ -346,8 +346,8 @@ function generateSummaryExcel(wb: XLSX.WorkBook, stats: SummaryStats, filters: {
     [""],
     ["RINGKASAN ANGGARAN"],
     ["Indikator", "Nilai"],
-    ["Total Anggaran", stats.totalBudget],
-    ["Total Terpakai", stats.totalSpent],
+    ["Pagu", stats.totalBudget],
+    ["Serapan", stats.totalSpent],
     ["Sisa Anggaran", stats.totalBudget - stats.totalSpent],
     ["Utilisasi (%)", stats.budgetUtilization.toFixed(1)],
     [""],
@@ -407,7 +407,7 @@ function generateProgressExcel(wb: XLSX.WorkBook, projects: ExportProjectData[],
 
 function generateBudgetExcel(wb: XLSX.WorkBook, projects: ExportProjectData[], stats: SummaryStats, filters: { unit: string; status: string }) {
   const headerData = [
-    ["LAPORAN REALISASI ANGGARAN"],
+    ["LAPORAN SERAPAN ANGGARAN"],
     ["PT PLN (Persero)"],
     [""],
     ["Tanggal", new Date().toLocaleDateString("id-ID")],
@@ -415,7 +415,7 @@ function generateBudgetExcel(wb: XLSX.WorkBook, projects: ExportProjectData[], s
     [""],
   ];
 
-  const tableHeader = ["Kode", "Nama Proyek", "Unit", "Anggaran (Rp)", "Terpakai (Rp)", "Sisa (Rp)", "Utilisasi (%)", "CPI", "Status Biaya"];
+  const tableHeader = ["Kode", "Nama Proyek", "Unit", "Pagu (Rp)", "Serapan (Rp)", "Sisa (Rp)", "Utilisasi (%)", "CPI", "Status Biaya"];
   
   const tableData = projects.map((p) => {
     const spent = p.metrics?.actualCost || 0;
@@ -610,7 +610,7 @@ export function exportAllToPDF(
   addAllReportsHeader(doc, "Laporan Lengkap - Semua Laporan", filters);
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("3. REALISASI ANGGARAN", 14, 55);
+  doc.text("3. SERAPAN ANGGARAN", 14, 55);
   generateBudgetPDF(doc, projects, stats, 62);
   
   // Page 4: Problems

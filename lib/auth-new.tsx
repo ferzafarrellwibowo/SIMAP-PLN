@@ -1,0 +1,191 @@
+// ============================================
+// AUTH CONTEXT - Simplified Role-based Access Control
+// Roles: Admin, Operator, Manajemen
+// ============================================
+
+"use client";
+
+import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import type { User, UserRole } from "./types-new";
+
+// ============================================
+// PERMISSION DEFINITIONS
+// ============================================
+
+export type Permission =
+  | "view_dashboard"
+  | "view_contracts"
+  | "create_contract"
+  | "edit_contract"
+  | "delete_contract"
+  | "view_invoices"
+  | "create_invoice"
+  | "edit_invoice"
+  | "update_invoice_status"
+  | "view_reports"
+  | "export_reports"
+  | "manage_users";
+
+const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
+  // Admin (Operator) - Full access untuk mengelola sistem
+  admin: [
+    "view_dashboard",
+    "view_contracts",
+    "create_contract",
+    "edit_contract",
+    "delete_contract",
+    "view_invoices",
+    "create_invoice",
+    "edit_invoice",
+    "update_invoice_status",
+    "view_reports",
+    "export_reports",
+    "manage_users",
+  ],
+  // Viewer (Manajer) - Hanya view dan export
+  viewer: [
+    "view_dashboard",
+    "view_contracts",
+    "view_invoices",
+    "view_reports",
+    "export_reports",
+  ],
+};
+
+// ============================================
+// MOCK USERS
+// ============================================
+
+export const MOCK_USERS: User[] = [
+  {
+    id: "USR-001",
+    username: "admin",
+    name: "Administrator",
+    email: "admin@pln.co.id",
+    role: "admin",
+    unit: "PLN Pusat",
+    createdAt: "2025-01-01",
+  },
+  {
+    id: "USR-002",
+    username: "operator",
+    name: "Budi Santoso",
+    email: "budi.santoso@pln.co.id",
+    role: "admin",
+    unit: "PLN UP3 Jakarta Selatan",
+    createdAt: "2025-01-01",
+  },
+  {
+    id: "USR-003",
+    username: "manajer",
+    name: "Ahmad Wijaya",
+    email: "ahmad.wijaya@pln.co.id",
+    role: "viewer",
+    unit: "PLN Pusat",
+    createdAt: "2025-01-01",
+  },
+  {
+    id: "USR-004",
+    username: "viewer",
+    name: "Diana Kusuma",
+    email: "diana.kusuma@pln.co.id",
+    role: "viewer",
+    unit: "PLN Pusat",
+    createdAt: "2025-01-01",
+  },
+];
+
+// Role labels untuk display
+export const ROLE_LABELS: Record<UserRole, string> = {
+  admin: "Admin (Operator)",
+  viewer: "Viewer (Manajer)",
+};
+
+// Role colors
+export const ROLE_COLORS: Record<UserRole, string> = {
+  admin: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  viewer: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+};
+
+// ============================================
+// AUTH CONTEXT
+// ============================================
+
+interface AuthContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  hasPermission: (permission: Permission) => boolean;
+  hasAnyPermission: (permissions: Permission[]) => boolean;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+
+  const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean> => {
+    // Simulate API call delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const id = usernameOrEmail.trim().toLowerCase();
+
+    // Find user by username OR email (password check is dummy)
+    const foundUser = MOCK_USERS.find(
+      (u) => u.username.toLowerCase() === id || u.email.toLowerCase() === id
+    );
+
+    if (foundUser && password === "password123") {
+      setUser(foundUser);
+      return true;
+    }
+
+    return false;
+  }, []);
+
+  const logout = useCallback(() => {
+    setUser(null);
+  }, []);
+
+  const hasPermission = useCallback(
+    (permission: Permission): boolean => {
+      if (!user) return false;
+      return ROLE_PERMISSIONS[user.role]?.includes(permission) || false;
+    },
+    [user]
+  );
+
+  const hasAnyPermission = useCallback(
+    (permissions: Permission[]): boolean => {
+      if (!user) return false;
+      return permissions.some((p) => ROLE_PERMISSIONS[user.role]?.includes(p));
+    },
+    [user]
+  );
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        hasPermission,
+        hasAnyPermission,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+export { ROLE_PERMISSIONS };
