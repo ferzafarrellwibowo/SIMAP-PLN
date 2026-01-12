@@ -47,7 +47,7 @@ export default function TagihanPage() {
     setSelectedInvoice(null);
   };
 
-  const canEditStatus = user?.role === "admin" || user?.role === "manajemen";
+  const canEditStatus = user?.role === "admin";
 
   const statusStats = useMemo(() => {
     return {
@@ -110,7 +110,6 @@ export default function TagihanPage() {
               onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Semua Status</option>
               {invoiceStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -199,29 +198,35 @@ export default function TagihanPage() {
                       {canEditStatus && (
                         <td className="px-6 py-4">
                           {selectedInvoice === invoice.id ? (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 min-w-[180px]">
                               <select
-                                className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                                className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                                 defaultValue={invoice.status}
                                 onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                               >
-                                {invoiceStatusOptions.map((opt) => (
+                                {invoiceStatusOptions.filter(opt => opt.value !== "all").map((opt) => (
                                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                               </select>
                               <button
                                 onClick={() => setSelectedInvoice(null)}
-                                className="text-xs text-gray-500 hover:text-gray-700"
+                                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                                title="Batal"
                               >
-                                Batal
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                               </button>
                             </div>
                           ) : (
                             <button
                               onClick={() => setSelectedInvoice(invoice.id)}
-                              className="text-xs px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                              className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
                             >
-                              Ubah Status
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Ubah
                             </button>
                           )}
                         </td>

@@ -48,7 +48,7 @@ export default function KontrakPage() {
             {filteredContracts.length} kontrak ditemukan
           </p>
         </div>
-        {(user?.role === "admin" || user?.role === "operator") && (
+        {user?.role === "admin" && (
           <Link
             href="/kontrak/create"
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -93,7 +93,6 @@ export default function KontrakPage() {
               onChange={(e) => setKategori(e.target.value as ContractCategory | "all")}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Semua Kategori</option>
               {contractCategoryOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -106,7 +105,6 @@ export default function KontrakPage() {
               onChange={(e) => setStatus(e.target.value as ContractStatus | "all")}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="all">Semua Status</option>
               {contractStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}

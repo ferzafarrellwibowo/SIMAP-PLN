@@ -84,7 +84,7 @@ export default function KontrakDetailPage() {
           </div>
         </div>
         
-        {(user?.role === "admin" || user?.role === "operator") && (
+        {user?.role === "admin" && (
           <div className="flex items-center gap-2">
             <Link
               href={`/tagihan/create?contractId=${contract.id}`}
