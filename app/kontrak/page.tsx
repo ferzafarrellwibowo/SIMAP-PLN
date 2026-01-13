@@ -194,24 +194,49 @@ export default function KontrakPage() {
                     </p>
                   </div>
                   
-                  <div className="w-48">
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-gray-500 dark:text-gray-400">Realisasi</span>
-                      <span className={`font-medium ${
-                        contract.persentaseRealisasi > 90 ? "text-red-600" :
-                        contract.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
-                      }`}>
-                        {contract.persentaseRealisasi.toFixed(1)}%
-                      </span>
+                  <div className="w-48 space-y-2">
+                    {/* Serapan Anggaran */}
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-500 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">Serapan Anggaran</span>
+                        <span className={`font-medium ${
+                          contract.persentaseRealisasi > 90 ? "text-red-600" :
+                          contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
+                        }`}>
+                          {contract.persentaseRealisasi.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            contract.persentaseRealisasi > 90 ? "bg-red-500" :
+                            contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
+                          }`}
+                          style={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          contract.persentaseRealisasi > 90 ? "bg-red-500" :
-                          contract.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
-                        }`}
-                        style={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
-                      />
+                    
+                    {/* Progres Pekerjaan */}
+                    <div>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="text-gray-500 dark:text-gray-400" title="Persentase penyelesaian fisik pekerjaan">Progres Pekerjaan</span>
+                        <span className={`font-medium ${
+                          contract.progressPekerjaan >= 90 ? "text-blue-600" :
+                          contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
+                        }`}>
+                          {contract.progressPekerjaan.toFixed(1)}%
+                        </span>
+                      </div>
+                      <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${
+                            contract.progressPekerjaan >= 90 ? "bg-blue-500" :
+                            contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
+                          }`}
+                          style={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
+                        />
+                      </div>
                     </div>
                   </div>
 

@@ -104,16 +104,76 @@ select {
 
 .custom-select:hover,
 select:hover {
-  border-color: #3b82f6; /* blue-500 */
-  box-shadow: 0 8px 24px rgba(59,130,246,0.12);
-  transform: translateY(-1px);
+  border-color: #d1d5db; /* gray-300 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transform: translateY(0);
+}
+
+.custom-select:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 @media (prefers-color-scheme: dark) {
   .custom-select:hover,
   select:hover {
-    border-color: #60a5fa; /* lighter blue for dark */
-    box-shadow: 0 8px 24px rgba(96,165,250,0.06);
+    border-color: #4b5563; /* darker gray for dark mode */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  
+  .custom-select:focus-visible,
+  select:focus-visible {
+    outline: none;
+    border-color: #4b5563;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+}
+
+/* Style native select option panels to better match site theme (where supported).
+   Note: browser support for option styling varies; this improves appearance in modern
+   browsers and dark-mode where possible. */
+.custom-select option,
+select option {
+  background-color: #1f2937; /* dark gray */
+  color: #f9fafb; /* light text */
+  padding: 8px 4px;
+}
+
+.custom-select option:disabled,
+select option:disabled {
+  background-color: #1f2937;
+  color: #f9fafb;
+  opacity: 1;
+}
+
+.custom-select option:checked,
+select option:checked {
+  background: linear-gradient(#3b82f6, #3b82f6);
+  background-color: #3b82f6;
+  color: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .custom-select option,
+  select option {
+    background-color: #1f2937;
+    color: #f9fafb;
+  }
+  
+  .custom-select option:disabled,
+  select option:disabled {
+    background-color: #1f2937;
+    color: #f9fafb;
+    opacity: 1;
+  }
+  
+  .custom-select option:checked,
+  select option:checked {
+    background: linear-gradient(#3b82f6, #3b82f6);
+    background-color: #3b82f6;
+    color: #f9fafb;
   }
 }
 

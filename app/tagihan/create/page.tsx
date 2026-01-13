@@ -436,8 +436,8 @@ export default function CreateTagihanPage() {
                 {/* Progress bar */}
                 <div className="mt-4">
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Realisasi: {selectedContract.persentaseRealisasi.toFixed(1)}%
+                    <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">
+                      Serapan Anggaran: {selectedContract.persentaseRealisasi.toFixed(1)}%
                     </span>
                     <span className="text-gray-600 dark:text-gray-400">
                       {existingInvoices.length} tagihan
@@ -448,7 +448,7 @@ export default function CreateTagihanPage() {
                       className={`h-full rounded-full transition-all ${
                         selectedContract.persentaseRealisasi > 90
                           ? "bg-red-500"
-                          : selectedContract.persentaseRealisasi > 70
+                          : selectedContract.persentaseRealisasi > 50
                           ? "bg-yellow-500"
                           : "bg-green-500"
                       }`}

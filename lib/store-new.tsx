@@ -141,6 +141,7 @@ function generateMockContracts(): Contract[] {
       totalTagihanDibayar: totalDibayar,
       sisaAnggaran,
       persentaseRealisasi: realisasiPersen,
+      progressPekerjaan: Math.min(realisasiPersen + Math.random() * 10 - 5, 100), // Progress fisik mendekati realisasi anggaran
       oldFlag: index % 5 === 0 ? "Y" : undefined,
       clickCB: index % 4 === 0,
       createdAt: "2025-01-01T00:00:00Z",
@@ -336,12 +337,12 @@ interface ContractStoreContextType {
   filterInvoices: (filters: InvoiceFilters) => Invoice[];
   
   // Mutations - ASYNC karena menggunakan Supabase
-  createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Promise<Contract>;
-  addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => Promise<Contract>; // Alias
-  updateContract: (id: string, updates: Partial<Contract>) => Contract | undefined;
+  createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>;
+  addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>; // Alias
+  updateContract: (id: string, updates: Partial<Contract>) => Promise<Contract>;
   
   createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Promise<Invoice>;
-  updateInvoice: (id: string, updates: Partial<Invoice>) => Invoice | undefined;
+  updateInvoice: (id: string, updates: Partial<Invoice>) => Promise<Invoice>;
   updateInvoiceStatus: (id: string, status: InvoiceStatus, notes?: string) => Invoice | undefined;
   
   // Alert mutations
@@ -498,6 +499,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
             totalTagihanDibayar: data.total_tagihan_dibayar,
             sisaAnggaran: data.sisa_anggaran,
             persentaseRealisasi: parseFloat(data.persentase_realisasi),
+            progressPekerjaan: parseFloat(data.progress_pekerjaan || '0'),
             oldFlag: data.old_flag,
             clickCB: data.click_cb,
             createdAt: data.created_at,
@@ -703,7 +705,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
 
   // Create contract - DENGAN SUPABASE
   const createContract = useCallback(
-    async (contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi">) => {
+    async (contractData: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => {
       try {
         // Call API to save to Supabase
         const response = await fetch('/api/contracts', {
@@ -763,6 +765,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           totalTagihanDibayar: data.total_tagihan_dibayar,
           sisaAnggaran: data.sisa_anggaran,
           persentaseRealisasi: data.persentase_realisasi,
+          progressPekerjaan: data.progress_pekerjaan || 0,
           oldFlag: data.old_flag,
           clickCB: data.click_cb,
           createdAt: data.created_at,
@@ -784,20 +787,89 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     []
   );
 
-  // Update contract
+  // Update contract - DENGAN SUPABASE
   const updateContract = useCallback(
-    (id: string, updates: Partial<Contract>) => {
-      let updated: Contract | undefined;
-      setContracts((prev) =>
-        prev.map((c) => {
-          if (c.id === id) {
-            updated = { ...c, ...updates, updatedAt: new Date().toISOString() };
-            return updated;
-          }
-          return c;
-        })
-      );
-      return updated;
+    async (id: string, updates: Partial<Contract>) => {
+      try {
+        // Call API to update in Supabase
+        const response = await fetch('/api/contracts', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, ...updates }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to update contract');
+        }
+
+        const { data } = await response.json();
+        
+        // Transform snake_case to camelCase
+        const transformedData: Contract = {
+          id: data.id,
+          no: data.no,
+          uraianKegiatan: data.uraian_kegiatan,
+          noPerjanjian: data.no_perjanjian,
+          tanggalPerjanjian: data.tanggal_perjanjian,
+          tanggalBerakhir: data.tanggal_berakhir,
+          judulPekerjaan: data.judul_pekerjaan,
+          nilaiKontrak: data.nilai_kontrak,
+          vendor: data.vendor,
+          nilaiTagihanKontrakPusat: data.nilai_tagihan_kontrak_pusat,
+          nilaiTagihanUnitInduk: data.nilai_tagihan_unit_induk,
+          nilaiBeritaAcara: data.nilai_berita_acara,
+          noBeritaAcara: data.no_berita_acara,
+          tanggalBeritaAcara: data.tanggal_berita_acara,
+          noBeritaAcaraSKRelasi: data.no_berita_acara_sk_relasi,
+          tanggalArsip: data.tanggal_arsip,
+          noXPS: data.no_xps,
+          tanggalXPS: data.tanggal_xps,
+          kategori: data.kategori,
+          jenisAnggaran: data.jenis_anggaran,
+          unit: data.unit,
+          unitSektorK: data.unit_sektor_k,
+          noSKWE: data.no_sk_we,
+          posAngg: data.pos_angg,
+          noSKUSKKO: data.no_sku_skko,
+          requestTanggalSERelasi: data.request_tanggal_se_relasi,
+          noSE: data.no_se,
+          noPO: data.no_po,
+          submissionId: data.submission_id,
+          jenisPekerjaan: data.jenis_pekerjaan,
+          bebanTahun: data.beban_tahun,
+          batasPaguTerbayar: data.batas_pagu_terbayar,
+          unitTerbayar: data.unit_terbayar,
+          konfirmasiNonRutin: data.konfirmasi_non_rutin,
+          bidang: data.bidang,
+          picId: data.pic_id,
+          picName: data.pic_name,
+          entryBy: data.entry_by,
+          status: data.status,
+          totalTagihanDibayar: data.total_tagihan_dibayar,
+          sisaAnggaran: data.sisa_anggaran,
+          persentaseRealisasi: data.persentase_realisasi,
+          progressPekerjaan: data.progress_pekerjaan || 0,
+          oldFlag: data.old_flag,
+          clickCB: data.click_cb,
+          createdAt: data.created_at,
+          createdBy: data.created_by,
+          updatedAt: data.updated_at,
+          updatedBy: data.updated_by,
+          keterangan: data.keterangan,
+          dokumenKontrak: data.dokumen_kontrak,
+        };
+
+        // Update local state
+        setContracts((prev) =>
+          prev.map((c) => (c.id === id ? transformedData : c))
+        );
+        
+        return transformedData;
+      } catch (error) {
+        console.error('Error updating contract:', error);
+        throw error;
+      }
     },
     []
   );

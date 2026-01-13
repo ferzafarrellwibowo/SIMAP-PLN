@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -25,11 +25,39 @@ export default function KontrakDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { getContractById, getInvoicesByContract } = useContractStore();
-
+  const { getContractById, getInvoicesByContract, updateContract } = useContractStore();
+  
   const contractId = params.id as string;
   const contract = useMemo(() => getContractById(contractId), [contractId, getContractById]);
   const invoices = useMemo(() => getInvoicesByContract(contractId), [contractId, getInvoicesByContract]);
+  
+  const [isEditingProgress, setIsEditingProgress] = useState(false);
+  const [progressValue, setProgressValue] = useState(contract?.progressPekerjaan.toString() || "0");
+  const [isSavingProgress, setIsSavingProgress] = useState(false);
+
+  const handleSaveProgress = async () => {
+    const newProgress = parseFloat(progressValue);
+    if (isNaN(newProgress) || newProgress < 0 || newProgress > 100) {
+      alert("Progress harus antara 0-100%");
+      return;
+    }
+    
+    setIsSavingProgress(true);
+    try {
+      await updateContract(contractId, { progressPekerjaan: newProgress });
+      setIsEditingProgress(false);
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      alert('Gagal menyimpan progress pekerjaan');
+    } finally {
+      setIsSavingProgress(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setProgressValue(contract?.progressPekerjaan.toString() || "0");
+    setIsEditingProgress(false);
+  };
 
   if (!contract) {
     return (
@@ -88,7 +116,15 @@ export default function KontrakDetailPage() {
           <div className="flex items-center gap-2">
             <Link
               href={`/tagihan/create?contractId=${contract.id}`}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
+                contract.persentaseRealisasi >= 100
+                  ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed"
+                  : "bg-blue-600 text-white hover:bg-blue-700"
+              }`}
+              {...(contract.persentaseRealisasi >= 100 ? { 
+                onClick: (e) => e.preventDefault(),
+                title: "Tidak dapat menambah tagihan karena serapan anggaran sudah mencapai 100%"
+              } : {})}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -291,12 +327,13 @@ export default function KontrakDetailPage() {
             
             <div className="h-px bg-gray-200 dark:bg-gray-700" />
             
+            {/* Serapan Anggaran */}
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600 dark:text-gray-400">Serapan</span>
+                <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">Serapan Anggaran</span>
                 <span className={`font-semibold ${
                   contract.persentaseRealisasi > 90 ? "text-red-600" :
-                  contract.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
+                  contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
                 }`}>
                   {contract.persentaseRealisasi.toFixed(1)}%
                 </span>
@@ -308,7 +345,90 @@ export default function KontrakDetailPage() {
                   transition={{ duration: 0.8 }}
                   className={`h-full rounded-full ${
                     contract.persentaseRealisasi > 90 ? "bg-red-500" :
-                    contract.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
+                    contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
+                  }`}
+                />
+              </div>
+            </div>
+            
+            {/* Progres Pekerjaan */}
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-gray-600 dark:text-gray-400" title="Persentase penyelesaian fisik pekerjaan">Progres Pekerjaan</span>
+                <div className="flex items-center gap-2">
+                  {!isEditingProgress ? (
+                    <>
+                      <span className={`font-semibold ${
+                        contract.progressPekerjaan >= 90 ? "text-blue-600" :
+                        contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
+                      }`}>
+                        {contract.progressPekerjaan.toFixed(1)}%
+                      </span>
+                      {user?.role === "admin" && (
+                        <button
+                          onClick={() => setIsEditingProgress(true)}
+                          className="text-gray-400 hover:text-blue-600 transition-colors"
+                          title="Edit progres pekerjaan"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={progressValue}
+                        onChange={(e) => setProgressValue(e.target.value)}
+                        disabled={isSavingProgress}
+                        className="w-16 px-2 py-0.5 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:opacity-50"
+                        autoFocus
+                      />
+                      <span className="text-xs text-gray-500">%</span>
+                      <button
+                        onClick={handleSaveProgress}
+                        disabled={isSavingProgress}
+                        className="text-green-600 hover:text-green-700 p-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Simpan"
+                      >
+                        {isSavingProgress ? (
+                          <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </button>
+                      <button
+                        onClick={handleCancelEdit}
+                        disabled={isSavingProgress}
+                        className="text-red-600 hover:text-red-700 p-0.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Batal"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className={`h-full rounded-full ${
+                    contract.progressPekerjaan >= 90 ? "bg-blue-500" :
+                    contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
                   }`}
                 />
               </div>

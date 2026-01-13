@@ -119,7 +119,10 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
               height={40}
               className="h-10 w-10"
             />
-            <span className="font-bold text-gray-900 dark:text-gray-100">PLN Monitor</span>
+            <div className="flex flex-col">
+              <span className="font-bold text-gray-900 dark:text-gray-100">SIMAP</span>
+              <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Sistem Informasi Monitoring Anggaran & Proyek</span>
+            </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -191,7 +194,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
             {/* Page title - mobile */}
             <div className="lg:hidden">
               <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                PLN Monitor
+                SIMAP
               </h1>
             </div>
 

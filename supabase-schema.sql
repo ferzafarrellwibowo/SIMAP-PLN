@@ -76,6 +76,7 @@ CREATE TABLE public.contracts (
   total_tagihan_dibayar BIGINT DEFAULT 0,
   sisa_anggaran BIGINT DEFAULT 0,
   persentase_realisasi DECIMAL(5, 2) DEFAULT 0,
+  progress_pekerjaan DECIMAL(5, 2) DEFAULT 0,
 
   -- Flags
   old_flag TEXT,

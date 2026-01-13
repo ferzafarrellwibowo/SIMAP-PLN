@@ -32,15 +32,15 @@ export function Select({
           {label}
         </label>
       )}
-      <div className="relative">
+      <div className="relative inline-flex items-center w-full overflow-hidden rounded-lg">
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-              "custom-select w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-10",
+              "custom-select w-full appearance-none border border-gray-300 bg-transparent px-4 py-2.5 pr-10",
               "text-sm text-gray-900 shadow-sm",
               "focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20",
-              "dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100",
+              "dark:border-gray-700 dark:bg-transparent dark:text-gray-100",
               "dark:focus:border-blue-500"
             )}
         >
@@ -55,7 +55,7 @@ export function Select({
             </option>
           ))}
         </select>
-        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+        <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
       </div>
     </div>
   );

@@ -94,6 +94,7 @@ export interface Contract {
   totalTagihanDibayar: number;    // Total yang sudah dibayar
   sisaAnggaran: number;           // nilaiKontrak - totalTagihanDibayar
   persentaseRealisasi: number;    // (totalTagihanDibayar / nilaiKontrak) * 100
+  progressPekerjaan: number;      // Progress pekerjaan 0-100%
   
   // Flags
   oldFlag?: string;               // Old Flag

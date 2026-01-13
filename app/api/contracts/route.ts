@@ -69,6 +69,7 @@ export async function POST(request: Request) {
       total_tagihan_dibayar: 0,
       sisa_anggaran: body.nilaiKontrak,
       persentase_realisasi: 0,
+      progress_pekerjaan: body.progressPekerjaan || 0,
       old_flag: body.oldFlag,
       click_cb: body.clickCB || false,
       created_by: body.createdBy,

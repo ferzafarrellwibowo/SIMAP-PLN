@@ -45,14 +45,14 @@ function SummaryCard({ title, value, subtitle, icon, color }: SummaryCardProps) 
 function RealisasiChart({ totalNilai, totalDibayar, persentase }: { totalNilai: number; totalDibayar: number; persentase: number }) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Serapan</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Serapan Anggaran</h3>
       <div className="mb-4">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-gray-600 dark:text-gray-400">Progress</span>
+          <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran dari total nilai kontrak">Serapan Anggaran</span>
           <span className="font-semibold text-gray-900 dark:text-gray-100">{persentase.toFixed(1)}%</span>
         </div>
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-          <motion.div initial={{ width: 0 }} animate={{ width: Math.min(persentase, 100) + "%" }} transition={{ duration: 1, ease: "easeOut" }} className={"h-full rounded-full " + (persentase > 90 ? "bg-red-500" : persentase > 70 ? "bg-yellow-500" : "bg-green-500")} />
+          <motion.div initial={{ width: 0 }} animate={{ width: Math.min(persentase, 100) + "%" }} transition={{ duration: 1, ease: "easeOut" }} className={"h-full rounded-full " + (persentase > 90 ? "bg-red-500" : persentase > 50 ? "bg-yellow-500" : "bg-green-500")} />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4 mt-6">

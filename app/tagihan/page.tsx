@@ -60,21 +60,60 @@ export default function TagihanPage() {
   
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
+  const [sortBy, setSortBy] = useState<"terbaru" | "tertinggi" | "terendah">("terbaru");
+  const [filterMonth, setFilterMonth] = useState<string>("all");
+  const [filterYear, setFilterYear] = useState<string>("all");
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
   const [pendingStatus, setPendingStatus] = useState<InvoiceStatus | null>(null);
   const [dibayarOleh, setDibayarOleh] = useState("");
 
+  // Get unique years from invoices
+  const availableYears = useMemo(() => {
+    const years = new Set<number>();
+    invoices.forEach((inv) => {
+      const year = new Date(inv.tanggalDiajukan).getFullYear();
+      years.add(year);
+    });
+    return Array.from(years).sort().reverse();
+  }, [invoices]);
+
   const filteredInvoices = useMemo(() => {
-    return invoices.filter((inv) => {
+    let filtered = invoices.filter((inv) => {
       const contract = contracts.find((c) => c.id === inv.contractId);
       const matchSearch = 
         inv.nomorTagihan.toLowerCase().includes(search.toLowerCase()) ||
         contract?.judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
         contract?.vendor.toLowerCase().includes(search.toLowerCase());
       const matchStatus = status === "all" || inv.status === status;
-      return matchSearch && matchStatus;
-    }).sort((a, b) => new Date(b.tanggalDiajukan).getTime() - new Date(a.tanggalDiajukan).getTime());
-  }, [invoices, contracts, search, status]);
+      
+      // Filter by year
+      let matchYear = true;
+      if (filterYear !== "all") {
+        const invYear = new Date(inv.tanggalDiajukan).getFullYear();
+        matchYear = invYear === parseInt(filterYear);
+      }
+      
+      // Filter by month
+      let matchMonth = true;
+      if (filterMonth !== "all") {
+        const invMonth = new Date(inv.tanggalDiajukan).getMonth() + 1;
+        matchMonth = invMonth === parseInt(filterMonth);
+      }
+      
+      return matchSearch && matchStatus && matchYear && matchMonth;
+    });
+
+    // Sort based on selected option
+    if (sortBy === "terbaru") {
+      filtered.sort((a, b) => new Date(b.tanggalDiajukan).getTime() - new Date(a.tanggalDiajukan).getTime());
+    } else if (sortBy === "tertinggi") {
+      filtered.sort((a, b) => b.nilaiTagihan - a.nilaiTagihan);
+    } else if (sortBy === "terendah") {
+      filtered.sort((a, b) => a.nilaiTagihan - b.nilaiTagihan);
+    }
+
+    return filtered;
+  }, [invoices, contracts, search, status, sortBy, filterMonth, filterYear]);
 
   const getContractInfo = (contractId: string) => {
     return contracts.find((c) => c.id === contractId);
@@ -175,8 +214,8 @@ export default function TagihanPage() {
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="md:col-span-2 lg:col-span-1">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pencarian</label>
             <input
               type="text"
@@ -188,15 +227,64 @@ export default function TagihanPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-               <select
-                 value={status}
-                 onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
-                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-               >
-                 {invoiceStatusOptions.map((opt) => (
-                   <option key={opt.value} value={opt.value}>{opt.label}</option>
-                 ))}
-               </select>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              {invoiceStatusOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Urutkan</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "terbaru" | "tertinggi" | "terendah")}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="terbaru">Terbaru</option>
+              <option value="tertinggi">Nilai Tertinggi</option>
+              <option value="terendah">Nilai Terendah</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tahun</label>
+            <select
+              value={filterYear}
+              onChange={(e) => setFilterYear(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">Semua Tahun</option>
+              {availableYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bulan</label>
+            <select
+              value={filterMonth}
+              onChange={(e) => setFilterMonth(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">Semua Bulan</option>
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8">Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
           </div>
         </div>
       </div>
@@ -214,7 +302,6 @@ export default function TagihanPage() {
                 <th className="px-4 py-3 w-[10%] text-right">Nilai</th>
                 <th className="px-4 py-3 w-[10%]">Tanggal</th>
                 <th className="px-4 py-3 w-[9%]">Status</th>
-                <th className="px-4 py-3 w-[7%]">Umur</th>
                 {canEditStatus && <th className="px-4 py-3 w-[8%]">Aksi</th>}
               </tr>
             </thead>
@@ -273,20 +360,6 @@ export default function TagihanPage() {
                           {INVOICE_STATUS_LABELS[invoice.status]}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
-                        {isPending && (
-                          <span className={`text-xs font-medium whitespace-nowrap ${
-                            age > 7 ? "text-red-600" : age > 3 ? "text-yellow-600" : "text-gray-600"
-                          }`}>
-                            {age}hr
-                          </span>
-                        )}
-                        {invoice.status === "dibayar" && invoice.tanggalVerifikasi && (
-                          <span className="text-xs text-green-600 whitespace-nowrap">
-                            {new Date(invoice.tanggalVerifikasi).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
-                          </span>
-                        )}
-                      </td>
                       {canEditStatus && (
                         <td className="px-4 py-3">
                           {(() => {
@@ -342,9 +415,9 @@ export default function TagihanPage() {
                               }
                               
                               return (
-                                <div className="inline-flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
+                                <div className="inline-flex items-center w-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm">
                                   <select
-                                    className="text-xs px-2 py-1.5 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
+                                    className="text-xs px-3 py-2 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
                                     defaultValue=""
                                     onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                                   >
@@ -355,7 +428,7 @@ export default function TagihanPage() {
                                   </select>
                                   <button
                                     onClick={handleCancelEdit}
-                                    className="px-2 py-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 dark:hover:bg-gray-600 border-l border-gray-300 dark:border-gray-600 transition-colors"
+                                    className="px-2 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors border-l border-gray-300 dark:border-gray-700"
                                   >
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -472,9 +545,9 @@ export default function TagihanPage() {
                           }
                           
                           return (
-                            <div className="flex gap-2">
+                            <div className="flex items-center w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm">
                               <select
-                                className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700"
+                                className="flex-1 text-sm px-3 py-2 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
                                 defaultValue=""
                                 onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                               >
@@ -483,7 +556,7 @@ export default function TagihanPage() {
                                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                               </select>
-                              <button onClick={handleCancelEdit} className="px-2 text-red-500">✕</button>
+                              <button onClick={handleCancelEdit} className="px-3 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors border-l border-gray-300 dark:border-gray-700">✕</button>
                             </div>
                           );
                         }
