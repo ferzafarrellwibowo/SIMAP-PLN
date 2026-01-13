@@ -7,9 +7,19 @@ import { useAuth } from "@/lib/auth-new";
 import type { InvoiceStatus, Invoice } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
-  if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(1)} M`;
-  if (value >= 1000000) return `Rp ${(value / 1000000).toFixed(0)} jt`;
-  return `Rp ${value.toLocaleString("id-ID")}`;
+  if (value >= 1000000000) {
+    const formatted = (value / 1000000000);
+    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}M` : `Rp${formatted.toFixed(1)}M`;
+  }
+  if (value >= 1000000) {
+    const formatted = (value / 1000000);
+    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}jt` : `Rp${formatted.toFixed(1)}jt`;
+  }
+  if (value >= 1000) {
+    const formatted = (value / 1000);
+    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}rb` : `Rp${formatted.toFixed(1)}rb`;
+  }
+  return `Rp${value.toLocaleString("id-ID")}`;
 }
 
 function daysAgo(date: string): number {
@@ -132,7 +142,7 @@ export default function TagihanPage() {
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto px-4">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
@@ -178,39 +188,40 @@ export default function TagihanPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {invoiceStatusOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+               <select
+                 value={status}
+                 onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
+                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+               >
+                 {invoiceStatusOptions.map((opt) => (
+                   <option key={opt.value} value={opt.value}>{opt.label}</option>
+                 ))}
+               </select>
           </div>
         </div>
       </div>
 
       {/* Invoice List */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
+        {/* Desktop Table - Hidden on Mobile */}
+        <div className="hidden lg:block">
+          <table className="w-full table-fixed">
             <thead className="bg-gray-50 dark:bg-gray-800">
               <tr className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                <th className="px-6 py-4">No Tagihan</th>
-                <th className="px-6 py-4">Kontrak</th>
-                <th className="px-6 py-4">Vendor</th>
-                <th className="px-6 py-4">Nilai</th>
-                <th className="px-6 py-4">Tanggal</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Umur</th>
-                {canEditStatus && <th className="px-6 py-4">Aksi</th>}
+                <th className="px-4 py-3 w-[22%]">No Tagihan</th>
+                <th className="px-4 py-3 w-[20%]">Kontrak</th>
+                <th className="px-4 py-3 w-[14%]">Vendor</th>
+                <th className="px-4 py-3 w-[10%] text-right">Nilai</th>
+                <th className="px-4 py-3 w-[10%]">Tanggal</th>
+                <th className="px-4 py-3 w-[9%]">Status</th>
+                <th className="px-4 py-3 w-[7%]">Umur</th>
+                {canEditStatus && <th className="px-4 py-3 w-[8%]">Aksi</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={canEditStatus ? 8 : 7} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={canEditStatus ? 8 : 7} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
                     Tidak ada tagihan yang ditemukan
                   </td>
                 </tr>
@@ -219,7 +230,7 @@ export default function TagihanPage() {
                   const contract = getContractInfo(invoice.contractId);
                   const age = daysAgo(invoice.tanggalDiajukan);
                   const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
-                  
+
                   return (
                     <motion.tr
                       key={invoice.id}
@@ -228,62 +239,69 @@ export default function TagihanPage() {
                       transition={{ delay: index * 0.03 }}
                       className="hover:bg-gray-50 dark:hover:bg-gray-800"
                     >
-                      <td className="px-6 py-4">
-                        <span className="font-medium text-gray-900 dark:text-gray-100">{invoice.nomorTagihan}</span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className="text-gray-700 dark:text-gray-300 text-sm">
-                          {contract?.judulPekerjaan.substring(0, 30)}...
+                      <td className="px-4 py-3">
+                        <span className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate block" title={invoice.nomorTagihan}>
+                          {invoice.nomorTagihan}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600 dark:text-gray-400 text-sm">{contract?.vendor}</span>
+                      <td className="px-4 py-3">
+                        <span className="text-gray-700 dark:text-gray-300 text-sm truncate block" title={contract?.judulPekerjaan}>
+                          {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25 
+                            ? contract.judulPekerjaan.substring(0, 25) + "..." 
+                            : contract?.judulPekerjaan}
+                        </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="font-medium text-gray-900 dark:text-gray-100">
+                      <td className="px-4 py-3">
+                        <span className="text-gray-600 dark:text-gray-400 text-sm truncate block" title={contract?.vendor}>
+                          {contract?.vendor && contract.vendor.length > 12
+                            ? contract.vendor.substring(0, 12) + "..."
+                            : contract?.vendor}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm whitespace-nowrap">
                           {formatCurrency(invoice.nilaiTagihan)}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-gray-600 dark:text-gray-400 text-sm">
-                          {new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID")}
+                      <td className="px-4 py-3">
+                        <span className="text-gray-600 dark:text-gray-400 text-xs whitespace-nowrap">
+                          {new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${INVOICE_STATUS_COLORS[invoice.status]}`}>
+                      <td className="px-4 py-3">
+                        <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap ${INVOICE_STATUS_COLORS[invoice.status]}`}>
                           {INVOICE_STATUS_LABELS[invoice.status]}
                         </span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 py-3">
                         {isPending && (
-                          <span className={`text-sm font-medium ${
+                          <span className={`text-xs font-medium whitespace-nowrap ${
                             age > 7 ? "text-red-600" : age > 3 ? "text-yellow-600" : "text-gray-600"
                           }`}>
-                            {age} hari
+                            {age}hr
                           </span>
                         )}
                         {invoice.status === "dibayar" && invoice.tanggalVerifikasi && (
-                          <span className="text-sm text-green-600">
-                            {new Date(invoice.tanggalVerifikasi).toLocaleDateString("id-ID")}
+                          <span className="text-xs text-green-600 whitespace-nowrap">
+                            {new Date(invoice.tanggalVerifikasi).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
                           </span>
                         )}
                       </td>
                       {canEditStatus && (
-                        <td className="px-6 py-4">
+                        <td className="px-4 py-3">
                           {(() => {
                             const availableOptions = getAvailableStatusOptions(invoice.status);
                             const canEdit = availableOptions.length > 0;
                             
-                            // Status ditolak atau dibayar tidak bisa diubah
                             if (!canEdit) {
                               return (
                                 <span className="text-xs text-gray-400 dark:text-gray-500 italic">
                                   {invoice.status === "ditolak" ? "Final" : invoice.status === "dibayar" ? (
-                                    <span className="flex flex-col">
+                                    <span className="flex flex-col leading-tight">
                                       <span>Final</span>
                                       {invoice.dibayarOleh && (
-                                        <span className="text-green-600 dark:text-green-400 not-italic">
-                                          oleh: {invoice.dibayarOleh}
+                                        <span className="text-green-600 dark:text-green-400 not-italic truncate max-w-[60px]" title={invoice.dibayarOleh}>
+                                          {invoice.dibayarOleh}
                                         </span>
                                       )}
                                     </span>
@@ -292,61 +310,54 @@ export default function TagihanPage() {
                               );
                             }
                             
-                            // Mode edit aktif
                             if (selectedInvoice === invoice.id) {
-                              // Jika pending status adalah dibayar, tampilkan form dibayar oleh
                               if (pendingStatus === "dibayar") {
                                 return (
-                                  <div className="flex flex-col gap-2 min-w-[200px]">
+                                  <div className="flex flex-col gap-1">
                                     <input
                                       type="text"
                                       value={dibayarOleh}
                                       onChange={(e) => setDibayarOleh(e.target.value)}
-                                      placeholder="Nama pembayar..."
-                                      className="text-sm px-3 py-1.5 border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm"
+                                      placeholder="Pembayar..."
+                                      className="text-xs px-2 py-1 w-full border border-green-300 dark:border-green-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                                       autoFocus
                                     />
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex gap-1">
                                       <button
                                         onClick={() => handleConfirmDibayar(invoice.id)}
                                         disabled={isUpdating || !dibayarOleh.trim()}
-                                        className="flex-1 text-sm px-3 py-1.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                        className="flex-1 text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
                                       >
-                                        {isUpdating ? "..." : "Konfirmasi"}
+                                        OK
                                       </button>
                                       <button
                                         onClick={handleCancelEdit}
-                                        className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                        title="Batal"
+                                        className="px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                                       >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
+                                        ✕
                                       </button>
                                     </div>
                                   </div>
                                 );
                               }
                               
-                              // Dropdown untuk pilih status
                               return (
-                                <div className="flex items-center gap-2 min-w-[180px]">
+                                <div className="inline-flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600">
                                   <select
-                                    className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                                    className="text-xs px-2 py-1.5 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
                                     defaultValue=""
                                     onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                                   >
-                                    <option value="" disabled>Pilih status...</option>
+                                    <option value="" disabled>Pilih</option>
                                     {availableOptions.map((opt) => (
                                       <option key={opt.value} value={opt.value}>{opt.label}</option>
                                     ))}
                                   </select>
                                   <button
                                     onClick={handleCancelEdit}
-                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                                    title="Batal"
+                                    className="px-2 py-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 dark:hover:bg-gray-600 border-l border-gray-300 dark:border-gray-600 transition-colors"
                                   >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                   </button>
@@ -354,15 +365,11 @@ export default function TagihanPage() {
                               );
                             }
                             
-                            // Tombol ubah status
                             return (
                               <button
                                 onClick={() => setSelectedInvoice(invoice.id)}
-                                className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                                className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40"
                               >
-                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
                                 Ubah
                               </button>
                             );
@@ -375,6 +382,127 @@ export default function TagihanPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden divide-y divide-gray-200 dark:divide-gray-700">
+          {filteredInvoices.length === 0 ? (
+            <div className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+              Tidak ada tagihan yang ditemukan
+            </div>
+          ) : (
+            filteredInvoices.map((invoice, index) => {
+              const contract = getContractInfo(invoice.contractId);
+              const age = daysAgo(invoice.tanggalDiajukan);
+              const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
+              
+              return (
+                <motion.div
+                  key={invoice.id}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.03 }}
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">
+                        {invoice.nomorTagihan}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                        {contract?.judulPekerjaan}
+                      </p>
+                    </div>
+                    <span className={`ml-2 inline-flex px-2 py-0.5 text-xs font-medium rounded-full shrink-0 ${INVOICE_STATUS_COLORS[invoice.status]}`}>
+                      {INVOICE_STATUS_LABELS[invoice.status]}
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-400">
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                      {formatCurrency(invoice.nilaiTagihan)}
+                    </span>
+                    <span>{contract?.vendor}</span>
+                    <span>{new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}</span>
+                    {isPending && (
+                      <span className={`font-medium ${age > 7 ? "text-red-600" : age > 3 ? "text-yellow-600" : "text-gray-600"}`}>
+                        {age}hr
+                      </span>
+                    )}
+                  </div>
+
+                  {canEditStatus && (
+                    <div className="mt-3">
+                      {(() => {
+                        const availableOptions = getAvailableStatusOptions(invoice.status);
+                        const canEdit = availableOptions.length > 0;
+                        
+                        if (!canEdit) {
+                          return (
+                            <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                              {invoice.status === "dibayar" && invoice.dibayarOleh 
+                                ? `Final • oleh: ${invoice.dibayarOleh}` 
+                                : "Final"}
+                            </span>
+                          );
+                        }
+                        
+                        if (selectedInvoice === invoice.id) {
+                          if (pendingStatus === "dibayar") {
+                            return (
+                              <div className="flex gap-2">
+                                <input
+                                  type="text"
+                                  value={dibayarOleh}
+                                  onChange={(e) => setDibayarOleh(e.target.value)}
+                                  placeholder="Nama pembayar..."
+                                  className="flex-1 text-sm px-3 py-1.5 border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700"
+                                  autoFocus
+                                />
+                                <button
+                                  onClick={() => handleConfirmDibayar(invoice.id)}
+                                  disabled={isUpdating || !dibayarOleh.trim()}
+                                  className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50"
+                                >
+                                  OK
+                                </button>
+                                <button onClick={handleCancelEdit} className="px-2 text-red-500">✕</button>
+                              </div>
+                            );
+                          }
+                          
+                          return (
+                            <div className="flex gap-2">
+                              <select
+                                className="flex-1 text-sm px-3 py-1.5 border border-blue-300 dark:border-blue-600 rounded-lg bg-white dark:bg-gray-700"
+                                defaultValue=""
+                                onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
+                              >
+                                <option value="" disabled>Pilih status...</option>
+                                {availableOptions.map((opt) => (
+                                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                              </select>
+                              <button onClick={handleCancelEdit} className="px-2 text-red-500">✕</button>
+                            </div>
+                          );
+                        }
+                        
+                        return (
+                          <button
+                            onClick={() => setSelectedInvoice(invoice.id)}
+                            className="text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg"
+                          >
+                            Ubah Status
+                          </button>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })
+          )}
         </div>
       </div>
     </div>
