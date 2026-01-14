@@ -19,7 +19,7 @@ export function Card({ children, className, hover = true }: CardProps) {
       whileHover={undefined}
       className={cn(
         "rounded-xl border border-gray-200 bg-white p-6 shadow-sm",
-        "dark:border-gray-800 dark:bg-gray-900",
+        "dark:border-gray-700 dark:bg-gray-900/95",
         className
       )}
     >
@@ -34,7 +34,7 @@ export function CardHeader({ children, className }: { children: ReactNode; class
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <h3 className={cn("text-lg font-semibold text-gray-900 dark:text-gray-100", className)}>
+    <h3 className={cn("text-lg font-semibold text-gray-900 dark:text-white", className)}>
       {children}
     </h3>
   );
@@ -42,7 +42,7 @@ export function CardTitle({ children, className }: { children: ReactNode; classN
 
 export function CardDescription({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("text-sm text-gray-500 dark:text-gray-400", className)}>
+    <p className={cn("text-sm text-gray-600 dark:text-gray-300", className)}>
       {children}
     </p>
   );

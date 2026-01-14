@@ -94,8 +94,8 @@ export default function LaporanPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Laporan</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Ringkasan data kontrak dan tagihan
           </p>
         </div>
@@ -148,48 +148,48 @@ export default function LaporanPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6"
+            className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
           >
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-4 h-4 rounded-full ${
                 cat.kategori === "investasi" ? "bg-purple-500" :
                 cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
               }`} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {cat.label}
               </h3>
             </div>
 
             <div className="space-y-4">
               {/* Kontrak */}
-              <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <div className="p-4 bg-gray-50 dark:bg-gray-800/80 rounded-lg">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Kontrak</span>
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{cat.totalKontrak}</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">Kontrak</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-white">{cat.totalKontrak}</span>
                 </div>
-                <p className="text-xs text-gray-500">{cat.kontrakAktif} aktif</p>
+                <p className="text-xs text-gray-600">{cat.kontrakAktif} aktif</p>
               </div>
 
               {/* Nilai & Realisasi */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Pagu</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(cat.totalNilai)}</span>
+                  <span className="text-gray-700 dark:text-gray-300">Pagu</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(cat.totalNilai)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Serapan</span>
-                  <span className="font-medium text-green-600">{formatCurrency(cat.totalDibayar)}</span>
+                  <span className="text-gray-700 dark:text-gray-300">Serapan</span>
+                  <span className="font-medium text-green-600 dark:text-green-400">{formatCurrency(cat.totalDibayar)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Sisa</span>
-                  <span className="font-medium text-blue-600">{formatCurrency(cat.sisaAnggaran)}</span>
+                  <span className="text-gray-700 dark:text-gray-300">Sisa</span>
+                  <span className="font-medium text-blue-600 dark:text-blue-400">{formatCurrency(cat.sisaAnggaran)}</span>
                 </div>
               </div>
 
               {/* Progress Bar */}
               <div>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-gray-500">Serapan</span>
+                  <span className="text-gray-600">Serapan</span>
                   <span className={`font-medium ${
                     cat.persentaseRealisasi > 90 ? "text-red-600" :
                     cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
@@ -211,14 +211,14 @@ export default function LaporanPage() {
               </div>
 
               {/* Tagihan */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600 dark:text-gray-400">Tagihan</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{cat.totalTagihan}</span>
+                  <span className="text-gray-700 dark:text-gray-300">Tagihan</span>
+                  <span className="font-medium text-gray-900 dark:text-white">{cat.totalTagihan}</span>
                 </div>
                 <div className="flex justify-between text-xs mt-1">
-                  <span className="text-green-600">{cat.tagihanDibayar} dibayar</span>
-                  <span className="text-yellow-600">{cat.tagihanPending} pending</span>
+                  <span className="text-green-700 dark:text-green-400">{cat.tagihanDibayar} dibayar</span>
+                  <span className="text-yellow-700">{cat.tagihanPending} pending</span>
                 </div>
               </div>
             </div>
@@ -239,7 +239,7 @@ export default function LaporanPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+              <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                 <th className="px-4 py-3 text-left">Kategori</th>
                 <th className="px-4 py-3 text-center">Kontrak</th>
                 <th className="px-4 py-3 text-center">Aktif</th>

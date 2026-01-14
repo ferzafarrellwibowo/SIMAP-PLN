@@ -185,8 +185,8 @@ export default function TagihanPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Daftar Tagihan</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Tagihan</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {filteredInvoices.length} tagihan ditemukan
           </p>
         </div>
@@ -194,43 +194,43 @@ export default function TagihanPage() {
 
       {/* Status Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-4 border border-yellow-200 dark:border-yellow-800">
-          <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium">Diajukan</p>
-          <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">{statusStats.diajukan}</p>
+        <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-4 border border-yellow-200 dark:border-yellow-700">
+          <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">Diajukan</p>
+          <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-200">{statusStats.diajukan}</p>
         </div>
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">Diterima</p>
-          <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{statusStats.diterima}</p>
+        <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+          <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Diterima</p>
+          <p className="text-2xl font-bold text-blue-800 dark:text-blue-200">{statusStats.diterima}</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
-          <p className="text-sm text-green-600 dark:text-green-400 font-medium">Dibayar</p>
-          <p className="text-2xl font-bold text-green-700 dark:text-green-300">{statusStats.dibayar}</p>
+        <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4 border border-green-200 dark:border-green-700">
+          <p className="text-sm text-green-700 dark:text-green-300 font-medium">Dibayar</p>
+          <p className="text-2xl font-bold text-green-800 dark:text-green-200">{statusStats.dibayar}</p>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-600 dark:text-red-400 font-medium">Ditolak</p>
-          <p className="text-2xl font-bold text-red-700 dark:text-red-300">{statusStats.ditolak}</p>
+        <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-200 dark:border-red-700">
+          <p className="text-sm text-red-700 dark:text-red-300 font-medium">Ditolak</p>
+          <p className="text-2xl font-bold text-red-800 dark:text-red-200">{statusStats.ditolak}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4">
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="md:col-span-2 lg:col-span-1">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pencarian</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nomor tagihan, kontrak, atau vendor..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {invoiceStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -238,11 +238,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Urutkan</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Urutkan</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "terbaru" | "tertinggi" | "terendah")}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="terbaru">Terbaru</option>
               <option value="tertinggi">Nilai Tertinggi</option>
@@ -250,11 +250,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tahun</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Tahun</label>
             <select
               value={filterYear}
               onChange={(e) => setFilterYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Tahun</option>
               {availableYears.map((year) => (
@@ -265,11 +265,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bulan</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Bulan</label>
             <select
               value={filterMonth}
               onChange={(e) => setFilterMonth(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Bulan</option>
               <option value="1">Januari</option>
@@ -290,12 +290,12 @@ export default function TagihanPage() {
       </div>
 
       {/* Invoice List */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800">
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
         {/* Desktop Table - Hidden on Mobile */}
         <div className="hidden lg:block">
           <table className="w-full table-fixed">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr className="text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            <thead className="bg-gray-50 dark:bg-gray-800/80">
+              <tr className="text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 <th className="px-4 py-3 w-[22%]">No Tagihan</th>
                 <th className="px-4 py-3 w-[20%]">Kontrak</th>
                 <th className="px-4 py-3 w-[14%]">Vendor</th>
@@ -324,34 +324,34 @@ export default function TagihanPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: index * 0.03 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     >
                       <td className="px-4 py-3">
-                        <span className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate block" title={invoice.nomorTagihan}>
+                        <span className="font-medium text-gray-900 dark:text-white text-sm truncate block" title={invoice.nomorTagihan}>
                           {invoice.nomorTagihan}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-gray-700 dark:text-gray-300 text-sm truncate block" title={contract?.judulPekerjaan}>
+                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan}>
                           {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25 
                             ? contract.judulPekerjaan.substring(0, 25) + "..." 
                             : contract?.judulPekerjaan}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-gray-600 dark:text-gray-400 text-sm truncate block" title={contract?.vendor}>
+                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={contract?.vendor}>
                           {contract?.vendor && contract.vendor.length > 12
                             ? contract.vendor.substring(0, 12) + "..."
                             : contract?.vendor}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm whitespace-nowrap">
+                        <span className="font-semibold text-gray-900 dark:text-white text-sm whitespace-nowrap">
                           {formatCurrency(invoice.nilaiTagihan)}
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-gray-600 dark:text-gray-400 text-xs whitespace-nowrap">
+                        <span className="text-gray-600 dark:text-gray-300 text-xs whitespace-nowrap">
                           {new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}
                         </span>
                       </td>
@@ -392,7 +392,7 @@ export default function TagihanPage() {
                                       value={dibayarOleh}
                                       onChange={(e) => setDibayarOleh(e.target.value)}
                                       placeholder="Pembayar..."
-                                      className="text-xs px-2 py-1 w-full border border-green-300 dark:border-green-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                      className="text-xs px-2 py-1 w-full border border-green-300 dark:border-green-500 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                       autoFocus
                                     />
                                     <div className="flex gap-1">
@@ -415,9 +415,9 @@ export default function TagihanPage() {
                               }
                               
                               return (
-                                <div className="inline-flex items-center w-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm">
+                                <div className="inline-flex items-center w-auto bg-white dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 shadow-sm">
                                   <select
-                                    className="text-xs px-3 py-2 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
+                                    className="text-xs px-3 py-2 bg-transparent text-gray-900 dark:text-white border-none focus:ring-0 focus:outline-none cursor-pointer"
                                     defaultValue=""
                                     onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                                   >
@@ -428,7 +428,7 @@ export default function TagihanPage() {
                                   </select>
                                   <button
                                     onClick={handleCancelEdit}
-                                    className="px-2 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors border-l border-gray-300 dark:border-gray-700"
+                                    className="px-2 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors border-l border-gray-300 dark:border-gray-600"
                                   >
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -441,7 +441,7 @@ export default function TagihanPage() {
                             return (
                               <button
                                 onClick={() => setSelectedInvoice(invoice.id)}
-                                className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded hover:bg-blue-100 dark:hover:bg-blue-900/40"
+                                className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50"
                               >
                                 Ubah
                               </button>

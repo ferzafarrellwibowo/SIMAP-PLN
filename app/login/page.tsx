@@ -62,7 +62,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gradient-to-br dark:from-[#0a1628] dark:via-[#0f172a] dark:to-[#1e293b] p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -70,7 +70,7 @@ export default function LoginPage() {
       >
         {/* Logo & Title */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4 mt-3">
+          <div className="flex justify-center my-0">
             <Image
               src="/Logo_PLN.svg"
               alt="Logo PLN"
@@ -79,19 +79,19 @@ export default function LoginPage() {
               className="h-24 w-24"
             />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            PLN Monitoring
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            SIMAP
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
-            Sistem Monitoring Kontrak & Tagihan
+          <p className="text-gray-700 dark:text-gray-300 mt-2 font-medium">
+            Sistem Informasi Monitoring Proyek & Anggaran
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 p-8">
+        <div className="bg-white dark:bg-[#1e293b] rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
                 Email
               </label>
               <input
@@ -101,12 +101,12 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@pln.co.id"
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
                 Password
               </label>
               <input
@@ -116,7 +116,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -150,8 +150,8 @@ export default function LoginPage() {
           </form>
 
           {/* Quick Login for Demo */}
-          <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-4">
+          <div className="mt-8 pt-6 border-t border-gray-300 dark:border-gray-600">
+            <p className="text-sm font-semibold text-gray-800 dark:text-gray-300 text-center mb-4">
               Demo Login (klik untuk masuk cepat)
             </p>
             <div className="grid grid-cols-1 gap-2">
@@ -160,15 +160,15 @@ export default function LoginPage() {
                   key={user.id}
                   onClick={() => handleQuickLogin(user.email)}
                   disabled={loading}
-                  className="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-left disabled:opacity-50"
+                  className="flex items-center justify-between px-4 py-3 bg-gray-100 dark:bg-gray-800/80 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-left disabled:opacity-50"
                 >
                   <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{user.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">{user.name}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{user.email}</p>
                   </div>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    user.role === "admin" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                    "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                    user.role === "admin" ? "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300" :
+                    "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300"
                   }`}>
                     {user.role === "admin" ? "Admin (Operator)" : "Viewer (Manajer)"}
                   </span>
@@ -179,7 +179,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           © 2025 PLN Unit Induk. All rights reserved.
         </p>
       </motion.div>

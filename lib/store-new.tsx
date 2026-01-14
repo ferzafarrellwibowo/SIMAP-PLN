@@ -241,8 +241,8 @@ export const JENIS_ANGGARAN_LABELS: Record<JenisAnggaran, string> = {
 };
 
 export const JENIS_ANGGARAN_COLORS: Record<JenisAnggaran, string> = {
-  AI: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-  AO: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300",
+  AI: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200",
+  AO: "bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200",
 };
 
 export const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
@@ -252,9 +252,9 @@ export const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
 };
 
 export const CONTRACT_STATUS_COLORS: Record<ContractStatus, string> = {
-  aktif: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  selesai: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  bermasalah: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  aktif: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+  selesai: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
+  bermasalah: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
 export const CONTRACT_CATEGORY_LABELS: Record<ContractCategory, string> = {
@@ -264,9 +264,9 @@ export const CONTRACT_CATEGORY_LABELS: Record<ContractCategory, string> = {
 };
 
 export const CONTRACT_CATEGORY_COLORS: Record<ContractCategory, string> = {
-  investasi: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-  pemeliharaan: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-  administrasi: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
+  investasi: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200",
+  pemeliharaan: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200",
+  administrasi: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/40 dark:text-cyan-200",
 };
 
 export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
@@ -277,10 +277,10 @@ export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
 };
 
 export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
-  diajukan: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  diterima: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  dibayar: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  ditolak: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  diajukan: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
+  diterima: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
+  dibayar: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+  ditolak: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
 // ============================================

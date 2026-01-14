@@ -64,17 +64,17 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-950">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-xl shadow-lg max-w-md w-full mx-4">
+        <div className="bg-white dark:bg-gray-900/95 p-8 rounded-xl shadow-lg max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
           <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/40 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
               Silakan Login
             </h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">
+            <p className="text-gray-700 dark:text-gray-300 mb-6">
               Anda perlu login untuk mengakses dashboard
             </p>
             <Link
@@ -90,7 +90,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
       {/* Mobile sidebar overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -110,7 +110,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
           }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-blue-700 dark:border-white/10">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/Logo_PLN.svg"
@@ -121,7 +121,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
             />
             <div className="flex flex-col">
               <span className="font-bold text-white">SIMAP</span>
-              <span className="text-[10px] text-gray-300 leading-tight">Sistem Informasi Monitoring Anggaran & Proyek</span>
+              <span className="text-[10px] text-blue-100 dark:text-blue-200 leading-tight">Sistem Informasi Monitoring Anggaran & Proyek</span>
             </div>
           </Link>
           <button
@@ -156,9 +156,9 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User info at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-700 dark:bg-white/15 rounded-full flex items-center justify-center">
               <span className="text-sm font-medium text-white">
                 {user?.name.charAt(0).toUpperCase()}
               </span>
@@ -178,7 +178,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <header className="sticky top-0 z-30 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <header className="sticky top-0 z-30 h-16 bg-white dark:bg-gray-900/95 border-b border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="h-full px-4 flex items-center justify-between">
             {/* Mobile menu button */}
             <button
@@ -192,7 +192,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
 
             {/* Page title - mobile */}
             <div className="lg:hidden">
-              <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
                 SIMAP
               </h1>
             </div>
@@ -214,8 +214,8 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  <div className="w-8 h-8 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-gray-600 dark:text-white">
                       {user?.name.charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -235,13 +235,13 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-20"
+                        className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 py-1 z-20"
                       >
-                        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-600">
+                          <p className="text-sm font-semibold text-gray-900 dark:text-white">
                             {user?.name}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                          <p className="text-xs text-gray-600 dark:text-gray-400">
                             {user?.email}
                           </p>
                         </div>
@@ -250,7 +250,7 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
                             logout();
                             setUserMenuOpen(false);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
                           Logout
                         </button>

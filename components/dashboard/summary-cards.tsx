@@ -22,32 +22,32 @@ const cardConfig = [
     key: "total",
     title: "Total Proyek",
     icon: FolderKanban,
-    color: "text-blue-600",
-    bgColor: "bg-blue-50 dark:bg-blue-950/30",
+    color: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-blue-50 dark:bg-blue-900/40",
     borderColor: "border-l-blue-500",
   },
   {
     key: "running",
     title: "Proyek Berjalan",
     icon: PlayCircle,
-    color: "text-emerald-600",
-    bgColor: "bg-emerald-50 dark:bg-emerald-950/30",
+    color: "text-emerald-600 dark:text-emerald-400",
+    bgColor: "bg-emerald-50 dark:bg-emerald-900/40",
     borderColor: "border-l-emerald-500",
   },
   {
     key: "completed",
     title: "Proyek Selesai",
     icon: CheckCircle2,
-    color: "text-violet-600",
-    bgColor: "bg-violet-50 dark:bg-violet-950/30",
+    color: "text-violet-600 dark:text-violet-400",
+    bgColor: "bg-violet-50 dark:bg-violet-900/40",
     borderColor: "border-l-violet-500",
   },
   {
     key: "problematic",
     title: "Proyek Bermasalah",
     icon: AlertTriangle,
-    color: "text-red-600",
-    bgColor: "bg-red-50 dark:bg-red-950/30",
+    color: "text-red-600 dark:text-red-400",
+    bgColor: "bg-red-50 dark:bg-red-900/40",
     borderColor: "border-l-red-500",
   },
 ];
@@ -73,7 +73,7 @@ export function SummaryCards({ total, running, completed, problematic }: Summary
               hover={false}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
                   {config.title}
                 </CardTitle>
                 <div className={`rounded-full p-2 ${config.bgColor}`}>
@@ -86,7 +86,7 @@ export function SummaryCards({ total, running, completed, problematic }: Summary
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, delay: index * 0.1 + 0.2 }}
                 >
-                  <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
                     {value}
                   </span>
                 </motion.div>

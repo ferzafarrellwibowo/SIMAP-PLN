@@ -7,43 +7,139 @@
    ============================================ */
 
 :root {
-  /* Light Mode Colors */
-  --background: #f8fafc;
-  --foreground: #1e293b;
+  /* ===== LIGHT MODE (DEFAULT) - Clean & Professional ===== */
+  
+  /* Background Colors */
+  --background: #ffffff;
+  --background-secondary: #f8fafc;
   --card-bg: #ffffff;
-  --card-border: #e2e8f0;
+  --card-bg-hover: #fafbfc;
+  
+  /* Text Colors - High Contrast */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-disabled: #94a3b8;
+  
+  /* Border & Divider */
+  --border-primary: #e2e8f0;
+  --border-secondary: #cbd5e1;
+  --border-focus: #3b82f6;
+  
+  /* Input & Form */
   --input-bg: #ffffff;
-  --input-border: #e2e8f0;
+  --input-border: #cbd5e1;
+  --input-focus-border: #3b82f6;
+  --input-placeholder: #94a3b8;
+  
+  /* Sidebar - Dark Blue */
   --sidebar-bg: #1e3a5f;
-  --sidebar-text: #94a3b8;
+  --sidebar-text: #cbd5e1;
   --sidebar-text-active: #ffffff;
+  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-active-bg: rgba(59, 130, 246, 0.15);
+  
+  /* Header/Navbar */
   --header-bg: #ffffff;
+  --header-border: #e2e8f0;
+  
+  /* Status Colors - Light Mode */
+  --status-success: #10b981;
+  --status-success-bg: #d1fae5;
+  --status-success-text: #065f46;
+  
+  --status-warning: #f59e0b;
+  --status-warning-bg: #fef3c7;
+  --status-warning-text: #92400e;
+  
+  --status-error: #ef4444;
+  --status-error-bg: #fee2e2;
+  --status-error-text: #991b1b;
+  
+  --status-info: #3b82f6;
+  --status-info-bg: #dbeafe;
+  --status-info-text: #1e40af;
+  
+  /* Accent Colors */
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-yellow: #f59e0b;
+  --accent-purple: #8b5cf6;
+  --accent-red: #ef4444;
 }
 
 .dark {
-  /* Dark Mode Colors */
-  --background: #0f172a;
-  --foreground: #f1f5f9;
+  /* ===== DARK MODE - Navy/Blue Theme ===== */
+  
+  /* Background Colors - Dark Blue/Navy */
+  --background: #0a1628;
+  --background-secondary: #0f172a;
   --card-bg: #1e293b;
-  --card-border: #334155;
+  --card-bg-hover: #283548;
+  
+  /* Text Colors - High Contrast on Dark */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-disabled: #64748b;
+  
+  /* Border & Divider */
+  --border-primary: #334155;
+  --border-secondary: #475569;
+  --border-focus: #60a5fa;
+  
+  /* Input & Form */
   --input-bg: #1e293b;
   --input-border: #475569;
-  --sidebar-bg: #0f172a;
+  --input-focus-border: #60a5fa;
+  --input-placeholder: #64748b;
+  
+  /* Sidebar - Darker Navy */
+  --sidebar-bg: #0a1628;
   --sidebar-text: #94a3b8;
   --sidebar-text-active: #ffffff;
+  --sidebar-hover: rgba(255, 255, 255, 0.05);
+  --sidebar-active-bg: rgba(96, 165, 250, 0.15);
+  
+  /* Header/Navbar */
   --header-bg: #1e293b;
+  --header-border: #334155;
+  
+  /* Status Colors - Dark Mode */
+  --status-success: #34d399;
+  --status-success-bg: #064e3b;
+  --status-success-text: #a7f3d0;
+  
+  --status-warning: #fbbf24;
+  --status-warning-bg: #78350f;
+  --status-warning-text: #fef3c7;
+  
+  --status-error: #f87171;
+  --status-error-bg: #7f1d1d;
+  --status-error-text: #fecaca;
+  
+  --status-info: #60a5fa;
+  --status-info-bg: #1e3a8a;
+  --status-info-text: #dbeafe;
+  
+  /* Accent Colors */
+  --accent-blue: #60a5fa;
+  --accent-green: #34d399;
+  --accent-yellow: #fbbf24;
+  --accent-purple: #a78bfa;
+  --accent-red: #f87171;
 }
 
 @theme inline {
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-foreground: var(--text-primary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
+  color: var(--text-primary);
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -54,43 +150,176 @@ html {
 }
 
 /* ============================================
-   DARK MODE OVERRIDES FOR TAILWIND CLASSES
+   BACKGROUND COLOR OVERRIDES
    ============================================ */
 
-/* Main backgrounds */
-.dark .bg-gray-100 {
+/* Light Mode Backgrounds */
+html:not(.dark) .bg-gray-50 {
+  background-color: #f8fafc;
+}
+
+html:not(.dark) .bg-gray-100 {
+  background-color: #f1f5f9;
+}
+
+html:not(.dark) .bg-white {
+  background-color: #ffffff;
+}
+
+/* Dark Mode Backgrounds */
+.dark .bg-gray-50 {
   background-color: #0f172a !important;
 }
 
-.dark .bg-gray-50 {
-  background-color: #1e293b !important;
+.dark .bg-gray-100 {
+  background-color: #0a1628 !important;
 }
 
 .dark .bg-white {
   background-color: #1e293b !important;
 }
 
-/* Sidebar specific - keep sidebar dark blue */
-.dark aside,
-.dark [class*="lg:pl-64"]>header {
-  background-color: #0f172a;
-}
-
-/* Cards and containers */
 .dark .bg-white\/80 {
   background-color: rgba(30, 41, 59, 0.9) !important;
 }
 
-/* Borders */
-.dark .border-gray-200 {
-  border-color: #334155 !important;
+/* ============================================
+   BORDER COLOR OVERRIDES
+   ============================================ */
+
+/* Light Mode Borders */
+html:not(.dark) .border-gray-100 {
+  border-color: #f1f5f9;
 }
 
+html:not(.dark) .border-gray-200 {
+  border-color: #e2e8f0;
+}
+
+html:not(.dark) .border-gray-300 {
+  border-color: #cbd5e1;
+}
+
+/* Dark Mode Borders */
 .dark .border-gray-100 {
   border-color: #475569 !important;
 }
 
-/* Input fields and dropdowns */
+.dark .border-gray-200 {
+  border-color: #334155 !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #475569 !important;
+}
+
+/* ============================================
+   TEXT COLOR OVERRIDES
+   ============================================ */
+
+/* Light Mode Text Colors */
+html:not(.dark) .text-gray-900 {
+  color: #0f172a;
+}
+
+html:not(.dark) .text-gray-800 {
+  color: #1e293b;
+}
+
+html:not(.dark) .text-gray-700 {
+  color: #334155;
+}
+
+html:not(.dark) .text-gray-600 {
+  color: #475569;
+}
+
+html:not(.dark) .text-gray-500 {
+  color: #64748b;
+}
+
+html:not(.dark) .text-gray-400 {
+  color: #94a3b8;
+}
+
+/* Dark Mode Text Colors */
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-black {
+  color: #f1f5f9 !important;
+}
+
+.dark .text-gray-700 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+/* Ensure headings are always visible */
+html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, 
+html:not(.dark) h4, html:not(.dark) h5, html:not(.dark) h6 {
+  color: #0f172a;
+}
+
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f1f5f9 !important;
+}
+
+/* Labels */
+html:not(.dark) label {
+  color: #0f172a;
+}
+
+.dark label {
+  color: #e2e8f0 !important;
+}
+
+/* Paragraph text */
+html:not(.dark) p {
+  color: #475569;
+}
+
+.dark p {
+  color: #cbd5e1;
+}
+
+/* ============================================
+   FORM ELEMENTS (INPUT, SELECT, TEXTAREA)
+   ============================================ */
+
+/* Light Mode Forms */
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #ffffff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94a3b8;
+}
+
+html:not(.dark) input:focus,
+html:not(.dark) select:focus,
+html:not(.dark) textarea:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Dark Mode Forms */
 .dark input,
 .dark select,
 .dark textarea {
@@ -104,41 +333,12 @@ html {
   color: #64748b !important;
 }
 
-/* 
-   TEXT COLOR OVERRIDES FOR DARK MODE 
-   Forces existing dark text classes to become light in dark mode
-*/
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-black {
-  color: #f1f5f9 !important;
-  /* white/slate-100 */
-}
-
-.dark .text-gray-700,
-.dark .text-gray-600 {
-  color: #cbd5e1 !important;
-  /* slate-300 */
-}
-
-.dark .text-gray-500 {
-  color: #94a3b8 !important;
-  /* slate-400 */
-}
-
-.dark .text-gray-400 {
-  color: #94a3b8 !important;
-  /* slate-400 */
-}
-
-/* Ensure headings specifically are white */
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6 {
-  color: #f1f5f9 !important;
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #60a5fa !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1) !important;
 }
 
 /* Select dropdown styling */
@@ -149,31 +349,37 @@ html {
 
 .dark select option:checked,
 .dark select option:hover {
-  background-color: #3b82f6;
+  background-color: #60a5fa;
   color: #ffffff;
 }
 
 /* Custom scrollbar for Webkit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 5px;
+  border: 2px solid #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0a1628;
 }
 
 .dark ::-webkit-scrollbar-thumb {
   background: #475569;
+  border-color: #0a1628;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
@@ -184,11 +390,11 @@ html {
 @supports (scrollbar-color: auto) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #d1d5db transparent;
+    scrollbar-color: #cbd5e1 #f1f5f9;
   }
 
   .dark * {
-    scrollbar-color: #475569 transparent;
+    scrollbar-color: #475569 #0a1628;
   }
 }
 
@@ -346,67 +552,453 @@ select:focus-visible {
 }
 
 /* ============================================
-   SIDEBAR STYLES - CONSISTENT DARK BLUE
+   SIDEBAR STYLES
+   Light Mode: Dark Blue (#1e3a5f)
+   Dark Mode: Darker Navy (#0a1628)
    ============================================ */
 
-/* Light mode sidebar - dark blue */
-aside {
+/* Light Mode Sidebar */
+html:not(.dark) aside {
   background-color: #1e3a5f !important;
 }
 
-aside .text-gray-900,
-aside .dark\:text-gray-100 {
+html:not(.dark) aside .text-gray-900,
+html:not(.dark) aside .text-gray-800,
+html:not(.dark) aside .text-gray-700,
+html:not(.dark) aside .text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+html:not(.dark) aside h1,
+html:not(.dark) aside h2,
+html:not(.dark) aside h3,
+html:not(.dark) aside .font-bold {
   color: #ffffff !important;
 }
 
-aside .text-gray-600,
-aside .text-gray-400,
-aside .dark\:text-gray-400 {
-  color: #94a3b8 !important;
+html:not(.dark) aside a:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-aside a:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+html:not(.dark) aside a[class*="bg-blue"],
+html:not(.dark) aside .bg-blue-50 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  color: #ffffff !important;
 }
 
-aside a.bg-blue-50,
-aside a.dark\:bg-blue-900\/20 {
-  background-color: rgba(59, 130, 246, 0.2) !important;
-}
-
-aside .border-gray-200,
-aside .dark\:border-gray-800 {
+html:not(.dark) aside .border-gray-200,
+html:not(.dark) aside .border-gray-300 {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Sidebar user info at bottom */
-aside .bg-gray-200,
-aside .dark\:bg-gray-700 {
-  background-color: rgba(255, 255, 255, 0.15) !important;
+/* Dark Mode Sidebar */
+.dark aside {
+  background-color: #0a1628 !important;
 }
 
-aside .text-gray-500,
-aside .dark\:text-gray-400 {
+.dark aside .text-gray-900,
+.dark aside .text-gray-800,
+.dark aside .text-gray-700,
+.dark aside .text-gray-600,
+.dark aside .text-gray-500,
+.dark aside .text-gray-400 {
   color: #94a3b8 !important;
 }
 
-/* Dark mode sidebar - same dark color */
-.dark aside {
-  background-color: #0f172a !important;
-  border-color: #1e293b !important;
+.dark aside h1,
+.dark aside h2,
+.dark aside h3,
+.dark aside .font-bold {
+  color: #ffffff !important;
+}
+
+.dark aside a:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.dark aside a[class*="bg-blue"],
+.dark aside .bg-blue-50,
+.dark aside [class*="dark:bg-blue"] {
+  background-color: rgba(96, 165, 250, 0.15) !important;
+  color: #ffffff !important;
 }
 
 .dark aside .border-gray-200,
-.dark aside .dark\:border-gray-800 {
+.dark aside .border-gray-300,
+.dark aside [class*="dark:border"] {
   border-color: #1e293b !important;
 }
 
+/* Sidebar user section */
+html:not(.dark) aside .bg-gray-200,
+html:not(.dark) aside [class*="bg-gray-"] {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark aside .bg-gray-200,
+.dark aside [class*="bg-gray-"],
+.dark aside [class*="dark:bg-gray"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
 /* ============================================
-   HEADER STYLES
+   HEADER/NAVBAR STYLES
    ============================================ */
 
-/* Dark mode header */
+/* Light Mode Header */
+html:not(.dark) header {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Dark Mode Header */
 .dark header {
   background-color: #1e293b !important;
   border-color: #334155 !important;
+}
+
+/* ============================================
+   BUTTON COLORS
+   ============================================ */
+
+/* Primary Button */
+.btn-primary {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.dark .btn-primary {
+  background-color: #60a5fa;
+  color: #0a1628;
+}
+
+.dark .btn-primary:hover {
+  background-color: #3b82f6;
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: #64748b;
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background-color: #475569;
+}
+
+.dark .btn-secondary {
+  background-color: #475569;
+  color: #f1f5f9;
+}
+
+.dark .btn-secondary:hover {
+  background-color: #64748b;
+}
+
+/* Success Button */
+.btn-success {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+}
+
+.dark .btn-success {
+  background-color: #34d399;
+  color: #0a1628;
+}
+
+.dark .btn-success:hover {
+  background-color: #10b981;
+}
+
+/* Danger Button */
+.btn-danger {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.dark .btn-danger {
+  background-color: #f87171;
+  color: #0a1628;
+}
+
+.dark .btn-danger:hover {
+  background-color: #ef4444;
+}
+
+/* ============================================
+   STATUS BADGE COLORS (Tailwind Classes)
+   ============================================ */
+
+/* Success/Green Status */
+html:not(.dark) .bg-emerald-100 {
+  background-color: #d1fae5;
+}
+
+html:not(.dark) .bg-emerald-200 {
+  background-color: #bbf7d0;
+}
+
+html:not(.dark) .text-emerald-800 {
+  color: #065f46;
+}
+
+html:not(.dark) .bg-emerald-500 {
+  background-color: #10b981;
+}
+
+.dark .bg-emerald-100 {
+  background-color: #064e3b !important;
+}
+
+.dark .text-emerald-800 {
+  color: #a7f3d0 !important;
+}
+
+.dark .bg-emerald-500 {
+  background-color: #34d399 !important;
+}
+
+/* Warning/Yellow Status */
+html:not(.dark) .bg-amber-100 {
+  background-color: #fef3c7;
+}
+
+/* stronger amber for badges in light mode */
+html:not(.dark) .bg-amber-200 {
+  background-color: #fde68a;
+}
+
+html:not(.dark) .text-amber-800 {
+  /* Darker amber text for better contrast on pale amber backgrounds */
+  color: #7a3e00;
+}
+
+html:not(.dark) .bg-amber-500 {
+  background-color: #f59e0b;
+}
+
+.dark .bg-amber-100 {
+  background-color: #78350f !important;
+}
+
+.dark .text-amber-800 {
+  color: #fef3c7 !important;
+}
+
+.dark .bg-amber-500 {
+  background-color: #fbbf24 !important;
+}
+
+/* Danger/Red Status */
+html:not(.dark) .bg-red-100 {
+  background-color: #fee2e2;
+}
+
+html:not(.dark) .bg-red-200 {
+  background-color: #fecaca;
+}
+
+html:not(.dark) .text-red-800 {
+  color: #991b1b;
+}
+
+html:not(.dark) .bg-red-500 {
+  background-color: #ef4444;
+}
+
+html:not(.dark) .text-red-600 {
+  color: #dc2626;
+}
+
+html:not(.dark) .bg-red-50 {
+  background-color: #fef2f2;
+}
+
+.dark .bg-red-100 {
+  background-color: #7f1d1d !important;
+}
+
+.dark .text-red-800 {
+  color: #fecaca !important;
+}
+
+.dark .bg-red-500 {
+  background-color: #f87171 !important;
+}
+
+.dark .text-red-600 {
+  color: #fca5a5 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: #7f1d1d !important;
+}
+
+/* Info/Blue Status */
+html:not(.dark) .bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+html:not(.dark) .text-blue-800 {
+  color: #1e40af;
+}
+
+html:not(.dark) .bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+html:not(.dark) .text-blue-600 {
+  color: #2563eb;
+}
+
+html:not(.dark) .bg-blue-50 {
+  background-color: #eff6ff;
+}
+
+html:not(.dark) .bg-blue-200 {
+  background-color: #bfdbfe;
+}
+
+html:not(.dark) .text-blue-400 {
+  color: #60a5fa;
+}
+
+html:not(.dark) .bg-blue-700 {
+  background-color: #1d4ed8;
+}
+
+.dark .bg-blue-100 {
+  background-color: #1e3a8a !important;
+}
+
+.dark .text-blue-800 {
+  color: #dbeafe !important;
+}
+
+.dark .bg-blue-500 {
+  background-color: #60a5fa !important;
+}
+
+.dark .text-blue-600 {
+  color: #93c5fd !important;
+}
+
+.dark .text-blue-400 {
+  color: #93c5fd !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: #1e3a8a !important;
+}
+
+.dark .bg-blue-200 {
+  background-color: #1e40af !important;
+}
+
+.dark .bg-blue-700 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Purple Status */
+html:not(.dark) .bg-purple-500 {
+  background-color: #8b5cf6;
+}
+
+.dark .bg-purple-500 {
+  background-color: #a78bfa !important;
+}
+
+/* Orange/Amber Status Colors */
+html:not(.dark) .bg-orange-50 {
+  background-color: #fff7ed;
+}
+
+html:not(.dark) .text-orange-800 {
+  color: #9a3412;
+}
+
+html:not(.dark) .bg-orange-500 {
+  background-color: #f97316;
+}
+
+.dark .bg-orange-50 {
+  background-color: #7c2d12 !important;
+}
+
+.dark .text-orange-800 {
+  color: #fed7aa !important;
+}
+
+.dark .bg-orange-500 {
+  background-color: #fb923c !important;
+}
+
+/* Cyan/Teal Status Colors */
+html:not(.dark) .bg-cyan-50 {
+  background-color: #ecfeff;
+}
+
+html:not(.dark) .text-cyan-800 {
+  color: #155e75;
+}
+
+html:not(.dark) .bg-cyan-500 {
+  background-color: #06b6d4;
+}
+
+.dark .bg-cyan-50 {
+  background-color: #164e63 !important;
+}
+
+.dark .text-cyan-800 {
+  color: #a5f3fc !important;
+}
+
+.dark .bg-cyan-500 {
+  background-color: #22d3ee !important;
+}
+
+/* Gray Status Colors for Neutral State */
+html:not(.dark) .bg-gray-50 {
+  background-color: #f8fafc;
+}
+
+html:not(.dark) .bg-gray-100 {
+  background-color: #f1f5f9;
+}
+
+html:not(.dark) .bg-gray-200 {
+  background-color: #e2e8f0;
+}
+
+html:not(.dark) .text-gray-800 {
+  color: #1e293b;
+}
+
+html:not(.dark) .text-gray-700 {
+  color: #334155;
+}
+
+html:not(.dark) .text-gray-600 {
+  color: #475569;
+}
+
+.dark .bg-gray-800 {
+  background-color: #1e293b !important;
+}
+
+.dark .text-gray-800 {
+  color: #f1f5f9 !important;
 }

@@ -62,12 +62,12 @@ export default function KontrakDetailPage() {
   if (!contract) {
     return (
       <div className="space-y-6">
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
-          <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+          <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Kontrak Tidak Ditemukan</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">Kontrak dengan ID "{contractId}" tidak ditemukan dalam sistem.</p>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Kontrak Tidak Ditemukan</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">Kontrak dengan ID "{contractId}" tidak ditemukan dalam sistem.</p>
           <Link
             href="/kontrak"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
@@ -96,7 +96,7 @@ export default function KontrakDetailPage() {
             <span className="text-gray-300 dark:text-gray-600">/</span>
             <span className="text-sm text-gray-500 dark:text-gray-400">Detail Kontrak</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {contract.judulPekerjaan}
           </h1>
           <div className="flex items-center gap-2 flex-wrap">
@@ -141,9 +141,9 @@ export default function KontrakDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="lg:col-span-2 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6"
+          className="lg:col-span-2 bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
         >
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Kontrak</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Kontrak</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>

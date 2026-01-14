@@ -43,8 +43,8 @@ export default function KontrakPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Daftar Kontrak</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Kontrak</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             {filteredContracts.length} kontrak ditemukan
           </p>
         </div>
@@ -62,24 +62,24 @@ export default function KontrakPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-4">
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pencarian</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari judul, vendor, atau nomor..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis Anggaran</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Jenis Anggaran</label>
             <select
               value={jenisAnggaran}
               onChange={(e) => setJenisAnggaran(e.target.value as JenisAnggaran | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {jenisAnggaranOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -87,11 +87,11 @@ export default function KontrakPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kategori</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Kategori</label>
             <select
               value={kategori}
               onChange={(e) => setKategori(e.target.value as ContractCategory | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {contractCategoryOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -99,11 +99,11 @@ export default function KontrakPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as ContractStatus | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {contractStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -116,11 +116,11 @@ export default function KontrakPage() {
       {/* Contract List */}
       <div className="space-y-4">
         {filteredContracts.length === 0 ? (
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <p className="text-gray-500 dark:text-gray-400">Tidak ada kontrak yang ditemukan</p>
+            <p className="text-gray-600 dark:text-gray-400">Tidak ada kontrak yang ditemukan</p>
           </div>
         ) : (
           filteredContracts.map((contract, index) => (
@@ -129,7 +129,7 @@ export default function KontrakPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 hover:shadow-md transition-shadow"
+              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
             >
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                 {/* Left Content */}
@@ -146,11 +146,11 @@ export default function KontrakPage() {
                     </span>
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
                     {contract.judulPekerjaan}
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <p>
                       <span className="font-medium">No Perjanjian:</span> {contract.noPerjanjian}
                     </p>
@@ -189,7 +189,7 @@ export default function KontrakPage() {
                 <div className="flex flex-col items-end gap-3">
                   <div className="text-right">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Nilai Kontrak</p>
-                    <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
                       {formatCurrency(contract.nilaiKontrak)}
                     </p>
                   </div>
@@ -242,7 +242,7 @@ export default function KontrakPage() {
 
                   <Link
                     href={`/kontrak/${contract.id}`}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   >
                     Detail
                   </Link>

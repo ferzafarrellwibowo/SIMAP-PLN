@@ -7,9 +7,9 @@ import { useContractStore } from "@/lib/store-new";
 import type { Alert, AlertSeverity } from "@/lib/types-new";
 
 const SEVERITY_COLORS: Record<AlertSeverity, string> = {
-  info: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  warning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  critical: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  info: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
+  warning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
+  critical: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
 const SEVERITY_ICONS: Record<AlertSeverity, ReactNode> = {
@@ -94,14 +94,14 @@ export function NotificationDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden"
+            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 z-50 overflow-hidden"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Notifikasi</h3>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notifikasi</h3>
                 {unreadCount > 0 && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{unreadCount} belum dibaca</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-300">{unreadCount} belum dibaca</p>
                 )}
               </div>
               {unreadCount > 0 && (
@@ -118,19 +118,19 @@ export function NotificationDropdown() {
             <div className="max-h-96 overflow-y-auto">
               {alerts.length === 0 ? (
                 <div className="p-8 text-center">
-                  <svg className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Tidak ada notifikasi</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Tidak ada notifikasi</p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                <div className="divide-y divide-gray-100 dark:divide-gray-700">
                   {alerts.slice(0, 10).map((alert) => (
                     <div
                       key={alert.id}
                       onClick={() => handleAlertClick(alert)}
-                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer ${
-                        !alert.readAt ? "bg-blue-50/50 dark:bg-blue-900/10" : ""
+                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+                        !alert.readAt ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
                       }`}
                     >
                       <div className="flex gap-3">
@@ -141,8 +141,8 @@ export function NotificationDropdown() {
                           <div className="flex items-start justify-between gap-2">
                             <p className={`text-sm font-medium ${
                               !alert.readAt 
-                                ? "text-gray-900 dark:text-gray-100" 
-                                : "text-gray-600 dark:text-gray-400"
+                                ? "text-gray-900 dark:text-white" 
+                                : "text-gray-600 dark:text-gray-300"
                             }`}>
                               {alert.title}
                             </p>
