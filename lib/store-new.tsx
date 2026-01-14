@@ -13,6 +13,7 @@ import type {
   InvoiceFilters,
   Alert,
 } from "./types-new";
+import { calculateContractStatus } from "./contract-status";
 
 // ============================================
 // MOCK DATA - VENDORS
@@ -51,26 +52,26 @@ function generateMockContracts(): Contract[] {
     nilai: number;
     status: ContractStatus;
   }> = [
-    // INVESTASI
-    { kategori: "investasi", uraian: "Pengadaan Trafo 60 MVA", judul: "Pengadaan dan Pemasangan Trafo Daya 60 MVA GI Cawang", vendor: "PT Wijaya Karya", nilai: 15000000000, status: "aktif" },
-    { kategori: "investasi", uraian: "Pembangunan SUTT 150kV", judul: "Pembangunan SUTT 150kV Cikarang-Bekasi Circuit 2", vendor: "PT Hutama Karya", nilai: 28000000000, status: "aktif" },
-    { kategori: "investasi", uraian: "Pengadaan Kubikel 20kV", judul: "Pengadaan Kubikel 20kV untuk GI Duri Kosambi", vendor: "PT PP (Persero)", nilai: 8500000000, status: "aktif" },
-    { kategori: "investasi", uraian: "Pembangunan GITET 500kV", judul: "Pembangunan GITET 500kV Surabaya Selatan", vendor: "PT Adhi Karya", nilai: 45000000000, status: "aktif" },
-    { kategori: "investasi", uraian: "Upgrade GI 70kV", judul: "Upgrade Kapasitas GI Cibinong 70kV", vendor: "PT Brantas Abipraya", nilai: 6200000000, status: "aktif" },
-    
-    // PEMELIHARAAN
-    { kategori: "pemeliharaan", uraian: "Pemeliharaan Trafo GI", judul: "Pemeliharaan Rutin Trafo GI Bandung Selatan", vendor: "PT Nindya Karya", nilai: 2500000000, status: "aktif" },
-    { kategori: "pemeliharaan", uraian: "Overhaul PMT 150kV", judul: "Overhaul PMT 150kV GI Medan Timur", vendor: "PT Hutama Karya", nilai: 1800000000, status: "aktif" },
-    { kategori: "pemeliharaan", uraian: "Penggantian Isolator SUTT", judul: "Penggantian Isolator SUTT 150kV Jalur Makassar", vendor: "PT Waskita Karya", nilai: 3200000000, status: "aktif" },
-    { kategori: "pemeliharaan", uraian: "Pemeliharaan Sistem Proteksi", judul: "Pemeliharaan Sistem Proteksi GI Jakarta Timur", vendor: "PT Wijaya Karya", nilai: 1500000000, status: "selesai" },
-    { kategori: "pemeliharaan", uraian: "Perbaikan Kabel Bawah Tanah", judul: "Perbaikan Kabel Bawah Tanah 20kV Area CBD Jakarta", vendor: "PT PP (Persero)", nilai: 4500000000, status: "bermasalah" },
-    
-    // ADMINISTRASI
-    { kategori: "administrasi", uraian: "Jasa Konsultansi DED", judul: "Jasa Konsultansi DED GI Tangerang Baru", vendor: "PT Adhi Karya", nilai: 850000000, status: "aktif" },
-    { kategori: "administrasi", uraian: "Supervisi Konstruksi", judul: "Jasa Supervisi Konstruksi SUTT 150kV Yogya-Solo", vendor: "PT Jasa Marga", nilai: 1200000000, status: "aktif" },
-    { kategori: "administrasi", uraian: "Studi Kelayakan", judul: "Studi Kelayakan Pembangunan GI Bekasi Timur", vendor: "PT Brantas Abipraya", nilai: 650000000, status: "aktif" },
-    { kategori: "administrasi", uraian: "Jasa Audit Teknis", judul: "Jasa Audit Teknis Instalasi GI se-Jawa Barat", vendor: "PT Nindya Karya", nilai: 480000000, status: "selesai" },
-  ];
+      // INVESTASI
+      { kategori: "investasi", uraian: "Pengadaan Trafo 60 MVA", judul: "Pengadaan dan Pemasangan Trafo Daya 60 MVA GI Cawang", vendor: "PT Wijaya Karya", nilai: 15000000000, status: "aktif" },
+      { kategori: "investasi", uraian: "Pembangunan SUTT 150kV", judul: "Pembangunan SUTT 150kV Cikarang-Bekasi Circuit 2", vendor: "PT Hutama Karya", nilai: 28000000000, status: "aktif" },
+      { kategori: "investasi", uraian: "Pengadaan Kubikel 20kV", judul: "Pengadaan Kubikel 20kV untuk GI Duri Kosambi", vendor: "PT PP (Persero)", nilai: 8500000000, status: "aktif" },
+      { kategori: "investasi", uraian: "Pembangunan GITET 500kV", judul: "Pembangunan GITET 500kV Surabaya Selatan", vendor: "PT Adhi Karya", nilai: 45000000000, status: "aktif" },
+      { kategori: "investasi", uraian: "Upgrade GI 70kV", judul: "Upgrade Kapasitas GI Cibinong 70kV", vendor: "PT Brantas Abipraya", nilai: 6200000000, status: "aktif" },
+
+      // PEMELIHARAAN
+      { kategori: "pemeliharaan", uraian: "Pemeliharaan Trafo GI", judul: "Pemeliharaan Rutin Trafo GI Bandung Selatan", vendor: "PT Nindya Karya", nilai: 2500000000, status: "aktif" },
+      { kategori: "pemeliharaan", uraian: "Overhaul PMT 150kV", judul: "Overhaul PMT 150kV GI Medan Timur", vendor: "PT Hutama Karya", nilai: 1800000000, status: "aktif" },
+      { kategori: "pemeliharaan", uraian: "Penggantian Isolator SUTT", judul: "Penggantian Isolator SUTT 150kV Jalur Makassar", vendor: "PT Waskita Karya", nilai: 3200000000, status: "aktif" },
+      { kategori: "pemeliharaan", uraian: "Pemeliharaan Sistem Proteksi", judul: "Pemeliharaan Sistem Proteksi GI Jakarta Timur", vendor: "PT Wijaya Karya", nilai: 1500000000, status: "selesai" },
+      { kategori: "pemeliharaan", uraian: "Perbaikan Kabel Bawah Tanah", judul: "Perbaikan Kabel Bawah Tanah 20kV Area CBD Jakarta", vendor: "PT PP (Persero)", nilai: 4500000000, status: "bermasalah" },
+
+      // ADMINISTRASI
+      { kategori: "administrasi", uraian: "Jasa Konsultansi DED", judul: "Jasa Konsultansi DED GI Tangerang Baru", vendor: "PT Adhi Karya", nilai: 850000000, status: "aktif" },
+      { kategori: "administrasi", uraian: "Supervisi Konstruksi", judul: "Jasa Supervisi Konstruksi SUTT 150kV Yogya-Solo", vendor: "PT Jasa Marga", nilai: 1200000000, status: "aktif" },
+      { kategori: "administrasi", uraian: "Studi Kelayakan", judul: "Studi Kelayakan Pembangunan GI Bekasi Timur", vendor: "PT Brantas Abipraya", nilai: 650000000, status: "aktif" },
+      { kategori: "administrasi", uraian: "Jasa Audit Teknis", judul: "Jasa Audit Teknis Instalasi GI se-Jawa Barat", vendor: "PT Nindya Karya", nilai: 480000000, status: "selesai" },
+    ];
 
   return contractData.map((data, index) => {
     // Random percentage of completion (20% - 85%)
@@ -97,6 +98,15 @@ function generateMockContracts(): Contract[] {
       pemeliharaan: ["Overhaul", "Perbaikan", "Pemeliharaan Rutin", "Penggantian"],
       administrasi: ["Konsultansi", "Supervisi", "Studi", "Audit"],
     };
+
+    // Calculate progress pekerjaan
+    const progressPekerjaan = Math.min(realisasiPersen + Math.random() * 10 - 5, 100);
+
+    // Hitung status secara dinamis
+    const calculatedStatus = calculateContractStatus({
+      tanggalBerakhir,
+      progressPekerjaan,
+    });
 
     return {
       id: `CTR-${String(index + 1).padStart(3, "0")}`,
@@ -137,11 +147,11 @@ function generateMockContracts(): Contract[] {
       picId: index % 2 === 0 ? "USR-002" : "USR-003",
       picName: index % 2 === 0 ? "Budi Santoso" : "Siti Rahayu",
       entryBy: ["Admin", "Operator", "System"][index % 3],
-      status: data.status,
+      status: calculatedStatus, // Status dihitung dinamis berdasarkan tanggal dan progress
       totalTagihanDibayar: totalDibayar,
       sisaAnggaran,
       persentaseRealisasi: realisasiPersen,
-      progressPekerjaan: Math.min(realisasiPersen + Math.random() * 10 - 5, 100), // Progress fisik mendekati realisasi anggaran
+      progressPekerjaan,
       oldFlag: index % 5 === 0 ? "Y" : undefined,
       clickCB: index % 4 === 0,
       createdAt: "2025-01-01T00:00:00Z",
@@ -164,10 +174,10 @@ function generateMockInvoices(contracts: Contract[]): Invoice[] {
   contracts.forEach((contract) => {
     // Generate 2-5 invoices per contract
     const numInvoices = Math.floor(Math.random() * 4) + 2;
-    
+
     for (let i = 0; i < numInvoices; i++) {
       const nilaiTagihan = Math.floor((contract.nilaiKontrak / numInvoices) * (0.8 + Math.random() * 0.4));
-      
+
       // Determine status based on random and position
       // Status: diajukan, diterima, ditolak, dibayar
       let status: InvoiceStatus;
@@ -185,12 +195,12 @@ function generateMockInvoices(contracts: Contract[]): Invoice[] {
 
       const tanggalDiajukan = new Date(2025, i * 2, 15 + Math.floor(Math.random() * 10));
       const tahun = tanggalDiajukan.getFullYear();
-      
+
       // Hitung tanggalVerifikasi jika status bukan diajukan
-      const tanggalVerifikasi = status !== "diajukan" 
+      const tanggalVerifikasi = status !== "diajukan"
         ? new Date(tanggalDiajukan.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
         : undefined;
-      
+
       invoices.push({
         id: `INV-${String(invoiceIndex).padStart(4, "0")}`,
         contractId: contract.id,
@@ -325,30 +335,30 @@ interface ContractStoreContextType {
   invoices: Invoice[];
   alerts: Alert[];
   isLoading: boolean;
-  
+
   // Getters
   getContractById: (id: string) => Contract | undefined;
   getInvoiceById: (id: string) => Invoice | undefined;
   getInvoicesByContract: (contractId: string) => Invoice[];
   getDashboardSummary: () => DashboardSummary;
-  
+
   // Filters
   filterContracts: (filters: ContractFilters) => Contract[];
   filterInvoices: (filters: InvoiceFilters) => Invoice[];
-  
+
   // Mutations - ASYNC karena menggunakan Supabase
   createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>;
   addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>; // Alias
   updateContract: (id: string, updates: Partial<Contract>) => Promise<Contract>;
-  
+
   createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Promise<Invoice>;
   updateInvoice: (id: string, updates: Partial<Invoice>) => Promise<Invoice>;
   updateInvoiceStatus: (id: string, status: InvoiceStatus, notes?: string) => Invoice | undefined;
-  
+
   // Alert mutations
   markAlertAsRead: (id: string) => void;
   markAllAlertsAsRead: () => void;
-  
+
   // Recalculate
   recalculateContractTotals: (contractId: string) => void;
 }
@@ -449,12 +459,12 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     async function loadDataFromSupabase() {
       try {
         setIsLoading(true);
-        
+
         // Fetch contracts
         const contractsRes = await fetch('/api/contracts');
         if (contractsRes.ok) {
           const { data: contractsData } = await contractsRes.json();
-          
+
           // Transform snake_case to camelCase
           const transformedContracts: Contract[] = contractsData.map((data: any) => ({
             id: data.id,
@@ -509,7 +519,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
             keterangan: data.keterangan,
             dokumenKontrak: data.dokumen_kontrak,
           }));
-          
+
           setContracts(transformedContracts);
         }
 
@@ -517,7 +527,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         const invoicesRes = await fetch('/api/invoices');
         if (invoicesRes.ok) {
           const { data: invoicesData } = await invoicesRes.json();
-          
+
           // Transform snake_case to camelCase
           const transformedInvoices: Invoice[] = invoicesData.map((data: any) => ({
             id: data.id,
@@ -542,7 +552,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
             createdAt: data.created_at,
             updatedAt: data.updated_at,
           }));
-          
+
           setInvoices(transformedInvoices);
         }
       } catch (error) {
@@ -678,7 +688,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       totalDibayar,
       totalSisaAnggaran: totalNilaiKontrak - totalDibayar,
       persentaseRealisasiGlobal: totalNilaiKontrak > 0 ? (totalDibayar / totalNilaiKontrak) * 100 : 0,
-      
+
       // Per Kategori
       kontrakInvestasi: kontrakInvestasi.length,
       kontrakPemeliharaan: kontrakPemeliharaan.length,
@@ -686,13 +696,13 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       nilaiInvestasi: kontrakInvestasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
       nilaiPemeliharaan: kontrakPemeliharaan.reduce((sum, c) => sum + c.nilaiKontrak, 0),
       nilaiAdministrasi: kontrakAdministrasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
-      
+
       totalTagihan: invoices.length,
       tagihanDiajukan: invoices.filter((inv) => inv.status === "diajukan").length,
       tagihanDiterima: invoices.filter((inv) => inv.status === "diterima").length,
       tagihanDibayar: invoices.filter((inv) => inv.status === "dibayar").length,
       tagihanDitolak: invoices.filter((inv) => inv.status === "ditolak").length,
-      
+
       kontrakHampirHabis: activeContracts.filter((c) => c.persentaseRealisasi > 90).length,
       tagihanPendingLama: invoices.filter(
         (inv) => inv.status === "diajukan" && new Date(inv.tanggalDiajukan) < sevenDaysAgo
@@ -720,7 +730,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         }
 
         const { data } = await response.json();
-        
+
         // Transform snake_case to camelCase
         const transformedData: Contract = {
           id: data.id,
@@ -804,7 +814,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         }
 
         const { data } = await response.json();
-        
+
         // Transform snake_case to camelCase
         const transformedData: Contract = {
           id: data.id,
@@ -864,7 +874,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         setContracts((prev) =>
           prev.map((c) => (c.id === id ? transformedData : c))
         );
-        
+
         return transformedData;
       } catch (error) {
         console.error('Error updating contract:', error);
@@ -891,7 +901,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         }
 
         const { data } = await response.json();
-        
+
         // Transform snake_case to camelCase
         const transformedData: Invoice = {
           id: data.id,
@@ -945,7 +955,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         }
 
         const { data } = await response.json();
-        
+
         // Transform snake_case to camelCase
         const transformedData: Invoice = {
           id: data.id,
@@ -975,7 +985,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         setInvoices((prev) =>
           prev.map((inv) => (inv.id === id ? transformedData : inv))
         );
-        
+
         return transformedData;
       } catch (error) {
         console.error('Error updating invoice:', error);
@@ -1009,7 +1019,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         (inv) => inv.contractId === contractId && inv.status === "dibayar"
       );
       const totalDibayar = contractInvoices.reduce((sum, inv) => sum + inv.nilaiTagihan, 0);
-      
+
       setContracts((prev) =>
         prev.map((c) => {
           if (c.id === contractId) {

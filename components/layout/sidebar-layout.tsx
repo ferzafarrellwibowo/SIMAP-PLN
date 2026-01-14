@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth, ROLE_LABELS, ROLE_COLORS } from "@/lib/auth-new";
 import { NotificationDropdown } from "./notification-dropdown";
+import { ThemeToggle } from "./theme-toggle";
 
 interface NavItem {
   name: string;
@@ -103,14 +104,13 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar - Dark blue in light mode, darker navy in dark mode */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#1e3a5f] dark:bg-[#0f172a] border-r border-[#2d4a6f] dark:border-[#1e293b] transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
           <Link href="/" className="flex items-center gap-3">
             <Image
               src="/Logo_PLN.svg"
@@ -120,13 +120,13 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
               className="h-10 w-10"
             />
             <div className="flex flex-col">
-              <span className="font-bold text-gray-900 dark:text-gray-100">SIMAP</span>
-              <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Sistem Informasi Monitoring Anggaran & Proyek</span>
+              <span className="font-bold text-white">SIMAP</span>
+              <span className="text-[10px] text-gray-300 leading-tight">Sistem Informasi Monitoring Anggaran & Proyek</span>
             </div>
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="lg:hidden p-2 text-gray-300 hover:text-white"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -143,11 +143,10 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
                 key={item.name}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400"
-                    : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
-                }`}
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${isActive
+                  ? "bg-blue-500/20 text-white"
+                  : "text-gray-300 hover:bg-white/10 hover:text-white"
+                  }`}
               >
                 {item.icon}
                 {item.name}
@@ -157,15 +156,15 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User info at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-800">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            <div className="w-10 h-10 bg-white/15 rounded-full flex items-center justify-center">
+              <span className="text-sm font-medium text-white">
                 {user?.name.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              <p className="text-sm font-medium text-white truncate">
                 {user?.name}
               </p>
               <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${ROLE_COLORS[user?.role || "admin"]}`}>
@@ -202,7 +201,10 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
             <div className="hidden lg:block" />
 
             {/* Right side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* Notifications */}
               <NotificationDropdown />
 

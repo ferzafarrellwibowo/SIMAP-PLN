@@ -1,8 +1,37 @@
 @import "tailwindcss";
 
+/* ============================================
+   COLOR SCHEME VARIABLES
+   Light Mode: White/Light gray background
+   Dark Mode: Navy/Slate dark background
+   ============================================ */
+
 :root {
-  --background: #f9fafb;
-  --foreground: #111827;
+  /* Light Mode Colors */
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #ffffff;
+  --input-border: #e2e8f0;
+  --sidebar-bg: #1e3a5f;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-active: #ffffff;
+  --header-bg: #ffffff;
+}
+
+.dark {
+  /* Dark Mode Colors */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #1e293b;
+  --input-border: #475569;
+  --sidebar-bg: #0f172a;
+  --sidebar-text: #94a3b8;
+  --sidebar-text-active: #ffffff;
+  --header-bg: #1e293b;
 }
 
 @theme inline {
@@ -10,13 +39,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #030712;
-    --foreground: #f9fafb;
-  }
 }
 
 body {
@@ -31,7 +53,107 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
+/* ============================================
+   DARK MODE OVERRIDES FOR TAILWIND CLASSES
+   ============================================ */
+
+/* Main backgrounds */
+.dark .bg-gray-100 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #1e293b !important;
+}
+
+.dark .bg-white {
+  background-color: #1e293b !important;
+}
+
+/* Sidebar specific - keep sidebar dark blue */
+.dark aside,
+.dark [class*="lg:pl-64"]>header {
+  background-color: #0f172a;
+}
+
+/* Cards and containers */
+.dark .bg-white\/80 {
+  background-color: rgba(30, 41, 59, 0.9) !important;
+}
+
+/* Borders */
+.dark .border-gray-200 {
+  border-color: #334155 !important;
+}
+
+.dark .border-gray-100 {
+  border-color: #475569 !important;
+}
+
+/* Input fields and dropdowns */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f1f5f9 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* 
+   TEXT COLOR OVERRIDES FOR DARK MODE 
+   Forces existing dark text classes to become light in dark mode
+*/
+.dark .text-gray-900,
+.dark .text-gray-800,
+.dark .text-black {
+  color: #f1f5f9 !important;
+  /* white/slate-100 */
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600 {
+  color: #cbd5e1 !important;
+  /* slate-300 */
+}
+
+.dark .text-gray-500 {
+  color: #94a3b8 !important;
+  /* slate-400 */
+}
+
+.dark .text-gray-400 {
+  color: #94a3b8 !important;
+  /* slate-400 */
+}
+
+/* Ensure headings specifically are white */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  color: #f1f5f9 !important;
+}
+
+/* Select dropdown styling */
+.dark select option {
+  background-color: #1e293b;
+  color: #f1f5f9;
+}
+
+.dark select option:checked,
+.dark select option:hover {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* Custom scrollbar for Webkit (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -50,13 +172,23 @@ html {
   background: #9ca3af;
 }
 
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-thumb {
-    background: #4b5563;
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Custom scrollbar for Firefox */
+@supports (scrollbar-color: auto) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d1d5db transparent;
   }
 
-  ::-webkit-scrollbar-thumb:hover {
-    background: #6b7280;
+  .dark * {
+    scrollbar-color: #475569 transparent;
   }
 }
 
@@ -66,6 +198,7 @@ html {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -85,14 +218,23 @@ html {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
 }
 
+.dark .card-hover:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
 /* Interactive hover for clickable elements */
 .interactive {
   transition: transform 150ms ease, box-shadow 150ms ease;
   will-change: transform, box-shadow;
 }
+
 .interactive:hover {
   transform: translateY(-3px);
-  box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+}
+
+.dark .interactive:hover {
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Select / dropdown hover effect for all native and custom selects */
@@ -104,77 +246,29 @@ select {
 
 .custom-select:hover,
 select:hover {
-  border-color: #d1d5db; /* gray-300 */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #d1d5db;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   transform: translateY(0);
 }
 
 .custom-select:focus-visible,
 select:focus-visible {
   outline: none;
-  border-color: #d1d5db;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
-@media (prefers-color-scheme: dark) {
-  .custom-select:hover,
-  select:hover {
-    border-color: #4b5563; /* darker gray for dark mode */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
-  
-  .custom-select:focus-visible,
-  select:focus-visible {
-    outline: none;
-    border-color: #4b5563;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  }
+.dark .custom-select:hover,
+.dark select:hover {
+  border-color: #64748b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Style native select option panels to better match site theme (where supported).
-   Note: browser support for option styling varies; this improves appearance in modern
-   browsers and dark-mode where possible. */
-.custom-select option,
-select option {
-  background-color: #1f2937; /* dark gray */
-  color: #f9fafb; /* light text */
-  padding: 8px 4px;
-}
-
-.custom-select option:disabled,
-select option:disabled {
-  background-color: #1f2937;
-  color: #f9fafb;
-  opacity: 1;
-}
-
-.custom-select option:checked,
-select option:checked {
-  background: linear-gradient(#3b82f6, #3b82f6);
-  background-color: #3b82f6;
-  color: #f9fafb;
-}
-
-@media (prefers-color-scheme: dark) {
-  .custom-select option,
-  select option {
-    background-color: #1f2937;
-    color: #f9fafb;
-  }
-  
-  .custom-select option:disabled,
-  select option:disabled {
-    background-color: #1f2937;
-    color: #f9fafb;
-    opacity: 1;
-  }
-  
-  .custom-select option:checked,
-  select option:checked {
-    background: linear-gradient(#3b82f6, #3b82f6);
-    background-color: #3b82f6;
-    color: #f9fafb;
-  }
+.dark .custom-select:focus-visible,
+.dark select:focus-visible {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 /* Table row hover (smoother) */
@@ -187,10 +281,8 @@ select option:checked {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
-@media (prefers-color-scheme: dark) {
-  .table-row-hover:hover {
-    background-color: rgba(255, 255, 255, 0.04);
-  }
+.dark .table-row-hover:hover {
+  background-color: rgba(255, 255, 255, 0.04);
 }
 
 /* Progress bar animation */
@@ -206,10 +298,12 @@ select option:checked {
 
 /* Pulse animation for badges */
 @keyframes pulse-slow {
+
   0%,
   100% {
     opacity: 1;
   }
+
   50% {
     opacity: 0.7;
   }
@@ -226,10 +320,8 @@ select option:checked {
   -webkit-backdrop-filter: blur(10px);
 }
 
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(17, 24, 39, 0.8);
-  }
+.dark .glass {
+  background: rgba(30, 41, 59, 0.8);
 }
 
 /* Chart container */
@@ -253,3 +345,68 @@ select option:checked {
   color: white;
 }
 
+/* ============================================
+   SIDEBAR STYLES - CONSISTENT DARK BLUE
+   ============================================ */
+
+/* Light mode sidebar - dark blue */
+aside {
+  background-color: #1e3a5f !important;
+}
+
+aside .text-gray-900,
+aside .dark\:text-gray-100 {
+  color: #ffffff !important;
+}
+
+aside .text-gray-600,
+aside .text-gray-400,
+aside .dark\:text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+aside a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+aside a.bg-blue-50,
+aside a.dark\:bg-blue-900\/20 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+aside .border-gray-200,
+aside .dark\:border-gray-800 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Sidebar user info at bottom */
+aside .bg-gray-200,
+aside .dark\:bg-gray-700 {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+aside .text-gray-500,
+aside .dark\:text-gray-400 {
+  color: #94a3b8 !important;
+}
+
+/* Dark mode sidebar - same dark color */
+.dark aside {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+}
+
+.dark aside .border-gray-200,
+.dark aside .dark\:border-gray-800 {
+  border-color: #1e293b !important;
+}
+
+/* ============================================
+   HEADER STYLES
+   ============================================ */
+
+/* Dark mode header */
+.dark header {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+}

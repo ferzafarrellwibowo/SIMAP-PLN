@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabaseServer } from '../../../lib/supabaseServer';
+import { calculateContractStatus } from '../../../lib/contract-status';
 
-// GET - Ambil semua contracts
+// GET - Ambil semua contracts dengan status dihitung dinamis
 export async function GET() {
   try {
     const { data, error } = await supabaseServer
@@ -14,7 +15,24 @@ export async function GET() {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ data }, { status: 200 });
+    // Hitung status secara dinamis untuk setiap kontrak
+    const currentDate = new Date();
+    const dataWithCalculatedStatus = data?.map((contract: any) => {
+      const calculatedStatus = calculateContractStatus(
+        {
+          tanggalBerakhir: contract.tanggal_berakhir,
+          progressPekerjaan: parseFloat(contract.progress_pekerjaan || '0'),
+        },
+        currentDate
+      );
+
+      return {
+        ...contract,
+        status: calculatedStatus,
+      };
+    });
+
+    return NextResponse.json({ data: dataWithCalculatedStatus }, { status: 200 });
   } catch (error: any) {
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
