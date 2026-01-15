@@ -17,20 +17,20 @@ export default function LaporanPage() {
 
   const categoryStats = useMemo(() => {
     const categories: ContractCategory[] = ["investasi", "pemeliharaan", "administrasi"];
-    
+
     return categories.map((cat) => {
       const catContracts = contracts.filter((c) => c.kategori === cat);
       const catInvoices = invoices.filter((inv) => {
         const contract = contracts.find((c) => c.id === inv.contractId);
         return contract?.kategori === cat;
       });
-      
+
       const totalNilai = catContracts.reduce((sum, c) => sum + c.nilaiKontrak, 0);
       const totalDibayar = catContracts.reduce((sum, c) => sum + c.totalTagihanDibayar, 0);
       const totalTagihan = catInvoices.length;
       const tagihanDibayar = catInvoices.filter((i) => i.status === "dibayar").length;
       const tagihanPending = catInvoices.filter((i) => i.status === "diajukan" || i.status === "diterima").length;
-      
+
       return {
         kategori: cat,
         label: CONTRACT_CATEGORY_LABELS[cat],
@@ -74,12 +74,12 @@ export default function LaporanPage() {
       cat.tagihanDibayar,
       cat.tagihanPending,
     ]);
-    
+
     const csvContent = [
       headers.join(","),
       ...rows.map((row) => row.join(",")),
     ].join("\n");
-    
+
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -116,26 +116,26 @@ export default function LaporanPage() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"
       >
-        <h2 className="text-lg font-semibold mb-4">Ringkasan Keseluruhan</h2>
+        <h2 className="text-lg font-semibold mb-4 !text-white">Ringkasan Keseluruhan</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>
-            <p className="text-blue-200 text-sm">Total Kontrak</p>
-            <p className="text-2xl font-bold">{overallStats.totalKontrak}</p>
-            <p className="text-blue-200 text-xs">{overallStats.kontrakAktif} aktif</p>
+            <p className="!text-blue-100 text-sm">Total Kontrak</p>
+            <p className="text-2xl font-bold !text-white">{overallStats.totalKontrak}</p>
+            <p className="!text-blue-100 text-xs">{overallStats.kontrakAktif} aktif</p>
           </div>
           <div>
-            <p className="text-blue-200 text-sm">Pagu</p>
-            <p className="text-2xl font-bold">{formatCurrency(overallStats.totalNilai)}</p>
+            <p className="!text-blue-100 text-sm">Pagu</p>
+            <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalNilai)}</p>
           </div>
           <div>
-            <p className="text-blue-200 text-sm">Serapan</p>
-            <p className="text-2xl font-bold">{formatCurrency(overallStats.totalDibayar)}</p>
-            <p className="text-blue-200 text-xs">{overallStats.persentaseRealisasi.toFixed(1)}% serapan</p>
+            <p className="!text-blue-100 text-sm">Serapan</p>
+            <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalDibayar)}</p>
+            <p className="!text-blue-100 text-xs">{overallStats.persentaseRealisasi.toFixed(1)}% serapan</p>
           </div>
           <div>
-            <p className="text-blue-200 text-sm">Total Tagihan</p>
-            <p className="text-2xl font-bold">{overallStats.totalTagihan}</p>
-            <p className="text-blue-200 text-xs">{overallStats.tagihanPending} pending</p>
+            <p className="!text-blue-100 text-sm">Total Tagihan</p>
+            <p className="text-2xl font-bold !text-white">{overallStats.totalTagihan}</p>
+            <p className="!text-blue-100 text-xs">{overallStats.tagihanPending} pending</p>
           </div>
         </div>
       </motion.div>
@@ -151,10 +151,9 @@ export default function LaporanPage() {
             className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className={`w-4 h-4 rounded-full ${
-                cat.kategori === "investasi" ? "bg-purple-500" :
-                cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
-              }`} />
+              <div className={`w-4 h-4 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
+                  cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                }`} />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {cat.label}
               </h3>
@@ -190,10 +189,9 @@ export default function LaporanPage() {
               <div>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-gray-600">Serapan</span>
-                  <span className={`font-medium ${
-                    cat.persentaseRealisasi > 90 ? "text-red-600" :
-                    cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
-                  }`}>
+                  <span className={`font-medium ${cat.persentaseRealisasi > 90 ? "text-red-600" :
+                      cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
+                    }`}>
                     {cat.persentaseRealisasi.toFixed(1)}%
                   </span>
                 </div>
@@ -202,10 +200,9 @@ export default function LaporanPage() {
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(cat.persentaseRealisasi, 100)}%` }}
                     transition={{ duration: 1, delay: index * 0.2 }}
-                    className={`h-full rounded-full ${
-                      cat.persentaseRealisasi > 90 ? "bg-red-500" :
-                      cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
-                    }`}
+                    className={`h-full rounded-full ${cat.persentaseRealisasi > 90 ? "bg-red-500" :
+                        cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
+                      }`}
                   />
                 </div>
               </div>
@@ -254,10 +251,9 @@ export default function LaporanPage() {
                 <tr key={cat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${
-                        cat.kategori === "investasi" ? "bg-purple-500" :
-                        cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
-                      }`} />
+                      <span className={`w-2 h-2 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
+                          cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                        }`} />
                       {cat.label}
                     </div>
                   </td>
@@ -267,11 +263,10 @@ export default function LaporanPage() {
                   <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
                   <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${
-                      cat.persentaseRealisasi > 90 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                      cat.persentaseRealisasi > 70 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                      "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    }`}>
+                    <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${cat.persentaseRealisasi > 90 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                        cat.persentaseRealisasi > 70 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                          "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                      }`}>
                       {cat.persentaseRealisasi.toFixed(1)}%
                     </span>
                   </td>

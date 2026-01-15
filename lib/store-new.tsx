@@ -277,9 +277,9 @@ export const INVOICE_STATUS_LABELS: Record<InvoiceStatus, string> = {
 };
 
 export const INVOICE_STATUS_COLORS: Record<InvoiceStatus, string> = {
-  diajukan: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
+  diajukan: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
   diterima: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
-  dibayar: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-200",
+  dibayar: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200",
   ditolak: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
 };
 
