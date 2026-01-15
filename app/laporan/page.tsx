@@ -263,9 +263,9 @@ export default function LaporanPage() {
                   <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
                   <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
                   <td className="px-4 py-3 text-center">
-                    <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${cat.persentaseRealisasi > 90 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                      cat.persentaseRealisasi > 70 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi > 90 ? "bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-400" :
+                      cat.persentaseRealisasi > 70 ? "bg-amber-200 text-amber-900 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                        "bg-emerald-200 text-emerald-900 dark:bg-green-900/30 dark:text-green-400"
                       }`}>
                       {cat.persentaseRealisasi.toFixed(1)}%
                     </span>

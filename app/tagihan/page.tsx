@@ -220,21 +220,21 @@ export default function TagihanPage() {
 
       {/* Status Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-xl p-4 border border-yellow-200 dark:border-yellow-700">
-          <p className="text-sm text-yellow-700 dark:text-yellow-300 font-medium">Diajukan</p>
-          <p className="text-2xl font-bold text-yellow-800 dark:text-yellow-200">{statusStats.diajukan}</p>
+        <div className="bg-amber-100 dark:bg-yellow-900/30 rounded-xl p-4 border border-amber-300 dark:border-yellow-700">
+          <p className="text-sm text-amber-800 dark:text-yellow-300 font-medium">Diajukan</p>
+          <p className="text-2xl font-bold text-amber-950 dark:text-yellow-200 mt-1">{statusStats.diajukan}</p>
         </div>
-        <div className="bg-blue-50 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
-          <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">Diterima</p>
-          <p className="text-2xl font-bold text-blue-800 dark:text-blue-200">{statusStats.diterima}</p>
+        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-300 dark:border-blue-700">
+          <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">Diterima</p>
+          <p className="text-2xl font-bold text-blue-950 dark:text-blue-200 mt-1">{statusStats.diterima}</p>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-4 border border-green-200 dark:border-green-700">
-          <p className="text-sm text-green-700 dark:text-green-300 font-medium">Dibayar</p>
-          <p className="text-2xl font-bold text-green-800 dark:text-green-200">{statusStats.dibayar}</p>
+        <div className="bg-emerald-100 dark:bg-green-900/30 rounded-xl p-4 border border-emerald-300 dark:border-green-700">
+          <p className="text-sm text-emerald-800 dark:text-green-300 font-medium">Dibayar</p>
+          <p className="text-2xl font-bold text-emerald-950 dark:text-green-200 mt-1">{statusStats.dibayar}</p>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/30 rounded-xl p-4 border border-red-200 dark:border-red-700">
-          <p className="text-sm text-red-700 dark:text-red-300 font-medium">Ditolak</p>
-          <p className="text-2xl font-bold text-red-800 dark:text-red-200">{statusStats.ditolak}</p>
+        <div className="bg-red-100 dark:bg-red-900/30 rounded-xl p-4 border border-red-300 dark:border-red-700">
+          <p className="text-sm text-red-800 dark:text-red-300 font-medium">Ditolak</p>
+          <p className="text-2xl font-bold text-red-950 dark:text-red-200 mt-1">{statusStats.ditolak}</p>
         </div>
       </div>
 
