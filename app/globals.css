@@ -8,58 +8,58 @@
 
 :root {
   /* ===== LIGHT MODE (DEFAULT) - Clean & Professional ===== */
-  
+
   /* Background Colors */
   --background: #ffffff;
   --background-secondary: #f8fafc;
   --card-bg: #ffffff;
   --card-bg-hover: #fafbfc;
-  
+
   /* Text Colors - High Contrast */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #64748b;
   --text-disabled: #94a3b8;
-  
+
   /* Border & Divider */
   --border-primary: #e2e8f0;
   --border-secondary: #cbd5e1;
   --border-focus: #3b82f6;
-  
+
   /* Input & Form */
   --input-bg: #ffffff;
   --input-border: #cbd5e1;
   --input-focus-border: #3b82f6;
   --input-placeholder: #94a3b8;
-  
+
   /* Sidebar - Dark Blue */
   --sidebar-bg: #1e3a5f;
   --sidebar-text: #cbd5e1;
   --sidebar-text-active: #ffffff;
   --sidebar-hover: rgba(255, 255, 255, 0.08);
   --sidebar-active-bg: rgba(59, 130, 246, 0.15);
-  
+
   /* Header/Navbar */
   --header-bg: #ffffff;
   --header-border: #e2e8f0;
-  
+
   /* Status Colors - Light Mode */
   --status-success: #10b981;
   --status-success-bg: #d1fae5;
   --status-success-text: #065f46;
-  
+
   --status-warning: #f59e0b;
   --status-warning-bg: #fef3c7;
   --status-warning-text: #92400e;
-  
+
   --status-error: #ef4444;
   --status-error-bg: #fee2e2;
   --status-error-text: #991b1b;
-  
+
   --status-info: #3b82f6;
   --status-info-bg: #dbeafe;
   --status-info-text: #1e40af;
-  
+
   /* Accent Colors */
   --accent-blue: #3b82f6;
   --accent-green: #10b981;
@@ -70,58 +70,58 @@
 
 .dark {
   /* ===== DARK MODE - Navy/Blue Theme ===== */
-  
+
   /* Background Colors - Dark Blue/Navy */
   --background: #0a1628;
   --background-secondary: #0f172a;
   --card-bg: #1e293b;
   --card-bg-hover: #283548;
-  
+
   /* Text Colors - High Contrast on Dark */
   --text-primary: #f1f5f9;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-disabled: #64748b;
-  
+
   /* Border & Divider */
   --border-primary: #334155;
   --border-secondary: #475569;
   --border-focus: #60a5fa;
-  
+
   /* Input & Form */
   --input-bg: #1e293b;
   --input-border: #475569;
   --input-focus-border: #60a5fa;
   --input-placeholder: #64748b;
-  
+
   /* Sidebar - Darker Navy */
   --sidebar-bg: #0a1628;
   --sidebar-text: #94a3b8;
   --sidebar-text-active: #ffffff;
   --sidebar-hover: rgba(255, 255, 255, 0.05);
   --sidebar-active-bg: rgba(96, 165, 250, 0.15);
-  
+
   /* Header/Navbar */
   --header-bg: #1e293b;
   --header-border: #334155;
-  
+
   /* Status Colors - Dark Mode */
   --status-success: #34d399;
   --status-success-bg: #064e3b;
   --status-success-text: #a7f3d0;
-  
+
   --status-warning: #fbbf24;
   --status-warning-bg: #78350f;
   --status-warning-text: #fef3c7;
-  
+
   --status-error: #f87171;
   --status-error-bg: #7f1d1d;
   --status-error-text: #fecaca;
-  
+
   --status-info: #60a5fa;
   --status-info-bg: #1e3a8a;
   --status-info-text: #dbeafe;
-  
+
   /* Accent Colors */
   --accent-blue: #60a5fa;
   --accent-green: #34d399;
@@ -266,12 +266,21 @@ html:not(.dark) .text-gray-400 {
 }
 
 /* Ensure headings are always visible */
-html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, 
-html:not(.dark) h4, html:not(.dark) h5, html:not(.dark) h6 {
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6 {
   color: #0f172a;
 }
 
-.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
   color: #f1f5f9 !important;
 }
 
@@ -1001,4 +1010,264 @@ html:not(.dark) .text-gray-600 {
 
 .dark .text-gray-800 {
   color: #f1f5f9 !important;
+}
+
+/* ============================================
+   LIGHT MODE TEXT COLOR OVERRIDES FOR CARDS
+   ============================================ */
+
+/* Blue text - Light Mode */
+html:not(.dark) .text-blue-900 {
+  color: #1e3a8a !important;
+}
+
+/* Green text - Light Mode */
+html:not(.dark) .text-green-800 {
+  color: #166534 !important;
+}
+
+html:not(.dark) .text-green-900 {
+  color: #14532d !important;
+}
+
+/* Purple text - Light Mode */
+html:not(.dark) .text-purple-700 {
+  color: #7e22ce !important;
+}
+
+html:not(.dark) .text-purple-800 {
+  color: #6b21a8 !important;
+}
+
+html:not(.dark) .text-purple-900 {
+  color: #581c87 !important;
+}
+
+/* Orange text - Light Mode */
+html:not(.dark) .text-orange-700 {
+  color: #c2410c !important;
+}
+
+html:not(.dark) .text-orange-800 {
+  color: #9a3412 !important;
+}
+
+html:not(.dark) .text-orange-900 {
+  color: #7c2d12 !important;
+}
+
+/* Cyan text - Light Mode */
+html:not(.dark) .text-cyan-700 {
+  color: #0e7490 !important;
+}
+
+html:not(.dark) .text-cyan-800 {
+  color: #155e75 !important;
+}
+
+html:not(.dark) .text-cyan-900 {
+  color: #164e63 !important;
+}
+
+/* Red text - Light Mode */
+html:not(.dark) .text-red-700 {
+  color: #b91c1c !important;
+}
+
+html:not(.dark) .text-red-600 {
+  color: #dc2626 !important;
+}
+
+/* Yellow/Amber text - Light Mode */
+html:not(.dark) .text-yellow-700 {
+  color: #a16207 !important;
+}
+
+html:not(.dark) .text-yellow-600 {
+  color: #ca8a04 !important;
+}
+
+html:not(.dark) .text-amber-700 {
+  color: #b45309 !important;
+}
+
+/* Green text additions - Light Mode */
+html:not(.dark) .text-green-700 {
+  color: #15803d !important;
+}
+
+html:not(.dark) .text-green-600 {
+  color: #16a34a !important;
+}
+
+/* ============================================
+   TABLE HOVER OVERRIDE
+   ============================================ */
+
+/* Light mode - hover should be visible BLUE tint */
+html:not(.dark) tr:hover {
+  background-color: #dbeafe !important;
+}
+
+html:not(.dark) tr:hover td {
+  color: inherit;
+}
+
+html:not(.dark) .hover\:bg-gray-50:hover {
+  background-color: #dbeafe !important;
+}
+
+html:not(.dark) .hover\:bg-gray-100:hover {
+  background-color: #bfdbfe !important;
+}
+
+/* Dark mode - hover should be visible LIGHTER slate */
+.dark tr:hover {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:bg-gray-800:hover {
+  background-color: #334155 !important;
+}
+
+/* Disable hover effect on thead and tfoot rows - HIGH SPECIFICITY */
+table thead tr:hover,
+table tfoot tr:hover,
+thead tr:hover,
+tfoot tr:hover {
+  background-color: transparent !important;
+}
+
+html:not(.dark) table thead tr:hover,
+html:not(.dark) thead tr:hover,
+html:not(.dark) table thead tr {
+  background-color: #f9fafb !important;
+}
+
+html:not(.dark) table tfoot tr:hover,
+html:not(.dark) tfoot tr:hover,
+html:not(.dark) table tfoot tr {
+  background-color: #f3f4f6 !important;
+}
+
+.dark table thead tr:hover,
+.dark thead tr:hover,
+.dark table thead tr {
+  background-color: #1f2937 !important;
+}
+
+.dark table tfoot tr:hover,
+.dark tfoot tr:hover,
+.dark table tfoot tr {
+  background-color: #1f2937 !important;
+}
+
+/* Only tbody rows should have hover effect */
+html:not(.dark) table tbody tr:hover {
+  background-color: #dbeafe !important;
+}
+
+.dark table tbody tr:hover {
+  background-color: #334155 !important;
+}
+
+/* NO HOVER CLASS - completely disable hover effect */
+tr.no-hover:hover,
+.no-hover:hover {
+  background-color: inherit !important;
+}
+
+html:not(.dark) tr.no-hover:hover {
+  background-color: inherit !important;
+}
+
+.dark tr.no-hover:hover {
+  background-color: inherit !important;
+}
+
+/* ============================================
+   LOGIN PAGE GRADIENT OVERRIDE
+   ============================================ */
+
+/* Light Mode - Force light gradient on login page */
+html:not(.dark) .bg-gradient-to-br.from-white {
+  background-image: linear-gradient(to bottom right, #ffffff, #eff6ff, #e0f2fe) !important;
+}
+
+/* Dark Mode - Force dark gradient on login page */
+.dark .bg-gradient-to-br.from-white {
+  background-image: linear-gradient(to bottom right, #030712, #0f172a, #0f1729) !important;
+}
+
+/* Light Mode - Login form card should be white */
+html:not(.dark) .bg-white.dark\:bg-gray-800 {
+  background-color: #ffffff !important;
+}
+
+/* Light mode text overrides for login page */
+html:not(.dark) .text-slate-800 {
+  color: #1e293b !important;
+}
+
+html:not(.dark) .text-slate-600 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-slate-700 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Light mode - Demo login buttons should be light */
+html:not(.dark) .bg-slate-50 {
+  background-color: #f8fafc !important;
+}
+
+html:not(.dark) .border-slate-200 {
+  border-color: #e2e8f0 !important;
+}
+
+html:not(.dark) .text-slate-800 {
+  color: #1e293b !important;
+}
+
+/* Light mode - Ensure hover states work correctly */
+html:not(.dark) .hover\:bg-blue-50:hover {
+  background-color: #eff6ff !important;
+}
+
+html:not(.dark) .hover\:border-blue-300:hover {
+  border-color: #93c5fd !important;
+}
+
+/* Light mode - Role badges text should be dark and readable */
+html:not(.dark) .text-blue-700 {
+  color: #1d4ed8 !important;
+}
+
+html:not(.dark) .text-emerald-700 {
+  color: #047857 !important;
+}
+
+html:not(.dark) .bg-blue-100 {
+  background-color: #dbeafe !important;
+}
+
+html:not(.dark) .bg-emerald-100 {
+  background-color: #d1fae5 !important;
+}
+
+html:not(.dark) .border-blue-200 {
+  border-color: #bfdbfe !important;
+}
+
+html:not(.dark) .border-emerald-200 {
+  border-color: #a7f3d0 !important;
 }

@@ -156,18 +156,18 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* User info at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700 dark:border-white/10">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-blue-700/50 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-700 dark:bg-white/15 rounded-full flex items-center justify-center">
-              <span className="text-sm font-medium text-white">
+            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-sm font-bold text-white">
                 {user?.name.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
+              <p className="text-sm font-semibold text-white truncate" style={{ color: '#ffffff' }}>
                 {user?.name}
               </p>
-              <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full ${ROLE_COLORS[user?.role || "admin"]}`}>
+              <span className="inline-flex mt-1 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-400/20 text-blue-100 border border-blue-400/30">
                 {ROLE_LABELS[user?.role || "admin"]}
               </span>
             </div>

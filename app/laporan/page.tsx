@@ -152,7 +152,7 @@ export default function LaporanPage() {
           >
             <div className="flex items-center gap-3 mb-4">
               <div className={`w-4 h-4 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
-                  cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
                 }`} />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {cat.label}
@@ -190,7 +190,7 @@ export default function LaporanPage() {
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-gray-600">Serapan</span>
                   <span className={`font-medium ${cat.persentaseRealisasi > 90 ? "text-red-600" :
-                      cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
+                    cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
                     }`}>
                     {cat.persentaseRealisasi.toFixed(1)}%
                   </span>
@@ -201,7 +201,7 @@ export default function LaporanPage() {
                     animate={{ width: `${Math.min(cat.persentaseRealisasi, 100)}%` }}
                     transition={{ duration: 1, delay: index * 0.2 }}
                     className={`h-full rounded-full ${cat.persentaseRealisasi > 90 ? "bg-red-500" :
-                        cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
+                      cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
                       }`}
                   />
                 </div>
@@ -252,7 +252,7 @@ export default function LaporanPage() {
                   <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <span className={`w-2 h-2 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
-                          cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                        cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
                         }`} />
                       {cat.label}
                     </div>
@@ -264,8 +264,8 @@ export default function LaporanPage() {
                   <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded-full text-xs font-semibold ${cat.persentaseRealisasi > 90 ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
-                        cat.persentaseRealisasi > 70 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                          "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                      cat.persentaseRealisasi > 70 ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                        "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                       }`}>
                       {cat.persentaseRealisasi.toFixed(1)}%
                     </span>

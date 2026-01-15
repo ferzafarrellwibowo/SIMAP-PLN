@@ -29,12 +29,12 @@ interface SummaryCardProps {
 
 function SummaryCard({ title, value, subtitle, icon, color }: SummaryCardProps) {
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-900/95 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-6">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-800 dark:text-gray-300">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">{value}</p>
-          {subtitle && <p className="text-sm text-gray-700 dark:text-gray-400 mt-1">{subtitle}</p>}
+          <p className="text-sm font-semibold text-slate-600 dark:text-gray-300">{title}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white mt-2">{value}</p>
+          {subtitle && <p className="text-sm text-slate-500 dark:text-gray-400 mt-1">{subtitle}</p>}
         </div>
         <div className={"p-3 rounded-xl " + color}>{icon}</div>
       </div>
@@ -56,13 +56,13 @@ function RealisasiChart({ totalNilai, totalDibayar, persentase }: { totalNilai: 
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4 mt-6">
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
-          <p className="text-xs text-blue-600 dark:text-blue-300 font-medium">Total Nilai Kontrak</p>
-          <p className="text-lg font-bold text-blue-700 dark:text-blue-200 mt-1">{formatCurrency(totalNilai)}</p>
+        <div className="p-4 bg-blue-100 border border-blue-300 dark:bg-blue-900/30 dark:border-blue-800 rounded-lg">
+          <p className="text-xs font-bold text-blue-800 dark:text-blue-300">Total Nilai Kontrak</p>
+          <p className="text-lg font-bold mt-1 text-blue-900 dark:text-blue-200">{formatCurrency(totalNilai)}</p>
         </div>
-        <div className="p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
-          <p className="text-xs text-green-600 dark:text-green-300 font-medium">Serapan</p>
-          <p className="text-lg font-bold text-green-700 dark:text-green-200 mt-1">{formatCurrency(totalDibayar)}</p>
+        <div className="p-4 bg-green-100 border border-green-300 dark:bg-green-900/30 dark:border-green-800 rounded-lg">
+          <p className="text-xs font-bold text-green-800 dark:text-green-300">Serapan</p>
+          <p className="text-lg font-bold mt-1 text-green-900 dark:text-green-200">{formatCurrency(totalDibayar)}</p>
         </div>
       </div>
     </div>
@@ -92,23 +92,23 @@ function InvoiceStatusChart({ summary }: { summary: any }) {
 
 function CategorySummary({ summary }: { summary: any }) {
   const categories = [
-    { key: "investasi" as ContractCategory, count: summary.kontrakInvestasi, nilai: summary.nilaiInvestasi, color: "bg-purple-500", bgColor: "bg-purple-50 dark:bg-purple-900/30", textColor: "text-purple-800 dark:text-purple-200" },
-    { key: "pemeliharaan" as ContractCategory, count: summary.kontrakPemeliharaan, nilai: summary.nilaiPemeliharaan, color: "bg-orange-500", bgColor: "bg-orange-50 dark:bg-orange-900/30", textColor: "text-orange-800 dark:text-orange-200" },
-    { key: "administrasi" as ContractCategory, count: summary.kontrakAdministrasi, nilai: summary.nilaiAdministrasi, color: "bg-cyan-500", bgColor: "bg-cyan-50 dark:bg-cyan-900/30", textColor: "text-cyan-800 dark:text-cyan-200" },
+    { key: "investasi" as ContractCategory, count: summary.kontrakInvestasi, nilai: summary.nilaiInvestasi, color: "bg-purple-500", bgColor: "bg-purple-100 border border-purple-300 dark:bg-purple-900/30 dark:border-purple-800", labelClass: "text-purple-800 dark:text-purple-200", valueClass: "text-purple-900 dark:text-purple-100", subtextClass: "text-purple-700 dark:text-purple-300" },
+    { key: "pemeliharaan" as ContractCategory, count: summary.kontrakPemeliharaan, nilai: summary.nilaiPemeliharaan, color: "bg-orange-500", bgColor: "bg-orange-100 border border-orange-300 dark:bg-orange-900/30 dark:border-orange-800", labelClass: "text-orange-800 dark:text-orange-200", valueClass: "text-orange-900 dark:text-orange-100", subtextClass: "text-orange-700 dark:text-orange-300" },
+    { key: "administrasi" as ContractCategory, count: summary.kontrakAdministrasi, nilai: summary.nilaiAdministrasi, color: "bg-cyan-500", bgColor: "bg-cyan-100 border border-cyan-300 dark:bg-cyan-900/30 dark:border-cyan-800", labelClass: "text-cyan-800 dark:text-cyan-200", valueClass: "text-cyan-900 dark:text-cyan-100", subtextClass: "text-cyan-700 dark:text-cyan-300" },
   ];
   const totalNilai = summary.nilaiInvestasi + summary.nilaiPemeliharaan + summary.nilaiAdministrasi;
   return (
-    <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ringkasan per Kategori</h3>
+    <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 p-6">
+      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Ringkasan per Kategori</h3>
       <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex mb-4">
         {categories.map((cat, i) => (<motion.div key={cat.key} initial={{ width: 0 }} animate={{ width: totalNilai > 0 ? ((cat.nilai / totalNilai) * 100) + "%" : "0%" }} transition={{ duration: 0.8, delay: i * 0.15 }} className={cat.color + " h-full"} />))}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {categories.map((cat) => (
-          <Link key={cat.key} href={"/kontrak?kategori=" + cat.key} className={cat.bgColor + " p-4 rounded-lg hover:opacity-90 transition-opacity"}>
-            <div className="flex items-center gap-2 mb-2"><div className={"w-3 h-3 rounded-full " + cat.color} /><p className={"text-sm font-semibold " + cat.textColor}>{CONTRACT_CATEGORY_LABELS[cat.key]}</p></div>
-            <p className={"text-lg font-bold " + cat.textColor}>{formatCurrency(cat.nilai)}</p>
-            <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mt-1">{cat.count} kontrak aktif</p>
+          <Link key={cat.key} href={"/kontrak?kategori=" + cat.key} className={cat.bgColor + " p-4 rounded-xl hover:shadow-md transition-all"}>
+            <div className="flex items-center gap-2 mb-2"><div className={"w-3 h-3 rounded-full " + cat.color} /><p className={"text-sm font-bold " + cat.labelClass}>{CONTRACT_CATEGORY_LABELS[cat.key]}</p></div>
+            <p className={"text-xl font-bold " + cat.valueClass}>{formatCurrency(cat.nilai)}</p>
+            <p className={"text-xs font-semibold mt-1 " + cat.subtextClass}>{cat.count} kontrak aktif</p>
           </Link>
         ))}
       </div>
@@ -121,16 +121,16 @@ export default function HomePage() {
   const { contracts, invoices, getDashboardSummary } = useContractStore();
   const [loading, setLoading] = useState(true);
   const summary = useMemo(() => getDashboardSummary(), [getDashboardSummary]);
-  
+
   useEffect(() => { const timer = setTimeout(() => setLoading(false), 600); return () => clearTimeout(timer); }, []);
-  
+
   if (loading) return (
     <div className="space-y-6 animate-pulse">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">{[...Array(4)].map((_, i) => (<div key={i} className="h-32 bg-gray-200 dark:bg-gray-800 rounded-xl" />))}</div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6"><div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-xl" /><div className="h-64 bg-gray-200 dark:bg-gray-800 rounded-xl" /></div>
     </div>
   );
-  
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -141,10 +141,10 @@ export default function HomePage() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <SummaryCard title="Kontrak Aktif" value={summary.totalKontrakAktif} subtitle={contracts.length + " total kontrak"} icon={<svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>} color="bg-blue-100 dark:bg-blue-900/30" />
-        <SummaryCard title="Tagihan Pending" value={summary.tagihanDiajukan + summary.tagihanDiterima} subtitle={summary.tagihanPendingLama + " lebih dari 7 hari"} icon={<svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} color="bg-yellow-100 dark:bg-yellow-900/30" />
-        <SummaryCard title="Serapan" value={formatCurrency(summary.totalDibayar)} subtitle={summary.persentaseRealisasiGlobal.toFixed(1) + "% serapan"} icon={<svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} color="bg-green-100 dark:bg-green-900/30" />
-        <SummaryCard title="Sisa Anggaran" value={formatCurrency(summary.totalSisaAnggaran)} subtitle={summary.kontrakHampirHabis + " kontrak > 90%"} icon={<svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>} color="bg-purple-100 dark:bg-purple-900/30" />
+        <SummaryCard title="Kontrak Aktif" value={summary.totalKontrakAktif} subtitle={contracts.length + " total kontrak"} icon={<svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>} color="bg-blue-100 border border-blue-200 dark:bg-blue-900/30 dark:border-blue-800" />
+        <SummaryCard title="Tagihan Pending" value={summary.tagihanDiajukan + summary.tagihanDiterima} subtitle={summary.tagihanPendingLama + " lebih dari 7 hari"} icon={<svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} color="bg-amber-100 border border-amber-200 dark:bg-yellow-900/30 dark:border-yellow-800" />
+        <SummaryCard title="Serapan" value={formatCurrency(summary.totalDibayar)} subtitle={summary.persentaseRealisasiGlobal.toFixed(1) + "% serapan"} icon={<svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} color="bg-green-100 border border-green-200 dark:bg-green-900/30 dark:border-green-800" />
+        <SummaryCard title="Sisa Anggaran" value={formatCurrency(summary.totalSisaAnggaran)} subtitle={summary.kontrakHampirHabis + " kontrak > 90%"} icon={<svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>} color="bg-purple-100 border border-purple-200 dark:bg-purple-900/30 dark:border-purple-800" />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <RealisasiChart totalNilai={summary.totalNilaiKontrak} totalDibayar={summary.totalDibayar} persentase={summary.persentaseRealisasiGlobal} />
