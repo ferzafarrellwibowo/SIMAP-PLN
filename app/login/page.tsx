@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth, MOCK_USERS } from "@/lib/auth-new";
@@ -12,8 +12,10 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -109,15 +111,33 @@ export default function LoginPage() {
               <label htmlFor="password" className="block text-sm font-semibold text-slate-700 dark:text-gray-200 mb-2">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-slate-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-slate-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
 
             {error && (
@@ -151,29 +171,54 @@ export default function LoginPage() {
 
           {/* Quick Login for Demo */}
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
-            <p className="text-sm font-semibold text-slate-600 dark:text-gray-300 text-center mb-4">
-              Demo Login (klik untuk masuk cepat)
-            </p>
-            <div className="grid grid-cols-1 gap-2">
-              {MOCK_USERS.map((user) => (
-                <button
-                  key={user.id}
-                  onClick={() => handleQuickLogin(user.email)}
-                  disabled={loading}
-                  className="flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all text-left disabled:opacity-50"
+            <button
+              type="button"
+              onClick={() => setShowDemo(!showDemo)}
+              className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-slate-600 dark:text-gray-300 mb-4 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              <span>Demo Login (klik untuk masuk cepat)</span>
+              <svg
+                className={`w-4 h-4 transform transition-transform duration-200 ${showDemo ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <AnimatePresence>
+              {showDemo && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-white">{user.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-gray-400">{user.email}</p>
+                  <div className="grid grid-cols-1 gap-2 pb-2">
+                    {MOCK_USERS.map((user) => (
+                      <button
+                        key={user.id}
+                        onClick={() => handleQuickLogin(user.email)}
+                        disabled={loading}
+                        className="flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-gray-700 border border-slate-200 dark:border-gray-600 rounded-xl hover:bg-blue-50 dark:hover:bg-gray-600 hover:border-blue-300 dark:hover:border-blue-500 transition-all text-left disabled:opacity-50"
+                      >
+                        <div>
+                          <p className="text-sm font-semibold text-slate-800 dark:text-white">{user.name}</p>
+                          <p className="text-xs text-slate-500 dark:text-gray-400">{user.email}</p>
+                        </div>
+                        <span className={`text-xs px-3 py-1.5 rounded-full font-semibold ${user.role === "admin" ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700" :
+                          "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700"
+                          }`}>
+                          {user.role === "admin" ? "Admin" : "Viewer"}
+                        </span>
+                      </button>
+                    ))}
                   </div>
-                  <span className={`text-xs px-3 py-1.5 rounded-full font-semibold ${user.role === "admin" ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700" :
-                    "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700"
-                    }`}>
-                    {user.role === "admin" ? "Admin (Operator)" : "Viewer (Manajer)"}
-                  </span>
-                </button>
-              ))}
-            </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

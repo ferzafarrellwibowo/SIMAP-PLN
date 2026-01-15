@@ -96,9 +96,10 @@ export const MOCK_USERS: User[] = [
 ];
 
 // Role labels untuk display
+// Role labels untuk display
 export const ROLE_LABELS: Record<UserRole, string> = {
-  admin: "Admin (Operator)",
-  viewer: "Viewer (Manajer)",
+  admin: "Admin",
+  viewer: "Viewer",
 };
 
 // Role colors

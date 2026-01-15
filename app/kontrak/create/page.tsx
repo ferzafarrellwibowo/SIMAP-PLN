@@ -49,6 +49,7 @@ export default function CreateContractPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -56,6 +57,9 @@ export default function CreateContractPage() {
       ...prev,
       [name]: value,
     }));
+
+    // Clear error when user changes input
+    if (errorMessage) setErrorMessage(null);
 
     // Auto-update jenisAnggaran based on kategori
     if (name === "kategori") {
@@ -69,11 +73,13 @@ export default function CreateContractPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setErrorMessage(null);
 
     try {
       // Validation
       if (!formData.judulPekerjaan || !formData.noPerjanjian || !formData.vendor || !formData.nilaiKontrak) {
-        alert("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
+        setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setIsSubmitting(false);
         return;
       }
@@ -108,24 +114,25 @@ export default function CreateContractPage() {
         bidang: formData.bidang,
         keterangan: formData.keterangan,
         // New fields
-        requestTanggalSERelasi: formData.requestTanggalSERelasi || null,
+        requestTanggalSERelasi: formData.requestTanggalSERelasi || undefined,
         noXPS: formData.noXPS,
-        tanggalXPS: formData.tanggalXPS || null,
+        tanggalXPS: formData.tanggalXPS || undefined,
         noBeritaAcara: formData.noBeritaAcara,
-        tanggalBeritaAcara: formData.tanggalBeritaAcara || null,
+        tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
         noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
-        tanggalArsip: formData.tanggalArsip || null,
+        tanggalArsip: formData.tanggalArsip || undefined,
         entryBy: user?.name || "Admin", // Auto-filled dengan nama user
         status: "aktif" as const,
       };
 
-      createContract(newContract);
-      
+      await createContract(newContract);
+
       // Redirect to contract list
       router.push("/kontrak");
     } catch (error) {
       console.error("Error creating contract:", error);
-      alert("Terjadi kesalahan saat membuat kontrak");
+      setErrorMessage("Terjadi kesalahan saat membuat kontrak. Silakan coba lagi.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
     }
@@ -166,6 +173,22 @@ export default function CreateContractPage() {
           Lengkapi formulir di bawah untuk menambahkan kontrak baru
         </p>
       </div>
+
+      {/* Error Alert */}
+      {errorMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-800"
+        >
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <p className="text-red-800 dark:text-red-200 font-medium">{errorMessage}</p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Form */}
       <motion.form

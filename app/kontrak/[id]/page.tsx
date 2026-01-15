@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useContractStore, CONTRACT_CATEGORY_LABELS, CONTRACT_CATEGORY_COLORS, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, INVOICE_STATUS_LABELS, INVOICE_STATUS_COLORS } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
+import AlertPopup from "@/components/ui/alert-popup";
+
 
 function formatCurrency(value: number): string {
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(2)} M`;
@@ -26,29 +28,40 @@ export default function KontrakDetailPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { getContractById, getInvoicesByContract, updateContract } = useContractStore();
-  
+
   const contractId = params.id as string;
   const contract = useMemo(() => getContractById(contractId), [contractId, getContractById]);
   const invoices = useMemo(() => getInvoicesByContract(contractId), [contractId, getInvoicesByContract]);
-  
+
   const [isEditingProgress, setIsEditingProgress] = useState(false);
   const [progressValue, setProgressValue] = useState(contract?.progressPekerjaan.toString() || "0");
   const [isSavingProgress, setIsSavingProgress] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSaveProgress = async () => {
     const newProgress = parseFloat(progressValue);
     if (isNaN(newProgress) || newProgress < 0 || newProgress > 100) {
-      alert("Progress harus antara 0-100%");
+      setErrorMessage("Progress harus antara 0-100%");
       return;
     }
-    
+
     setIsSavingProgress(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
     try {
       await updateContract(contractId, { progressPekerjaan: newProgress });
       setIsEditingProgress(false);
+      setSuccessMessage("Progress pekerjaan berhasil diperbarui.");
+
+      // Auto clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     } catch (error) {
       console.error('Error updating progress:', error);
-      alert('Gagal menyimpan progress pekerjaan');
+      setErrorMessage('Gagal menyimpan progress pekerjaan');
     } finally {
       setIsSavingProgress(false);
     }
@@ -57,6 +70,7 @@ export default function KontrakDetailPage() {
   const handleCancelEdit = () => {
     setProgressValue(contract?.progressPekerjaan.toString() || "0");
     setIsEditingProgress(false);
+    setErrorMessage(null);
   };
 
   if (!contract) {
@@ -111,17 +125,16 @@ export default function KontrakDetailPage() {
             </span>
           </div>
         </div>
-        
+
         {user?.role === "admin" && (
           <div className="flex items-center gap-2">
             <Link
               href={`/tagihan/create?contractId=${contract.id}`}
-              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${
-                contract.persentaseRealisasi >= 100
-                  ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
-              {...(contract.persentaseRealisasi >= 100 ? { 
+              className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${contract.persentaseRealisasi >= 100
+                ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+              {...(contract.persentaseRealisasi >= 100 ? {
                 onClick: (e) => e.preventDefault(),
                 title: "Tidak dapat menambah tagihan karena serapan anggaran sudah mencapai 100%"
               } : {})}
@@ -135,6 +148,18 @@ export default function KontrakDetailPage() {
         )}
       </div>
 
+      {/* Alerts */}
+      <AlertPopup
+        message={successMessage}
+        type="success"
+        onClose={() => setSuccessMessage(null)}
+      />
+      <AlertPopup
+        message={errorMessage}
+        type="error"
+        onClose={() => setErrorMessage(null)}
+      />
+
       {/* Info Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Info */}
@@ -144,7 +169,7 @@ export default function KontrakDetailPage() {
           className="lg:col-span-2 bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Informasi Kontrak</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No Perjanjian</p>
@@ -318,23 +343,22 @@ export default function KontrakDetailPage() {
           className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Ringkasan Keuangan</h2>
-          
+
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Nilai Kontrak</p>
               <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiKontrak)}</p>
             </div>
-            
+
             <div className="h-px bg-gray-200 dark:bg-gray-700" />
-            
+
             {/* Serapan Anggaran */}
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">Serapan Anggaran</span>
-                <span className={`font-semibold ${
-                  contract.persentaseRealisasi > 90 ? "text-red-600" :
+                <span className={`font-semibold ${contract.persentaseRealisasi > 90 ? "text-red-600" :
                   contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
-                }`}>
+                  }`}>
                   {contract.persentaseRealisasi.toFixed(1)}%
                 </span>
               </div>
@@ -343,14 +367,13 @@ export default function KontrakDetailPage() {
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
                   transition={{ duration: 0.8 }}
-                  className={`h-full rounded-full ${
-                    contract.persentaseRealisasi > 90 ? "bg-red-500" :
+                  className={`h-full rounded-full ${contract.persentaseRealisasi > 90 ? "bg-red-500" :
                     contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
-                  }`}
+                    }`}
                 />
               </div>
             </div>
-            
+
             {/* Progres Pekerjaan */}
             <div>
               <div className="flex justify-between text-sm mb-2">
@@ -358,10 +381,9 @@ export default function KontrakDetailPage() {
                 <div className="flex items-center gap-2">
                   {!isEditingProgress ? (
                     <>
-                      <span className={`font-semibold ${
-                        contract.progressPekerjaan >= 90 ? "text-blue-600" :
+                      <span className={`font-semibold ${contract.progressPekerjaan >= 90 ? "text-blue-600" :
                         contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
-                      }`}>
+                        }`}>
                         {contract.progressPekerjaan.toFixed(1)}%
                       </span>
                       {user?.role === "admin" && (
@@ -426,15 +448,14 @@ export default function KontrakDetailPage() {
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className={`h-full rounded-full ${
-                    contract.progressPekerjaan >= 90 ? "bg-blue-500" :
+                  className={`h-full rounded-full ${contract.progressPekerjaan >= 90 ? "bg-blue-500" :
                     contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
-                  }`}
+                    }`}
                 />
               </div>
             </div>
-            
-              <div className="grid grid-cols-2 gap-3">
+
+            <div className="grid grid-cols-2 gap-3">
               <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <p className="text-xs text-green-600 dark:text-green-400 mb-1">Serapan</p>
                 <p className="text-sm font-bold text-green-700 dark:text-green-300">{formatCurrency(contract.totalTagihanDibayar)}</p>
@@ -485,7 +506,7 @@ export default function KontrakDetailPage() {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Tagihan</h2>
           <span className="text-sm text-gray-500 dark:text-gray-400">{invoices.length} tagihan</span>
         </div>
-        
+
         {invoices.length === 0 ? (
           <div className="text-center py-8">
             <svg className="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

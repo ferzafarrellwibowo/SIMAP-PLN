@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useContractStore, INVOICE_STATUS_LABELS, INVOICE_STATUS_COLORS, invoiceStatusOptions } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
+import AlertPopup from "@/components/ui/alert-popup";
 import type { InvoiceStatus, Invoice } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
@@ -34,7 +35,7 @@ function getAvailableStatusOptions(currentStatus: InvoiceStatus) {
   if (currentStatus === "ditolak" || currentStatus === "dibayar") {
     return [];
   }
-  
+
   // Jika status diajukan, hanya bisa pilih Diterima atau Ditolak
   if (currentStatus === "diajukan") {
     return [
@@ -42,7 +43,7 @@ function getAvailableStatusOptions(currentStatus: InvoiceStatus) {
       { value: "ditolak", label: "Ditolak" },
     ];
   }
-  
+
   // Jika status diterima, bisa pilih Ditolak atau Dibayar
   if (currentStatus === "diterima") {
     return [
@@ -50,14 +51,14 @@ function getAvailableStatusOptions(currentStatus: InvoiceStatus) {
       { value: "dibayar", label: "Dibayar" },
     ];
   }
-  
+
   return [];
 }
 
 export default function TagihanPage() {
   const { user } = useAuth();
   const { contracts, invoices, updateInvoiceStatus } = useContractStore();
-  
+
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
   const [sortBy, setSortBy] = useState<"terbaru" | "tertinggi" | "terendah">("terbaru");
@@ -66,6 +67,8 @@ export default function TagihanPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
   const [pendingStatus, setPendingStatus] = useState<InvoiceStatus | null>(null);
   const [dibayarOleh, setDibayarOleh] = useState("");
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Get unique years from invoices
   const availableYears = useMemo(() => {
@@ -80,26 +83,26 @@ export default function TagihanPage() {
   const filteredInvoices = useMemo(() => {
     let filtered = invoices.filter((inv) => {
       const contract = contracts.find((c) => c.id === inv.contractId);
-      const matchSearch = 
+      const matchSearch =
         inv.nomorTagihan.toLowerCase().includes(search.toLowerCase()) ||
         contract?.judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
         contract?.vendor.toLowerCase().includes(search.toLowerCase());
       const matchStatus = status === "all" || inv.status === status;
-      
+
       // Filter by year
       let matchYear = true;
       if (filterYear !== "all") {
         const invYear = new Date(inv.tanggalDiajukan).getFullYear();
         matchYear = invYear === parseInt(filterYear);
       }
-      
+
       // Filter by month
       let matchMonth = true;
       if (filterMonth !== "all") {
         const invMonth = new Date(inv.tanggalDiajukan).getMonth() + 1;
         matchMonth = invMonth === parseInt(filterMonth);
       }
-      
+
       return matchSearch && matchStatus && matchYear && matchMonth;
     });
 
@@ -127,16 +130,21 @@ export default function TagihanPage() {
       setPendingStatus(newStatus);
       return;
     }
-    
+
     setIsUpdating(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
     try {
       await updateInvoiceStatus(invoiceId, newStatus);
       setSelectedInvoice(null);
       setPendingStatus(null);
       setDibayarOleh("");
+      setSuccessMessage("Status tagihan berhasil diperbarui.");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Gagal mengubah status tagihan');
+      setErrorMessage('Gagal mengubah status tagihan');
+      setTimeout(() => setErrorMessage(null), 5000);
     } finally {
       setIsUpdating(false);
     }
@@ -144,19 +152,25 @@ export default function TagihanPage() {
 
   const handleConfirmDibayar = async (invoiceId: string) => {
     if (!dibayarOleh.trim()) {
-      alert('Harap isi nama pembayar');
+      setErrorMessage('Harap isi nama pembayar');
+      setTimeout(() => setErrorMessage(null), 3000);
       return;
     }
-    
+
     setIsUpdating(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
     try {
       await updateInvoiceStatus(invoiceId, "dibayar", dibayarOleh);
       setSelectedInvoice(null);
       setPendingStatus(null);
       setDibayarOleh("");
+      setSuccessMessage("Status tagihan berhasil diperbarui.");
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Gagal mengubah status tagihan');
+      setErrorMessage('Gagal mengubah status tagihan');
+      setTimeout(() => setErrorMessage(null), 5000);
     } finally {
       setIsUpdating(false);
     }
@@ -191,6 +205,18 @@ export default function TagihanPage() {
           </p>
         </div>
       </div>
+
+      {/* Alerts */}
+      <AlertPopup
+        message={successMessage}
+        type="success"
+        onClose={() => setSuccessMessage(null)}
+      />
+      <AlertPopup
+        message={errorMessage}
+        type="error"
+        onClose={() => setErrorMessage(null)}
+      />
 
       {/* Status Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -333,8 +359,8 @@ export default function TagihanPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan}>
-                          {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25 
-                            ? contract.judulPekerjaan.substring(0, 25) + "..." 
+                          {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25
+                            ? contract.judulPekerjaan.substring(0, 25) + "..."
                             : contract?.judulPekerjaan}
                         </span>
                       </td>
@@ -365,7 +391,7 @@ export default function TagihanPage() {
                           {(() => {
                             const availableOptions = getAvailableStatusOptions(invoice.status);
                             const canEdit = availableOptions.length > 0;
-                            
+
                             if (!canEdit) {
                               return (
                                 <span className="text-xs text-gray-400 dark:text-gray-500 italic">
@@ -382,7 +408,7 @@ export default function TagihanPage() {
                                 </span>
                               );
                             }
-                            
+
                             if (selectedInvoice === invoice.id) {
                               if (pendingStatus === "dibayar") {
                                 return (
@@ -413,7 +439,7 @@ export default function TagihanPage() {
                                   </div>
                                 );
                               }
-                              
+
                               return (
                                 <div className="inline-flex items-center w-auto bg-white dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 shadow-sm">
                                   <select
@@ -437,7 +463,7 @@ export default function TagihanPage() {
                                 </div>
                               );
                             }
-                            
+
                             return (
                               <button
                                 onClick={() => setSelectedInvoice(invoice.id)}
@@ -468,7 +494,7 @@ export default function TagihanPage() {
               const contract = getContractInfo(invoice.contractId);
               const age = daysAgo(invoice.tanggalDiajukan);
               const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
-              
+
               return (
                 <motion.div
                   key={invoice.id}
@@ -490,7 +516,7 @@ export default function TagihanPage() {
                       {INVOICE_STATUS_LABELS[invoice.status]}
                     </span>
                   </div>
-                  
+
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-400">
                     <span className="font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(invoice.nilaiTagihan)}
@@ -509,17 +535,17 @@ export default function TagihanPage() {
                       {(() => {
                         const availableOptions = getAvailableStatusOptions(invoice.status);
                         const canEdit = availableOptions.length > 0;
-                        
+
                         if (!canEdit) {
                           return (
                             <span className="text-xs text-gray-400 dark:text-gray-500 italic">
-                              {invoice.status === "dibayar" && invoice.dibayarOleh 
-                                ? `Final • oleh: ${invoice.dibayarOleh}` 
+                              {invoice.status === "dibayar" && invoice.dibayarOleh
+                                ? `Final • oleh: ${invoice.dibayarOleh}`
                                 : "Final"}
                             </span>
                           );
                         }
-                        
+
                         if (selectedInvoice === invoice.id) {
                           if (pendingStatus === "dibayar") {
                             return (
@@ -543,7 +569,7 @@ export default function TagihanPage() {
                               </div>
                             );
                           }
-                          
+
                           return (
                             <div className="flex items-center w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm">
                               <select
@@ -560,7 +586,7 @@ export default function TagihanPage() {
                             </div>
                           );
                         }
-                        
+
                         return (
                           <button
                             onClick={() => setSelectedInvoice(invoice.id)}

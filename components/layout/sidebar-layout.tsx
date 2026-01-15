@@ -111,13 +111,13 @@ export function SidebarLayout({ children }: { children: ReactNode }) {
       >
         {/* Logo */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-blue-700 dark:border-white/10">
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-3 hover:!bg-transparent">
             <Image
-              src="/Logo_PLN.svg"
+              src="/Logo_PLNb.svg"
               alt="Logo PLN"
-              width={40}
-              height={40}
-              className="h-10 w-10"
+              width={56}
+              height={56}
+              className="h-14 w-14"
             />
             <div className="flex flex-col">
               <span className="font-bold text-white">SIMAP</span>

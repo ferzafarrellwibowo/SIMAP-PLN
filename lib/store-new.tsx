@@ -241,8 +241,8 @@ export const JENIS_ANGGARAN_LABELS: Record<JenisAnggaran, string> = {
 };
 
 export const JENIS_ANGGARAN_COLORS: Record<JenisAnggaran, string> = {
-  AI: "bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200",
-  AO: "bg-teal-100 text-teal-800 dark:bg-teal-900/40 dark:text-teal-200",
+  AI: "bg-purple-100 text-purple-900 dark:bg-purple-900/40 dark:text-purple-200",
+  AO: "bg-teal-100 text-teal-900 dark:bg-teal-900/40 dark:text-teal-200",
 };
 
 export const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
@@ -353,7 +353,7 @@ interface ContractStoreContextType {
 
   createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Promise<Invoice>;
   updateInvoice: (id: string, updates: Partial<Invoice>) => Promise<Invoice>;
-  updateInvoiceStatus: (id: string, status: InvoiceStatus, notes?: string) => Invoice | undefined;
+  updateInvoiceStatus: (id: string, status: InvoiceStatus, dibayarOleh?: string) => Promise<Invoice>;
 
   // Alert mutations
   markAlertAsRead: (id: string) => void;

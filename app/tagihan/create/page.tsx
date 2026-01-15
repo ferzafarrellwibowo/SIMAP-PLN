@@ -37,6 +37,7 @@ export default function CreateTagihanPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // File upload state
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -77,11 +78,11 @@ export default function CreateTagihanPage() {
       // Prefer sanitized noPerjanjian, fallback to numeric `no`, then last 8 chars of id
       const contractKey = selectedContract.noPerjanjian
         ? selectedContract.noPerjanjian
-            .toString()
-            .replace(/[^A-Za-z0-9]/g, "-") // replace non-alnum with '-'
-            .replace(/-+/g, "-") // collapse multiple dashes
-            .replace(/(^-|-$)/g, "") // trim leading/trailing dashes
-            .toUpperCase()
+          .toString()
+          .replace(/[^A-Za-z0-9]/g, "-") // replace non-alnum with '-'
+          .replace(/-+/g, "-") // collapse multiple dashes
+          .replace(/(^-|-$)/g, "") // trim leading/trailing dashes
+          .toUpperCase()
         : (typeof selectedContract.no !== "undefined" ? `NO${String(selectedContract.no).padStart(3, "0")}` : selectedContract.id.slice(-8).toUpperCase());
 
       const generatedNumber = `BA/${contractKey}/${String(invoiceCount).padStart(2, "0")}/${year}`;
@@ -100,7 +101,7 @@ export default function CreateTagihanPage() {
       ...prev,
       [name]: value,
     }));
-    
+
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => {
@@ -109,6 +110,9 @@ export default function CreateTagihanPage() {
         return newErrors;
       });
     }
+
+    // Clear global error
+    if (submitError) setSubmitError(null);
   };
 
   // Handle file selection and upload
@@ -222,11 +226,18 @@ export default function CreateTagihanPage() {
     }
 
     setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      setSubmitError("Mohon periksa input yang ditandai merah");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
 
     if (!validateForm()) {
       return;
@@ -266,7 +277,8 @@ export default function CreateTagihanPage() {
       router.push(`/kontrak/${formData.contractId}`);
     } catch (error) {
       console.error("Error creating invoice:", error);
-      alert("Terjadi kesalahan saat membuat tagihan");
+      setSubmitError("Terjadi kesalahan saat membuat tagihan. Silakan coba lagi.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
     }
@@ -339,6 +351,22 @@ export default function CreateTagihanPage() {
         </div>
       </div>
 
+      {/* Error Alert */}
+      {submitError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-800"
+        >
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <p className="text-red-800 dark:text-red-200 font-medium">{submitError}</p>
+          </div>
+        </motion.div>
+      )}
+
       {/* Form */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -366,11 +394,10 @@ export default function CreateTagihanPage() {
                   value={formData.contractId}
                   onChange={handleChange}
                   disabled={!!contractIdParam}
-                  className={`w-full px-3 py-2 rounded-lg border ${
-                    errors.contractId
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                  } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed`}
+                  className={`w-full px-3 py-2 rounded-lg border ${errors.contractId
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed`}
                 >
                   <option value="">-- Pilih Kontrak --</option>
                   {contracts
@@ -422,11 +449,10 @@ export default function CreateTagihanPage() {
                       Sisa Anggaran
                     </p>
                     <p
-                      className={`text-sm font-bold ${
-                        remainingBudget < selectedContract.nilaiKontrak * 0.1
-                          ? "text-red-600 dark:text-red-400"
-                          : "text-green-600 dark:text-green-400"
-                      }`}
+                      className={`text-sm font-bold ${remainingBudget < selectedContract.nilaiKontrak * 0.1
+                        ? "text-red-600 dark:text-red-400"
+                        : "text-green-600 dark:text-green-400"
+                        }`}
                     >
                       {formatCurrency(remainingBudget)}
                     </p>
@@ -445,13 +471,12 @@ export default function CreateTagihanPage() {
                   </div>
                   <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all ${
-                        selectedContract.persentaseRealisasi > 90
-                          ? "bg-red-500"
-                          : selectedContract.persentaseRealisasi > 50
+                      className={`h-full rounded-full transition-all ${selectedContract.persentaseRealisasi > 90
+                        ? "bg-red-500"
+                        : selectedContract.persentaseRealisasi > 50
                           ? "bg-yellow-500"
                           : "bg-green-500"
-                      }`}
+                        }`}
                       style={{
                         width: `${Math.min(selectedContract.persentaseRealisasi, 100)}%`,
                       }}
@@ -484,11 +509,10 @@ export default function CreateTagihanPage() {
                   value={formData.nomorTagihan}
                   onChange={handleChange}
                   placeholder="BA/001/01/2025"
-                  className={`w-full px-3 py-2 rounded-lg border ${
-                    errors.nomorTagihan
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                  } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                  className={`w-full px-3 py-2 rounded-lg border ${errors.nomorTagihan
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
                 />
                 {errors.nomorTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.nomorTagihan}</p>
@@ -509,11 +533,10 @@ export default function CreateTagihanPage() {
                   name="tanggalTagihan"
                   value={formData.tanggalTagihan}
                   onChange={handleChange}
-                  className={`w-full px-3 py-2 rounded-lg border ${
-                    errors.tanggalTagihan
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                  } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                  className={`w-full px-3 py-2 rounded-lg border ${errors.tanggalTagihan
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
                 />
                 {errors.tanggalTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.tanggalTagihan}</p>
@@ -537,11 +560,10 @@ export default function CreateTagihanPage() {
                   placeholder="0"
                   min="0"
                   step="1"
-                  className={`w-full px-3 py-2 rounded-lg border ${
-                    errors.nilaiTagihan
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                  } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                  className={`w-full px-3 py-2 rounded-lg border ${errors.nilaiTagihan
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
                 />
                 {errors.nilaiTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.nilaiTagihan}</p>
@@ -778,8 +800,8 @@ export default function CreateTagihanPage() {
                         {isUploading
                           ? 'Mengupload...'
                           : uploadedFileUrl
-                          ? `${formatFileSize(selectedFile?.size || 0)} - Upload berhasil`
-                          : ''}
+                            ? `${formatFileSize(selectedFile?.size || 0)} - Upload berhasil`
+                            : ''}
                       </p>
                     </div>
                   </div>
