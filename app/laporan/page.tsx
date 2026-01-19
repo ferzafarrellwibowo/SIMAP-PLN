@@ -1,9 +1,17 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useContractStore, CONTRACT_CATEGORY_LABELS } from "@/lib/store-new";
+import Link from "next/link";
 import type { ContractCategory } from "@/lib/types-new";
+import { getSubscriptions } from "@/lib/subscription-service";
+import {
+  SubscriptionWithPayments,
+  CATEGORY_LABELS as SUB_CATEGORY_LABELS,
+  CATEGORY_COLORS as SUB_CATEGORY_COLORS,
+  SubscriptionCategory
+} from "@/lib/subscription-types";
 
 function formatCurrency(value: number): string {
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(2)} M`;
@@ -14,6 +22,24 @@ function formatCurrency(value: number): string {
 export default function LaporanPage() {
   const { contracts, invoices, getDashboardSummary } = useContractStore();
   const summary = useMemo(() => getDashboardSummary(), [getDashboardSummary]);
+
+  // Subscription State
+  const [subscriptions, setSubscriptions] = useState<SubscriptionWithPayments[]>([]);
+  const [subsLoading, setSubsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSubs() {
+      try {
+        const data = await getSubscriptions();
+        setSubscriptions(data);
+      } catch (err) {
+        console.error("Error loading subscriptions:", err);
+      } finally {
+        setSubsLoading(false);
+      }
+    }
+    fetchSubs();
+  }, []);
 
   const categoryStats = useMemo(() => {
     const categories: ContractCategory[] = ["investasi", "pemeliharaan", "administrasi"];
@@ -59,6 +85,54 @@ export default function LaporanPage() {
     tagihanPending: summary.tagihanDiajukan + summary.tagihanDiterima,
   }), [contracts, invoices, summary]);
 
+  // Subscription Stats Calculation
+  const subscriptionStats = useMemo(() => {
+    const categories = Array.from(new Set(subscriptions.map(s => s.kategori))) as SubscriptionCategory[];
+
+    const stats = categories.map(cat => {
+      const catSubs = subscriptions.filter(s => s.kategori === cat);
+
+      // Calculate total annualized budget (assuming anggaran_per_bulan * 12 is the contract value equivalent)
+      // Or we can just use total_terbayar vs total_bulan_belum_bayar * anggaran
+      const totalAnggaranBulanan = catSubs.reduce((sum, s) => sum + s.anggaran_per_bulan, 0);
+
+      // Actual payments made
+      const totalTerbayar = catSubs.reduce((sum, s) => sum + s.total_terbayar, 0);
+
+      // Potential total for the year (this is tricky as periods vary, but let's stick to what we can calculate)
+      // Let's use: Total Terbayar vs Total Seharusnya (Paid + Unpaid in current period maybe?)
+      // For now, let's just show Total Terbayar and Total Subscriptions
+
+      const totalSubs = catSubs.length;
+      const activeSubs = catSubs.filter(s => s.status === 'aktif').length;
+      const hasGaps = catSubs.filter(s => s.has_gaps).length;
+
+      return {
+        kategori: cat,
+        label: SUB_CATEGORY_LABELS[cat] || cat,
+        totalSubs,
+        activeSubs,
+        hasGaps,
+        totalAnggaranBulanan,
+        totalTerbayar,
+        // Calculate average progress if needed
+        avgProgress: catSubs.reduce((sum, s) => sum + s.paid_percentage, 0) / (totalSubs || 1)
+      };
+    });
+
+    // Provide a sorted or complete list if needed, for now just what exists
+    return stats.sort((a, b) => b.totalTerbayar - a.totalTerbayar);
+  }, [subscriptions]);
+
+  const overallSubStats = useMemo(() => {
+    return {
+      totalSubs: subscriptions.length,
+      activeSubs: subscriptions.filter(s => s.status === 'aktif').length,
+      totalTerbayar: subscriptions.reduce((sum, s) => sum + s.total_terbayar, 0),
+      totalGaps: subscriptions.filter(s => s.has_gaps).length
+    };
+  }, [subscriptions]);
+
   const handleExport = () => {
     // Generate CSV content
     const headers = ["Kategori", "Total Kontrak", "Kontrak Aktif", "Pagu", "Serapan", "Sisa Anggaran", "% Serapan", "Total Tagihan", "Tagihan Dibayar", "Tagihan Pending"];
@@ -90,203 +164,315 @@ export default function LaporanPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
-            Ringkasan data kontrak dan tagihan
-          </p>
-        </div>
-        <button
-          onClick={handleExport}
-          className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          Export CSV
-        </button>
-      </div>
-
-      {/* Overall Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"
-      >
-        <h2 className="text-lg font-semibold mb-4 !text-white">Ringkasan Keseluruhan</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <div className="space-y-12 pb-12">
+      {/* SECTION 1: KONTRAK */}
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <p className="!text-blue-100 text-sm">Total Kontrak</p>
-            <p className="text-2xl font-bold !text-white">{overallStats.totalKontrak}</p>
-            <p className="!text-blue-100 text-xs">{overallStats.kontrakAktif} aktif</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Kontrak</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Ringkasan data kontrak dan tagihan proyek
+            </p>
           </div>
-          <div>
-            <p className="!text-blue-100 text-sm">Pagu</p>
-            <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalNilai)}</p>
-          </div>
-          <div>
-            <p className="!text-blue-100 text-sm">Serapan</p>
-            <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalDibayar)}</p>
-            <p className="!text-blue-100 text-xs">{overallStats.persentaseRealisasi.toFixed(1)}% serapan</p>
-          </div>
-          <div>
-            <p className="!text-blue-100 text-sm">Total Tagihan</p>
-            <p className="text-2xl font-bold !text-white">{overallStats.totalTagihan}</p>
-            <p className="!text-blue-100 text-xs">{overallStats.tagihanPending} pending</p>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Category Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {categoryStats.map((cat, index) => (
-          <motion.div
-            key={cat.kategori}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+          <button
+            onClick={handleExport}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className={`w-4 h-4 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
-                cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
-                }`} />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {cat.label}
-              </h3>
-            </div>
-
-            <div className="space-y-4">
-              {/* Kontrak */}
-              <div className="p-4 bg-gray-50 dark:bg-gray-800/80 rounded-lg">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Kontrak</span>
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">{cat.totalKontrak}</span>
-                </div>
-                <p className="text-xs text-gray-600">{cat.kontrakAktif} aktif</p>
-              </div>
-
-              {/* Nilai & Realisasi */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700 dark:text-gray-300">Pagu</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(cat.totalNilai)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700 dark:text-gray-300">Serapan</span>
-                  <span className="font-medium text-green-600 dark:text-green-400">{formatCurrency(cat.totalDibayar)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700 dark:text-gray-300">Sisa</span>
-                  <span className="font-medium text-blue-600 dark:text-blue-400">{formatCurrency(cat.sisaAnggaran)}</span>
-                </div>
-              </div>
-
-              {/* Progress Bar */}
-              <div>
-                <div className="flex justify-between text-xs mb-1">
-                  <span className="text-gray-600">Serapan</span>
-                  <span className={`font-medium ${cat.persentaseRealisasi > 90 ? "text-red-600" :
-                    cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
-                    }`}>
-                    {cat.persentaseRealisasi.toFixed(1)}%
-                  </span>
-                </div>
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(cat.persentaseRealisasi, 100)}%` }}
-                    transition={{ duration: 1, delay: index * 0.2 }}
-                    className={`h-full rounded-full ${cat.persentaseRealisasi > 90 ? "bg-red-500" :
-                      cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
-                      }`}
-                  />
-                </div>
-              </div>
-
-              {/* Tagihan */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-700 dark:text-gray-300">Tagihan</span>
-                  <span className="font-medium text-gray-900 dark:text-white">{cat.totalTagihan}</span>
-                </div>
-                <div className="flex justify-between text-xs mt-1">
-                  <span className="text-green-700 dark:text-green-400">{cat.tagihanDibayar} dibayar</span>
-                  <span className="text-yellow-700">{cat.tagihanPending} pending</span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Detailed Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
-      >
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail per Kategori</h3>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export CSV
+          </button>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[700px]">
-            <thead className="bg-gray-50 dark:bg-gray-800">
-              <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                <th className="px-4 py-3 text-left">Kategori</th>
-                <th className="px-4 py-3 text-center">Kontrak</th>
-                <th className="px-4 py-3 text-center">Aktif</th>
-                <th className="px-4 py-3 text-right">Pagu</th>
-                <th className="px-4 py-3 text-right">Serapan</th>
-                <th className="px-4 py-3 text-right">Sisa</th>
-                <th className="px-4 py-3 text-center">%</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
-              {categoryStats.map((cat) => (
-                <tr key={cat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-2 h-2 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
-                        cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
-                        }`} />
-                      {cat.label}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.totalKontrak}</td>
-                  <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.kontrakAktif}</td>
-                  <td className="px-4 py-3 text-right font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
-                  <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
-                  <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi > 90 ? "bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-400" :
-                      cat.persentaseRealisasi > 70 ? "bg-amber-200 text-amber-900 dark:bg-yellow-900/30 dark:text-yellow-400" :
-                        "bg-emerald-200 text-emerald-900 dark:bg-green-900/30 dark:text-green-400"
+
+        {/* Overall Summary */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl p-6 text-white"
+        >
+          <h2 className="text-lg font-semibold mb-4 !text-white">Ringkasan Kontrak</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <p className="!text-blue-100 text-sm">Total Kontrak</p>
+              <p className="text-2xl font-bold !text-white">{overallStats.totalKontrak}</p>
+              <p className="!text-blue-100 text-xs">{overallStats.kontrakAktif} aktif</p>
+            </div>
+            <div>
+              <p className="!text-blue-100 text-sm">Pagu Total</p>
+              <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalNilai)}</p>
+            </div>
+            <div>
+              <p className="!text-blue-100 text-sm">Realisasi Total</p>
+              <p className="text-2xl font-bold !text-white">{formatCurrency(overallStats.totalDibayar)}</p>
+              <p className="!text-blue-100 text-xs">{overallStats.persentaseRealisasi.toFixed(1)}% serapan</p>
+            </div>
+            <div>
+              <p className="!text-blue-100 text-sm">Total Tagihan</p>
+              <p className="text-2xl font-bold !text-white">{overallStats.totalTagihan}</p>
+              <p className="!text-blue-100 text-xs">{overallStats.tagihanPending} pending</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Category Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {categoryStats.map((cat, index) => (
+            <motion.div
+              key={cat.kategori}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`w-4 h-4 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
+                  cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                  }`} />
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {cat.label}
+                </h3>
+              </div>
+
+              <div className="space-y-4">
+                {/* Kontrak */}
+                <div className="p-4 bg-gray-50 dark:bg-gray-800/80 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">Kontrak</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-white">{cat.totalKontrak}</span>
+                  </div>
+                  <p className="text-xs text-gray-600">{cat.kontrakAktif} aktif</p>
+                </div>
+
+                {/* Nilai & Realisasi */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Pagu</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(cat.totalNilai)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Realisasi</span>
+                    <span className="font-medium text-green-600 dark:text-green-400">{formatCurrency(cat.totalDibayar)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Sisa</span>
+                    <span className="font-medium text-blue-600 dark:text-blue-400">{formatCurrency(cat.sisaAnggaran)}</span>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-600">Realisasi</span>
+                    <span className={`font-medium ${cat.persentaseRealisasi > 90 ? "text-red-600" :
+                      cat.persentaseRealisasi > 70 ? "text-yellow-600" : "text-green-600"
                       }`}>
                       {cat.persentaseRealisasi.toFixed(1)}%
                     </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot className="bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
-              <tr className="font-semibold text-sm">
-                <td className="px-4 py-3 text-gray-900 dark:text-gray-100">Total</td>
-                <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.totalKontrak}</td>
-                <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.kontrakAktif}</td>
-                <td className="px-4 py-3 text-right text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
-                <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(overallStats.totalDibayar)}</td>
-                <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(overallStats.sisaAnggaran)}</td>
-                <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.persentaseRealisasi.toFixed(1)}%</td>
-              </tr>
-            </tfoot>
-          </table>
+                  </div>
+                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(cat.persentaseRealisasi, 100)}%` }}
+                      transition={{ duration: 1, delay: index * 0.2 }}
+                      className={`h-full rounded-full ${cat.persentaseRealisasi > 90 ? "bg-red-500" :
+                        cat.persentaseRealisasi > 70 ? "bg-yellow-500" : "bg-green-500"
+                        }`}
+                    />
+                  </div>
+                </div>
+
+                {/* Tagihan */}
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700 dark:text-gray-300">Tagihan</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{cat.totalTagihan}</span>
+                  </div>
+                  <div className="flex justify-between text-xs mt-1">
+                    <span className="text-green-700 dark:text-green-400">{cat.tagihanDibayar} dibayar</span>
+                    <span className="text-yellow-700">{cat.tagihanPending} pending</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </motion.div>
+
+        {/* Detailed Table */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+        >
+          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Kontrak per Kategori</h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[700px]">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left">Kategori</th>
+                  <th className="px-4 py-3 text-center">Kontrak</th>
+                  <th className="px-4 py-3 text-center">Aktif</th>
+                  <th className="px-4 py-3 text-right">Pagu</th>
+                  <th className="px-4 py-3 text-right">Realisasi</th>
+                  <th className="px-4 py-3 text-right">Sisa</th>
+                  <th className="px-4 py-3 text-center">% Review</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                {categoryStats.map((cat) => (
+                  <tr key={cat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
+                          cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
+                          }`} />
+                        {cat.label}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.totalKontrak}</td>
+                    <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.kontrakAktif}</td>
+                    <td className="px-4 py-3 text-right font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
+                    <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
+                    <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi > 90 ? "bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-400" :
+                        cat.persentaseRealisasi > 70 ? "bg-amber-200 text-amber-900 dark:bg-yellow-900/30 dark:text-yellow-400" :
+                          "bg-emerald-200 text-emerald-900 dark:bg-green-900/30 dark:text-green-400"
+                        }`}>
+                        {cat.persentaseRealisasi.toFixed(1)}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
+                <tr className="font-semibold text-sm">
+                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">Total</td>
+                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.totalKontrak}</td>
+                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.kontrakAktif}</td>
+                  <td className="px-4 py-3 text-right text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
+                  <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(overallStats.totalDibayar)}</td>
+                  <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(overallStats.sisaAnggaran)}</td>
+                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.persentaseRealisasi.toFixed(1)}%</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* SECTION 2: LANGGANAN */}
+      <div className="space-y-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Langganan</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              Ringkasan data langganan rutin dan pembayaran
+            </p>
+          </div>
+        </div>
+
+        {subsLoading ? (
+          <div className="flex items-center justify-center min-h-[200px]">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <>
+            {/* Subscription Summary */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-xl p-6 text-white"
+            >
+              <h3 className="text-lg font-semibold mb-4 !text-white">Ringkasan Langganan</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div>
+                  <p className="!text-emerald-100 text-sm">Total Langganan</p>
+                  <p className="text-2xl font-bold !text-white">{overallSubStats.totalSubs}</p>
+                  <p className="!text-emerald-100 text-xs">{overallSubStats.activeSubs} aktif</p>
+                </div>
+                <div>
+                  <p className="!text-emerald-100 text-sm">Status Pembayaran</p>
+                  <p className="text-2xl font-bold !text-white">{overallSubStats.totalGaps > 0 ? `${overallSubStats.totalGaps} Perlu Perhatian` : "Aman"}</p>
+                  <p className="!text-emerald-100 text-xs text-wrap">{overallSubStats.totalGaps > 0 ? "Ada bulan terlewat" : "Tidak ada gap"}</p>
+                </div>
+                <div>
+                  <p className="!text-emerald-100 text-sm">Total Terbayar</p>
+                  <p className="text-2xl font-bold !text-white">{formatCurrency(overallSubStats.totalTerbayar)}</p>
+                </div>
+                <div>
+                  {/* Placeholder for future metric */}
+                  <p className="!text-emerald-100 text-sm">Rata-rata Progress</p>
+                  <p className="text-2xl font-bold !text-white">
+                    {subscriptions.length > 0 ? (subscriptions.reduce((sum, s) => sum + s.paid_percentage, 0) / subscriptions.length).toFixed(0) : 0}%
+                  </p>
+                  <p className="!text-emerald-100 text-xs">Kelengkapan data</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Subscription Detail Table */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+            >
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Langganan per Kategori</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[700px]">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left">Kategori</th>
+                      <th className="px-4 py-3 text-center">Jml Langganan</th>
+                      <th className="px-4 py-3 text-center">Aktif</th>
+                      <th className="px-4 py-3 text-center">Anggaran / Bulan</th>
+                      <th className="px-4 py-3 text-center">Total Terbayar (Semua Tahun)</th>
+                      <th className="px-4 py-3 text-center">Progress Rata-rata</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                    {subscriptionStats.length > 0 ? subscriptionStats.map((stat) => (
+                      <tr key={stat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <span className={`w-2 h-2 rounded-full ${SUB_CATEGORY_COLORS[stat.kategori]?.split(" ")[0] || "bg-gray-400"}`} />
+                            {stat.label}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{stat.totalSubs}</td>
+                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{stat.activeSubs}</td>
+                        <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-gray-100">{formatCurrency(stat.totalAnggaranBulanan)}</td>
+                        <td className="px-4 py-3 text-center text-green-600 font-medium">{formatCurrency(stat.totalTerbayar)}</td>
+                        <td className="px-4 py-3 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div className="h-full bg-emerald-500" style={{ width: `${stat.avgProgress}%` }}></div>
+                            </div>
+                            <span className="text-xs text-gray-600 dark:text-gray-400">{stat.avgProgress.toFixed(0)}%</span>
+                          </div>
+                        </td>
+                      </tr>
+                    )) : (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                          Belum ada data langganan
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

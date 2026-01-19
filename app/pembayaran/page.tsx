@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-new";
 import {
@@ -81,23 +81,7 @@ export default function PembayaranPage() {
     setSubscriptionToDelete(null);
   };
 
-  // Fetch data from Supabase
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const data = await getSubscriptions();
-        setSubscriptions(data);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching subscriptions:", err);
-        setError("Gagal memuat data. Pastikan koneksi database sudah benar.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+
 
   // Filter subscriptions
   const filteredSubscriptions = useMemo(() => {
@@ -117,7 +101,7 @@ export default function PembayaranPage() {
       // Get year summary for status filter
       const yearPayments = sub.payments.filter((p) => p.tahun === selectedYear);
       const paidCount = yearPayments.filter((p) => p.status === "PAID").length;
-      const gapMonths = sub.gap_months.filter((m) => 
+      const gapMonths = sub.gap_months.filter((m) =>
         sub.payments.some((p) => p.bulan === m && p.tahun === selectedYear)
       );
       const hasGapsThisYear = gapMonths.length > 0;
@@ -181,16 +165,9 @@ export default function PembayaranPage() {
     return Array.from(years).sort();
   }, [subscriptions]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Memuat data...</p>
-        </div>
-      </div>
-    );
-  }
+  const isFilterActive = search !== "" || categoryFilter !== "all" || tahunMulai !== "all" || tahunSelesai !== "all" || statusFilter !== "all";
+
+
 
   if (error) {
     return (
@@ -258,7 +235,7 @@ export default function PembayaranPage() {
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+        <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-7" : "md:grid-cols-6"}`}>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
               Pencarian
@@ -338,25 +315,34 @@ export default function PembayaranPage() {
             </select>
           </div>
           {/* Reset Filter Button */}
-          {(search !== "" || categoryFilter !== "all" || tahunMulai !== "all" || tahunSelesai !== "all" || statusFilter !== "all") && (
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setCategoryFilter("all");
-                  setTahunMulai("all");
-                  setTahunSelesai("all");
-                  setStatusFilter("all");
-                }}
-                className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+          <AnimatePresence>
+            {isFilterActive && (
+              <motion.div
+                key="reset-button"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-end"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset Filter
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setCategoryFilter("all");
+                    setTahunMulai("all");
+                    setTahunSelesai("all");
+                    setStatusFilter("all");
+                  }}
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reset
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -393,7 +379,7 @@ export default function PembayaranPage() {
             const yearPayments = sub.payments.filter((p) => p.tahun === selectedYear);
             const paidCount = yearPayments.filter((p) => p.status === "PAID").length;
             const paidPercentageYear = Math.round((paidCount / 12) * 100);
-            
+
             return (
               <motion.div
                 key={sub.id}
@@ -488,26 +474,24 @@ export default function PembayaranPage() {
                             Status Pembayaran
                           </span>
                           <span
-                            className={`font-medium ${
-                              paidPercentageYear === 100
-                                ? "text-emerald-600"
-                                : paidPercentageYear >= 50
+                            className={`font-medium ${paidPercentageYear === 100
+                              ? "text-emerald-600"
+                              : paidPercentageYear >= 50
                                 ? "text-blue-600"
                                 : "text-red-600"
-                            }`}
+                              }`}
                           >
                             {paidCount}/12 bulan ({paidPercentageYear}%)
                           </span>
                         </div>
                         <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all ${
-                              paidPercentageYear === 100
-                                ? "bg-emerald-500"
-                                : yearSummary.hasGaps
+                            className={`h-full rounded-full transition-all ${paidPercentageYear === 100
+                              ? "bg-emerald-500"
+                              : yearSummary.hasGaps
                                 ? "bg-amber-500"
                                 : "bg-blue-500"
-                            }`}
+                              }`}
                             style={{ width: `${paidPercentageYear}%` }}
                           />
                         </div>
@@ -556,11 +540,11 @@ export default function PembayaranPage() {
       {deleteModalOpen && subscriptionToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* Backdrop */}
-          <div 
+          <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={handleCancelDelete}
           />
-          
+
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -651,13 +635,12 @@ function CompactMonthIndicatorFromPayments({
           <div
             key={month.value}
             title={`${month.name}: ${isPaid ? "Lunas" : isGap ? "Terlewat" : "Belum Bayar"}`}
-            className={`w-4 h-4 rounded-sm flex items-center justify-center text-[8px] font-medium cursor-default ${
-              isPaid
-                ? "bg-emerald-500 text-white"
-                : isGap
+            className={`w-4 h-4 rounded-sm flex items-center justify-center text-[8px] font-medium cursor-default ${isPaid
+              ? "bg-emerald-500 text-white"
+              : isGap
                 ? "bg-amber-500 text-white"
                 : "bg-red-500 text-white"
-            }`}
+              }`}
           >
             {month.short.charAt(0)}
           </div>

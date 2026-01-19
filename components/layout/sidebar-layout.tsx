@@ -44,7 +44,7 @@ const navigation: NavItem[] = [
     ),
   },
   {
-    name: "Pembayaran",
+    name: "Langganan",
     href: "/pembayaran",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
