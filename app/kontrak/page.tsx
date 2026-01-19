@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useContractStore, CONTRACT_CATEGORY_LABELS, CONTRACT_CATEGORY_COLORS, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, contractCategoryOptions, contractStatusOptions, jenisAnggaranOptions } from "@/lib/store-new";
@@ -25,6 +25,9 @@ export default function KontrakPage() {
   const [kategori, setKategori] = useState<ContractCategory | "all">(initialKategori || "all");
   const [status, setStatus] = useState<ContractStatus | "all">("all");
   const [jenisAnggaran, setJenisAnggaran] = useState<JenisAnggaran | "all">("all");
+
+  // Check if any filter is active
+  const isFilterActive = search !== "" || kategori !== "all" || status !== "all" || jenisAnggaran !== "all";
 
   const filteredContracts = useMemo(() => {
     return contracts.filter((c) => {
@@ -63,7 +66,7 @@ export default function KontrakPage() {
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-6" : "md:grid-cols-5"}`}>
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
             <input
@@ -111,24 +114,33 @@ export default function KontrakPage() {
             </select>
           </div>
           {/* Reset Filter Button */}
-          {(search !== "" || kategori !== "all" || status !== "all" || jenisAnggaran !== "all") && (
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setKategori("all");
-                  setStatus("all");
-                  setJenisAnggaran("all");
-                }}
-                className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+          <AnimatePresence>
+            {isFilterActive && (
+              <motion.div
+                key="reset-button"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-end"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset Filter
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setKategori("all");
+                    setStatus("all");
+                    setJenisAnggaran("all");
+                  }}
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reset
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

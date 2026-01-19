@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useContractStore, INVOICE_STATUS_LABELS, INVOICE_STATUS_COLORS, invoiceStatusOptions } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
 import AlertPopup from "@/components/ui/alert-popup";
@@ -79,6 +79,9 @@ export default function TagihanPage() {
     });
     return Array.from(years).sort().reverse();
   }, [invoices]);
+
+  // Check if any filter is active
+  const isFilterActive = search !== "" || status !== "all" || filterYear !== "all" || filterMonth !== "all";
 
   const filteredInvoices = useMemo(() => {
     let filtered = invoices.filter((inv) => {
@@ -240,7 +243,7 @@ export default function TagihanPage() {
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isFilterActive ? "lg:grid-cols-6" : "lg:grid-cols-5"}`}>
           <div className="md:col-span-2 lg:col-span-1">
             <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
             <input
@@ -313,24 +316,33 @@ export default function TagihanPage() {
             </select>
           </div>
           {/* Reset Filter Button */}
-          {(search !== "" || status !== "all" || filterYear !== "all" || filterMonth !== "all") && (
-            <div className="flex items-end">
-              <button
-                onClick={() => {
-                  setSearch("");
-                  setStatus("all");
-                  setFilterYear("all");
-                  setFilterMonth("all");
-                }}
-                className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+          <AnimatePresence>
+            {isFilterActive && (
+              <motion.div
+                key="reset-button"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.2 }}
+                className="flex items-end"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Reset Filter
-              </button>
-            </div>
-          )}
+                <button
+                  onClick={() => {
+                    setSearch("");
+                    setStatus("all");
+                    setFilterYear("all");
+                    setFilterMonth("all");
+                  }}
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  Reset
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -340,11 +352,11 @@ export default function TagihanPage() {
         <div className="hidden lg:block">
           <table className="w-full table-fixed">
             <thead className="bg-gray-50 dark:bg-gray-800/80">
-              <tr className="text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+              <tr className="text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                 <th className="px-4 py-3 w-[22%]">No Tagihan</th>
                 <th className="px-4 py-3 w-[20%]">Kontrak</th>
                 <th className="px-4 py-3 w-[14%]">Vendor</th>
-                <th className="px-4 py-3 w-[10%] text-right">Nilai</th>
+                <th className="px-4 py-3 w-[10%]">Nilai</th>
                 <th className="px-4 py-3 w-[10%]">Tanggal</th>
                 <th className="px-4 py-3 w-[9%]">Status</th>
                 {canEditStatus && <th className="px-4 py-3 w-[8%]">Aksi</th>}
@@ -371,42 +383,42 @@ export default function TagihanPage() {
                       transition={{ delay: index * 0.03 }}
                       className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     >
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <span className="font-medium text-gray-900 dark:text-white text-sm truncate block" title={invoice.nomorTagihan}>
                           {invoice.nomorTagihan}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan}>
                           {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25
                             ? contract.judulPekerjaan.substring(0, 25) + "..."
                             : contract?.judulPekerjaan}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={contract?.vendor}>
                           {contract?.vendor && contract.vendor.length > 12
                             ? contract.vendor.substring(0, 12) + "..."
                             : contract?.vendor}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-right">
+                      <td className="px-4 py-3 text-center">
                         <span className="font-semibold text-gray-900 dark:text-white text-sm whitespace-nowrap">
                           {formatCurrency(invoice.nilaiTagihan)}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <span className="text-gray-600 dark:text-gray-300 text-xs whitespace-nowrap">
                           {new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}
                         </span>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-center">
                         <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap ${INVOICE_STATUS_COLORS[invoice.status]}`}>
                           {INVOICE_STATUS_LABELS[invoice.status]}
                         </span>
                       </td>
                       {canEditStatus && (
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-center">
                           {(() => {
                             const availableOptions = getAvailableStatusOptions(invoice.status);
                             const canEdit = availableOptions.length > 0;

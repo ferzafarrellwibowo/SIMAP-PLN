@@ -13,6 +13,19 @@ import {
   SubscriptionCategory
 } from "@/lib/subscription-types";
 
+// Dot colors for light mode visibility (darker shades)
+const SUB_CATEGORY_DOT_COLORS: Record<SubscriptionCategory, string> = {
+  utilitas: "bg-blue-500",
+  software: "bg-purple-500",
+  jasa: "bg-cyan-500",
+  perlengkapan: "bg-amber-500",
+  properti: "bg-indigo-500",
+  transportasi: "bg-orange-500",
+  karyawan: "bg-emerald-500",
+  pemasaran: "bg-pink-500",
+  lainnya: "bg-gray-500",
+};
+
 function formatCurrency(value: number): string {
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(2)} M`;
   if (value >= 1000000) return `Rp ${(value / 1000000).toFixed(0)} jt`;
@@ -313,13 +326,13 @@ export default function LaporanPage() {
             <table className="w-full min-w-[700px]">
               <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                  <th className="px-4 py-3 text-left">Kategori</th>
+                  <th className="px-4 py-3 text-center">Kategori</th>
                   <th className="px-4 py-3 text-center">Kontrak</th>
                   <th className="px-4 py-3 text-center">Aktif</th>
-                  <th className="px-4 py-3 text-right">Pagu</th>
-                  <th className="px-4 py-3 text-right">Realisasi</th>
-                  <th className="px-4 py-3 text-right">Sisa</th>
-                  <th className="px-4 py-3 text-center">% Review</th>
+                  <th className="px-4 py-3 text-center">Pagu</th>
+                  <th className="px-4 py-3 text-center">Realisasi</th>
+                  <th className="px-4 py-3 text-center">Sisa</th>
+                  <th className="px-4 py-3 text-center">PERSENTASE</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
@@ -335,9 +348,9 @@ export default function LaporanPage() {
                     </td>
                     <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.totalKontrak}</td>
                     <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.kontrakAktif}</td>
-                    <td className="px-4 py-3 text-right font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
-                    <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
-                    <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
+                    <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
+                    <td className="px-4 py-3 text-center text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
+                    <td className="px-4 py-3 text-center text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
                     <td className="px-4 py-3 text-center">
                       <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi > 90 ? "bg-red-200 text-red-900 dark:bg-red-900/30 dark:text-red-400" :
                         cat.persentaseRealisasi > 70 ? "bg-amber-200 text-amber-900 dark:bg-yellow-900/30 dark:text-yellow-400" :
@@ -354,9 +367,9 @@ export default function LaporanPage() {
                   <td className="px-4 py-3 text-gray-900 dark:text-gray-100">Total</td>
                   <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.totalKontrak}</td>
                   <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.kontrakAktif}</td>
-                  <td className="px-4 py-3 text-right text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
-                  <td className="px-4 py-3 text-right text-green-600 whitespace-nowrap">{formatCurrency(overallStats.totalDibayar)}</td>
-                  <td className="px-4 py-3 text-right text-blue-600 whitespace-nowrap">{formatCurrency(overallStats.sisaAnggaran)}</td>
+                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
+                  <td className="px-4 py-3 text-center text-green-600 whitespace-nowrap">{formatCurrency(overallStats.totalDibayar)}</td>
+                  <td className="px-4 py-3 text-center text-blue-600 whitespace-nowrap">{formatCurrency(overallStats.sisaAnggaran)}</td>
                   <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.persentaseRealisasi.toFixed(1)}%</td>
                 </tr>
               </tfoot>
@@ -429,12 +442,13 @@ export default function LaporanPage() {
                 <table className="w-full min-w-[700px]">
                   <thead className="bg-gray-50 dark:bg-gray-800">
                     <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                      <th className="px-4 py-3 text-left">Kategori</th>
+                      <th className="px-4 py-3 text-center">Kategori</th>
                       <th className="px-4 py-3 text-center">Jml Langganan</th>
                       <th className="px-4 py-3 text-center">Aktif</th>
                       <th className="px-4 py-3 text-center">Anggaran / Bulan</th>
                       <th className="px-4 py-3 text-center">Total Terbayar (Semua Tahun)</th>
                       <th className="px-4 py-3 text-center">Progress Rata-rata</th>
+                      <th className="px-4 py-3 text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
@@ -442,7 +456,7 @@ export default function LaporanPage() {
                       <tr key={stat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                         <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
                           <div className="flex items-center gap-2">
-                            <span className={`w-2 h-2 rounded-full ${SUB_CATEGORY_COLORS[stat.kategori]?.split(" ")[0] || "bg-gray-400"}`} />
+                            <span className={`w-2 h-2 rounded-full ${SUB_CATEGORY_DOT_COLORS[stat.kategori] || "bg-gray-500"}`} />
                             {stat.label}
                           </div>
                         </td>
@@ -458,10 +472,25 @@ export default function LaporanPage() {
                             <span className="text-xs text-gray-600 dark:text-gray-400">{stat.avgProgress.toFixed(0)}%</span>
                           </div>
                         </td>
+                        <td className="px-4 py-3 text-center">
+                          {stat.hasGaps > 0 ? (
+                            <div className="flex items-center justify-center" title={`${stat.hasGaps} langganan perlu perhatian`}>
+                              <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                              </svg>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-center" title="Semua langganan aman">
+                              <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                           Belum ada data langganan
                         </td>
                       </tr>
