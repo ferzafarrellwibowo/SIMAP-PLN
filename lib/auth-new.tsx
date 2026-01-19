@@ -5,8 +5,11 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import type { User, UserRole } from "./types-new";
+
+// Storage key for persisting auth state
+const AUTH_STORAGE_KEY = "simap_auth_user";
 
 // ============================================
 // PERMISSION DEFINITIONS
@@ -116,6 +119,7 @@ export const ROLE_COLORS: Record<UserRole, string> = {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   hasPermission: (permission: Permission) => boolean;
@@ -124,8 +128,53 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to safely access localStorage
+function getStoredUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored) as User;
+    }
+  } catch (error) {
+    console.error("Error reading auth from localStorage:", error);
+  }
+  return null;
+}
+
+// Helper function to store user in localStorage
+function storeUser(user: User | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (user) {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  } catch (error) {
+    console.error("Error storing auth to localStorage:", error);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Restore auth state from localStorage on mount
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      // Verify the stored user still exists in our mock users
+      const validUser = MOCK_USERS.find((u) => u.id === storedUser.id);
+      if (validUser) {
+        setUser(validUser);
+      } else {
+        // Clear invalid stored user
+        storeUser(null);
+      }
+    }
+    setIsLoading(false);
+  }, []);
 
   const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean> => {
     // Simulate API call delay
@@ -140,6 +189,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (foundUser && password === "password123") {
       setUser(foundUser);
+      storeUser(foundUser); // Persist to localStorage
       return true;
     }
 
@@ -148,6 +198,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
+    storeUser(null); // Clear from localStorage
   }, []);
 
   const hasPermission = useCallback(
@@ -171,6 +222,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         isAuthenticated: !!user,
+        isLoading,
         login,
         logout,
         hasPermission,
