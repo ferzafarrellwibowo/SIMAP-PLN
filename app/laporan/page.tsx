@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useContractStore, CONTRACT_CATEGORY_LABELS } from "@/lib/store-new";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { ContractCategory } from "@/lib/types-new";
 import { getSubscriptions } from "@/lib/subscription-service";
 import {
@@ -33,6 +34,7 @@ function formatCurrency(value: number): string {
 }
 
 export default function LaporanPage() {
+  const router = useRouter();
   const { contracts, invoices, getDashboardSummary } = useContractStore();
   const summary = useMemo(() => getDashboardSummary(), [getDashboardSummary]);
 
@@ -464,24 +466,34 @@ export default function LaporanPage() {
                         <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{stat.activeSubs}</td>
                         <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-gray-100">{formatCurrency(stat.totalAnggaranBulanan)}</td>
                         <td className="px-4 py-3 text-center text-green-600 font-medium">{formatCurrency(stat.totalTerbayar)}</td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-2">
-                            <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                              <div className="h-full bg-emerald-500" style={{ width: `${stat.avgProgress}%` }}></div>
+                            <div className="w-28 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-emerald-500 transition-all"
+                                style={{ width: `${Math.max(0, Math.min(100, stat.avgProgress))}%` }}
+                              />
                             </div>
                             <span className="text-xs text-gray-600 dark:text-gray-400">{stat.avgProgress.toFixed(0)}%</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-center">
+                        <td className="px-4 py-3 text-center align-middle">
                           {stat.hasGaps > 0 ? (
-                            <div className="flex items-center justify-center" title={`${stat.hasGaps} langganan perlu perhatian`}>
-                              <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                              </svg>
+                            <div className="flex items-center justify-center">
+                              <button
+                                onClick={() => router.push(`/pembayaran?kategori=${stat.kategori}&status=hasGaps`)}
+                                className="mx-auto inline-flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
+                                title={`${stat.hasGaps} langganan perlu perhatian - Klik untuk melihat detail`}
+                                aria-label={`Lihat langganan ${stat.label} yang perlu perhatian`}
+                              >
+                                <svg className="block w-5 h-5 text-amber-500 hover:text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                              </button>
                             </div>
                           ) : (
-                            <div className="flex items-center justify-center" title="Semua langganan aman">
-                              <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center justify-center mx-auto" title="Semua langganan aman" aria-hidden>
+                              <svg className="block w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                               </svg>
                             </div>

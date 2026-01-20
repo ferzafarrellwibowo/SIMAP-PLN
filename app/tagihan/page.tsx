@@ -8,19 +8,10 @@ import AlertPopup from "@/components/ui/alert-popup";
 import type { InvoiceStatus, Invoice } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
-  if (value >= 1000000000) {
-    const formatted = (value / 1000000000);
-    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}M` : `Rp${formatted.toFixed(1)}M`;
-  }
-  if (value >= 1000000) {
-    const formatted = (value / 1000000);
-    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}jt` : `Rp${formatted.toFixed(1)}jt`;
-  }
-  if (value >= 1000) {
-    const formatted = (value / 1000);
-    return formatted % 1 === 0 ? `Rp${formatted.toFixed(0)}rb` : `Rp${formatted.toFixed(1)}rb`;
-  }
-  return `Rp${value.toLocaleString("id-ID")}`;
+  if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(2)} M`;
+  if (value >= 1000000) return `Rp ${(value / 1000000).toFixed(0)} jt`;
+  if (value >= 1000) return `Rp ${value.toLocaleString("id-ID")}`;
+  return `Rp ${value.toLocaleString("id-ID")}`;
 }
 
 function daysAgo(date: string): number {

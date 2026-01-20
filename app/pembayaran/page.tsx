@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-new";
 import {
   SubscriptionWithPayments,
@@ -16,16 +17,22 @@ import {
 } from "@/lib/subscription-types";
 import { getSubscriptions, deleteSubscription } from "@/lib/subscription-service";
 import { CompactMonthIndicator } from "@/components/payment/payment-status-grid";
+import { CardSkeleton } from "@/components/ui/skeleton";
 
 export default function PembayaranPage() {
   const { user } = useAuth();
+  const searchParams = useSearchParams();
   const [subscriptions, setSubscriptions] = useState<SubscriptionWithPayments[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Read URL parameters for initial filter values
+  const kategoriParam = searchParams.get("kategori") as SubscriptionCategory | null;
+  const statusParam = searchParams.get("status") as "all" | "complete" | "incomplete" | "hasGaps" | null;
+
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "complete" | "incomplete" | "hasGaps">("all");
-  const [categoryFilter, setCategoryFilter] = useState<SubscriptionCategory | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "complete" | "incomplete" | "hasGaps">(statusParam || "all");
+  const [categoryFilter, setCategoryFilter] = useState<SubscriptionCategory | "all">(kategoriParam || "all");
   const [tahunMulai, setTahunMulai] = useState<number | "all">("all");
   const [tahunSelesai, setTahunSelesai] = useState<number | "all">("all");
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -206,32 +213,41 @@ export default function PembayaranPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Total Langganan</p>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {summaryStats.total}
-          </p>
+      {/* Summary Cards */}
+      {loading ? (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Lunas {selectedYear}</p>
-          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-            {summaryStats.complete}
-          </p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Total Langganan</p>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {summaryStats.total}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Lunas {selectedYear}</p>
+            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+              {summaryStats.complete}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Ada Terlewat</p>
+            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+              {summaryStats.hasGaps}
+            </p>
+          </div>
+          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+            <p className="text-sm text-gray-500 dark:text-gray-400">Belum Bayar {selectedYear}</p>
+            <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+              {formatCurrency(summaryStats.totalUnpaid)}
+            </p>
+          </div>
         </div>
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Ada Terlewat</p>
-          <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-            {summaryStats.hasGaps}
-          </p>
-        </div>
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">Belum Bayar {selectedYear}</p>
-          <p className="text-2xl font-bold text-red-600 dark:text-red-400">
-            {formatCurrency(summaryStats.totalUnpaid)}
-          </p>
-        </div>
-      </div>
+      )}
 
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
@@ -347,7 +363,14 @@ export default function PembayaranPage() {
       </div>
 
       {/* Subscription List */}
-      <div className="space-y-4">
+      {loading ? (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="space-y-4">
         {filteredSubscriptions.length === 0 ? (
           <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
             <svg
@@ -535,6 +558,7 @@ export default function PembayaranPage() {
           })
         )}
       </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && subscriptionToDelete && (
