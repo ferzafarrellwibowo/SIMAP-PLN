@@ -43,6 +43,18 @@ export default function RootLayout({
             `,
           }}
         />
+        {/* Favicon: sediakan beberapa link agar browser dapat memilih ukuran terbaik */}
+        {/* SVG (scalable) */}
+        <link rel="icon" href="/logoPLN1.svg" type="image/svg+xml" />
+        {/* Hint ukuran - 'any' signals SVG scalable icons */}
+        <link rel="icon" href="/logoPLN1.svg" sizes="any" />
+        {/* Fallbacks - if you add PNG/ICO assets to /public, browsers can pick these for pixel-perfect sizes */}
+        <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
+        <link rel="icon" href="/logoPLN1-192.png" sizes="192x192" />
+        {/* Apple / mobile */}
+        <link rel="apple-touch-icon" href="/logoPLN1-180.png" />
+        {/* Safari pinned tab (mask-icon prefers monochrome SVG) */}
+        <link rel="mask-icon" href="/logoPLN1.svg" color="#000000" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

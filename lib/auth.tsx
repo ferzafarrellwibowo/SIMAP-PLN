@@ -70,19 +70,10 @@ export const MOCK_USERS: User[] = [
   {
     id: "USR-001",
     username: "admin",
-    name: "Administrator",
-    email: "admin@pln.co.id",
+    name: "Ferza Farrell Wibowo",
+    email: "frzfarrell@pln.co.id",
     role: "admin",
     unit: "PLN Pusat",
-    createdAt: "2025-01-01",
-  },
-  {
-    id: "USR-002",
-    username: "budi.pic",
-    name: "Budi Santoso",
-    email: "budi.santoso@pln.co.id",
-    role: "pic",
-    unit: "PLN UP3 Jakarta Selatan",
     createdAt: "2025-01-01",
   },
   {
@@ -106,8 +97,8 @@ export const MOCK_USERS: User[] = [
   {
     id: "USR-005",
     username: "ahmad.manajer",
-    name: "Ahmad Wijaya",
-    email: "ahmad.wijaya@pln.co.id",
+    name: "Falih Akmal Dewanda",
+    email: "falih@pln.co.id",
     role: "manajer",
     unit: "PLN Pusat",
     createdAt: "2025-01-01",
