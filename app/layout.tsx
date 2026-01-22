@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Monitoring Proyek & Anggaran - PT PLN (Persero)",
-  description: "Sistem Monitoring Proyek dan Anggaran PT PLN (Persero)",
+  title: "SIMAP - Sistem Informasi Monitoring Anggaran & Proyek",
+  description: "Sistem Informasi Monitoring Anggaran & Proyek",
 };
 
 export default function RootLayout({
