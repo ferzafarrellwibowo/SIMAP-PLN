@@ -76,7 +76,7 @@ export function ThemeToggle() {
     if (!mounted) {
         return (
             <button
-                className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/60 hover:shadow-sm dark:hover:shadow-sm hover:ring-1 dark:hover:ring-white/10 focus:outline-none"
                 aria-label="Toggle theme"
             >
                 <div className="w-5 h-5" />
@@ -89,7 +89,7 @@ export function ThemeToggle() {
     return (
         <button
             onClick={toggleTheme}
-            className="relative p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            className="relative p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/60 hover:shadow-sm dark:hover:shadow-sm hover:ring-1 dark:hover:ring-white/10 focus:outline-none"
             title={isDark ? "Beralih ke Light Mode" : "Beralih ke Dark Mode"}
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >

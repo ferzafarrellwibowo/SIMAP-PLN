@@ -74,7 +74,7 @@ export function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 relative transition-colors"
+        className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 relative transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/60 hover:shadow-sm dark:hover:shadow-sm hover:ring-1 dark:hover:ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-white/20"
         title="Notifikasi"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -129,7 +129,7 @@ export function NotificationDropdown() {
                     <div
                       key={alert.id}
                       onClick={() => handleAlertClick(alert)}
-                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer ${
+                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors transition-shadow cursor-pointer rounded-lg hover:shadow-sm dark:hover:shadow-sm ${
                         !alert.readAt ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
                       }`}
                     >
