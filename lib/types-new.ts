@@ -28,30 +28,67 @@ export interface User {
 export type ContractStatus = "aktif" | "selesai" | "bermasalah";
 export type ContractCategory = "investasi" | "pemeliharaan" | "administrasi";
 export type JenisAnggaran = "AI" | "AO"; // AI = Anggaran Investasi, AO = Anggaran Operasi
+export type StatusVIP = "lunas" | "belum_lunas" | "dokumen_tidak_lengkap";
+export type CRStatus = "CR" | "Not CR";
 
 export interface Contract {
   id: string;
   no: number;                     // Nomor urut
   
-  // Identitas Kontrak
-  uraianKegiatan: string;         // Uraian Kegiatan/Mata Anggaran
-  noPerjanjian: string;           // No Perjanjian/Amandemen
+  // ============================================
+  // FIELD KHUSUS KATEGORI INVESTASI
+  // ============================================
+  
+  // Identitas Kontrak (Input Manual)
+  noPerjanjian: string;           // Nomor Perjanjian/Amandemen (auto-generate: 03xxPj/STH.xx.xx/F0107xxxx00/xxxx)
   tanggalPerjanjian: string;      // Tanggal Perjanjian/Amandemen
   tanggalBerakhir: string;        // Tanggal Berakhir
-  judulPekerjaan: string;         // Judul Perjanjian
+  judulPRK: string;               // Judul PRK
+  nilaiPerjanjian: number;        // Nilai Perjanjian
+  namaVendor: string;             // Nama Vendor
+  nilaiTagihan: number;           // Nilai Tagihan/Nominal
   
-  // Nilai & Vendor
-  nilaiKontrak: number;           // Nilai Perjanjian
-  vendor: string;                 // Nama Vendor
+  // Field Auto-Generate
+  noBeritaAcara?: string;         // No. Berita Acara (auto-generate: xxxx/JKO/2024/012)
+  tanggalBeritaAcara?: string;    // Tanggal Berita Acara (auto saat submit form tambah tagihan)
+  noWBSPosAnggaran?: string;      // No. WBS/Pos Anggaran (auto-generate: I.1001.23.21.0805.008)
+  noSKKI?: string;                // No. SKKI (auto-generate: xxxx/KEU.00.03/EVP MUM/2024)
+  requestTanggalSE?: string;      // Tanggal Request SE (auto saat status tagihan berubah dari "diajukan" ke "diterima")
+  noSE?: string;                  // No. SE (auto-generate: 100369xxxx)
+  noPO?: string;                  // No. PO (auto-generate: 310148xxxx)
+  submissionIdVIP?: string;       // Submission ID - Vendor Invoicing Portal (auto-generate: TRE-V/xxxx/xxxx/00000xxxxx)
   
-  // Tagihan
+  // Status VIP (Lunas jika serapan 100%, Belum Lunas saat baru dibuat, Dokumen Tidak Lengkap bisa diedit admin)
+  statusVIP: StatusVIP;
+  
+  // Terbayar (calculated)
+  terbayar: number;
+  
+  // Status Kontrak (Lunas jika serapan 100%, Belum Lunas saat baru dibuat, Bermasalah bisa diedit admin)
+  status: ContractStatus;
+  
+  // Detail Pekerjaan
+  namaPekerjaan: string;          // Nama Pekerjaan
+  jenisAI: JenisAnggaran;         // Jenis AI
+  noPRK?: string;                 // No.PRK (auto-generate: (tahun).KPST.21.xxx)
+  crNotCR: CRStatus;              // CR/Not CR
+  
+  // ============================================
+  // FIELD UMUM (untuk semua kategori)
+  // ============================================
+  
+  // Backward compatibility fields (mapped from new fields)
+  uraianKegiatan: string;         // Uraian Kegiatan/Mata Anggaran
+  judulPekerjaan: string;         // Judul Perjanjian (mapped from judulPRK/namaPekerjaan)
+  nilaiKontrak: number;           // Nilai Perjanjian (mapped from nilaiPerjanjian)
+  vendor: string;                 // Nama Vendor (mapped from namaVendor)
+  
+  // Tagihan (legacy)
   nilaiTagihanKontrakPusat: number;  // Nilai Tagihan/Klaim Kontrak Pusat
   nilaiTagihanUnitInduk: number;     // Nilai Tagihan/Unit Induk Kantor Pusat
   nilaiBeritaAcara?: number;         // Sdr/Tagihan (Nilai Berita Acara)
   
-  // Berita Acara
-  noBeritaAcara?: string;         // No Berita Acara
-  tanggalBeritaAcara?: string;    // Tanggal Berita Acara
+  // Berita Acara (legacy)
   noBeritaAcaraSKRelasi?: string; // No Berita Acara SK/Relasi
   
   // Arsip
@@ -67,16 +104,14 @@ export interface Contract {
   unit: string;
   unitSektorK?: string;           // Unit Sektor K
   
-  // SK/WE & PO
+  // SK/WE & PO (legacy)
   noSKWE?: string;                // No SK/WE
-  posAngg?: string;               // Pos Angg
-  noSKUSKKO?: string;             // No SKU/SKKO
-  requestTanggalSERelasi?: string; // Request tanggal SE Relasi
-  noSE?: string;                  // No SE
-  noPO?: string;                  // No PO
-  submissionId?: string;          // Submission ID
+  posAngg?: string;               // Pos Angg (legacy, mapped to noWBSPosAnggaran)
+  noSKUSKKO?: string;             // No SKU/SKKO (legacy, mapped to noSKKI)
+  requestTanggalSERelasi?: string; // Request tanggal SE Relasi (legacy, mapped to requestTanggalSE)
+  submissionId?: string;          // Submission ID (legacy, mapped to submissionIdVIP)
   
-  // Detail Pekerjaan
+  // Detail Pekerjaan (legacy)
   jenisPekerjaan?: string;        // Jenis Pekerjaan
   bebanTahun?: string;            // Beban tahun
   batasPaguTerbayar?: number;     // Batas pagu Terbayar
@@ -90,8 +125,7 @@ export interface Contract {
   entryBy?: string;               // Entry by
   
   // Status & calculated fields
-  status: ContractStatus;
-  totalTagihanDibayar: number;    // Total yang sudah dibayar
+  totalTagihanDibayar: number;    // Total yang sudah dibayar (mapped from terbayar)
   sisaAnggaran: number;           // nilaiKontrak - totalTagihanDibayar
   persentaseRealisasi: number;    // (totalTagihanDibayar / nilaiKontrak) * 100
   progressPekerjaan: number;      // Progress pekerjaan 0-100%

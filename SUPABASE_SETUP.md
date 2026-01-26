@@ -22,10 +22,23 @@
    - ✅ Triggers untuk auto-update total tagihan
    - ✅ Sample data (opsional - bisa dihapus)
 
-### 3. **Verifikasi Tabel**
+### 3. **Jalankan Migration untuk Kategori Investasi**
+   - Buka file `supabase-migration-investasi.sql` di root project ini
+   - Copy **semua isi file** tersebut
+   - Paste ke SQL Editor di Supabase
+   - Klik **Run** atau tekan `Ctrl+Enter`
+
+   Migration ini akan:
+   - ✅ Menambah kolom baru untuk kategori Investasi
+   - ✅ Auto-generate field seperti No. Perjanjian, No. SE, No. PO, dll
+   - ✅ Trigger untuk update Status VIP otomatis
+   - ✅ Trigger untuk generate No. Berita Acara saat tambah tagihan
+   - ✅ Sample data untuk kontrak Investasi
+
+### 4. **Verifikasi Tabel**
    Setelah berhasil, cek di **Table Editor**:
    - Anda akan melihat 2 tabel baru: `contracts` dan `invoices`
-   - Jika ada sample data, akan muncul 3 rows di tabel `contracts`
+   - Jika ada sample data, akan muncul 5 rows kontrak Investasi di tabel `contracts`
 
 ---
 

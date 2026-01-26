@@ -107,23 +107,79 @@ export interface SupabaseProjectMetrics {
 export interface SupabaseContract {
   id: string;
   no: number;
+  
+  // Field khusus kategori Investasi
+  no_perjanjian: string;                    // Nomor Perjanjian/Amandemen
+  tanggal_perjanjian: string;               // Tanggal Perjanjian/Amandemen
+  tanggal_berakhir: string;                 // Tanggal Berakhir
+  judul_prk: string;                        // Judul PRK
+  nilai_perjanjian: number;                 // Nilai Perjanjian
+  nama_vendor: string;                      // Nama Vendor
+  nilai_tagihan: number;                    // Nilai Tagihan/Nominal
+  no_berita_acara: string | null;           // No. Berita Acara (auto-generate)
+  tanggal_berita_acara: string | null;      // Tanggal Berita Acara (auto)
+  no_wbs_pos_anggaran: string | null;       // No. WBS/Pos Anggaran (auto-generate)
+  no_skki: string | null;                   // No. SKKI (auto-generate)
+  request_tanggal_se: string | null;        // Tanggal Request SE (auto)
+  no_se: string | null;                     // No. SE (auto-generate)
+  no_po: string | null;                     // No. PO (auto-generate)
+  submission_id_vip: string | null;         // Submission ID - VIP (auto-generate)
+  status_vip: 'lunas' | 'belum_lunas' | 'dokumen_tidak_lengkap';
+  terbayar: number;
+  nama_pekerjaan: string;                   // Nama Pekerjaan
+  jenis_ai: 'AI' | 'AO';                    // Jenis AI
+  no_prk: string | null;                    // No.PRK (auto-generate)
+  cr_not_cr: 'CR' | 'Not CR';               // CR/Not CR
+  
+  // Backward compatibility fields
   uraian_kegiatan: string;
-  no_perjanjian: string;
-  tanggal_perjanjian: string;
-  tanggal_berakhir: string;
   judul_pekerjaan: string;
   nilai_kontrak: number;
   vendor: string;
+  nilai_tagihan_kontrak_pusat: number | null;
+  nilai_tagihan_unit_induk: number | null;
+  nilai_berita_acara: number | null;
+  no_berita_acara_sk_relasi: string | null;
+  tanggal_arsip: string | null;
+  no_xps: string | null;
+  tanggal_xps: string | null;
+  
   kategori: 'investasi' | 'pemeliharaan' | 'administrasi';
   jenis_anggaran: 'AI' | 'AO';
   unit: string;
+  unit_sektor_k: string | null;
+  no_skwe: string | null;
+  pos_angg: string | null;
+  no_sku_skko: string | null;
+  request_tanggal_se_relasi: string | null;
+  submission_id: string | null;
+  jenis_pekerjaan: string | null;
+  beban_tahun: string | null;
+  batas_pagu_terbayar: number | null;
+  unit_terbayar: string | null;
+  konfirmasi_non_rutin: string | null;
+  bidang: string | null;
+  
+  pic_id: string | null;
+  pic_name: string | null;
+  entry_by: string | null;
+  
   status: 'aktif' | 'selesai' | 'bermasalah';
   total_tagihan_dibayar: number;
   sisa_anggaran: number;
   persentase_realisasi: number;
-  pic_name: string | null;
+  progress_pekerjaan: number | null;
+  
+  old_flag: string | null;
+  click_cb: boolean | null;
+  
   created_at: string;
+  created_by: string | null;
   updated_at: string;
+  updated_by: string | null;
+  
+  keterangan: string | null;
+  dokumen_kontrak: string | null;
 }
 
 export interface SupabaseInvoice {

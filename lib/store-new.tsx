@@ -12,6 +12,8 @@ import type {
   ContractFilters,
   InvoiceFilters,
   Alert,
+  StatusVIP,
+  CRStatus,
 } from "./types-new";
 import { calculateContractStatus } from "./contract-status";
 
@@ -108,21 +110,56 @@ function generateMockContracts(): Contract[] {
       progressPekerjaan,
     });
 
+    // Generate unique numbers for auto-generated fields (Investasi)
+    const randomNum1 = 1000 + index * 100 + Math.floor(Math.random() * 100);
+    const randomNum2 = 100 + index * 10;
+    
+    // Determine status VIP based on realisasi
+    const statusVIP = realisasiPersen >= 100 ? "lunas" : "belum_lunas";
+
     return {
       id: `CTR-${String(index + 1).padStart(3, "0")}`,
       no: index + 1,
-      uraianKegiatan: data.uraian,
-      noPerjanjian: `${String(index + 1).padStart(4, "0")}/PLN/KTR/${tahun}`,
+      
+      // ============================================
+      // FIELD KHUSUS KATEGORI INVESTASI
+      // ============================================
+      
+      // Auto-generated fields for Investasi
+      noPerjanjian: data.kategori === "investasi" 
+        ? `03${randomNum1}Pj/STH.01.01/F0107${randomNum1}00/${tahun}`
+        : `${String(index + 1).padStart(4, "0")}/PLN/KTR/${tahun}`,
       tanggalPerjanjian,
       tanggalBerakhir,
+      judulPRK: data.uraian,
+      nilaiPerjanjian: data.nilai,
+      namaVendor: data.vendor,
+      nilaiTagihan: Math.floor(totalDibayar * 0.6),
+      noBeritaAcara: realisasiPersen > 30 ? `${randomNum1}/JKO/${tahun}/012` : undefined,
+      tanggalBeritaAcara: realisasiPersen > 30 ? `${tahun}-${String(bulanMulai + 2).padStart(2, "0")}-20` : undefined,
+      noWBSPosAnggaran: `I.1001.23.21.0805.${String(randomNum2).padStart(3, "0")}`,
+      noSKKI: `${randomNum1}/KEU.00.03/EVP MUM/${tahun}`,
+      requestTanggalSE: realisasiPersen > 40 ? `${tahun}-${String(bulanMulai + 1).padStart(2, "0")}-15` : undefined,
+      noSE: `100369${randomNum1}`,
+      noPO: `310148${randomNum1}`,
+      submissionIdVIP: `TRE-V/${randomNum1}/${tahun}/00000${randomNum1 * 10}`,
+      statusVIP: statusVIP as "lunas" | "belum_lunas" | "dokumen_tidak_lengkap",
+      terbayar: totalDibayar,
+      namaPekerjaan: data.judul,
+      jenisAI: data.kategori === "investasi" ? "AI" : "AO",
+      noPRK: `${tahun}.KPST.21.${String(randomNum2).padStart(3, "0")}`,
+      crNotCR: (index % 3 === 0 ? "CR" : "Not CR") as "CR" | "Not CR",
+      
+      // ============================================
+      // BACKWARD COMPATIBILITY FIELDS
+      // ============================================
+      uraianKegiatan: data.uraian,
       judulPekerjaan: data.judul,
       nilaiKontrak: data.nilai,
       vendor: data.vendor,
       nilaiTagihanKontrakPusat: Math.floor(totalDibayar * 0.6),
       nilaiTagihanUnitInduk: Math.floor(totalDibayar * 0.4),
       nilaiBeritaAcara: realisasiPersen > 30 ? Math.floor(totalDibayar * 0.9) : undefined,
-      noBeritaAcara: realisasiPersen > 30 ? `BA-${String(index + 1).padStart(3, "0")}/${tahun}` : undefined,
-      tanggalBeritaAcara: realisasiPersen > 30 ? `${tahun}-${String(bulanMulai + 2).padStart(2, "0")}-20` : undefined,
       noBeritaAcaraSKRelasi: realisasiPersen > 50 ? `BA-SK/${String(index + 1).padStart(3, "0")}/${tahun}` : undefined,
       tanggalArsip: realisasiPersen > 50 ? `${tahun}-${String(bulanMulai + 3).padStart(2, "0")}-01` : undefined,
       noXPS: realisasiPersen > 40 ? `XPS/${String(index + 1).padStart(4, "0")}/${tahun}` : undefined,
@@ -132,12 +169,10 @@ function generateMockContracts(): Contract[] {
       unit: units[index % units.length],
       unitSektorK: `Sektor ${["A", "B", "C", "D", "E"][index % 5]}`,
       noSKWE: `SK-WE/${String(index + 1).padStart(4, "0")}/${tahun}`,
-      posAngg: `${5200 + (index % 10)}`,
-      noSKUSKKO: `SKU/${String(index + 1).padStart(5, "0")}/${tahun}`,
-      requestTanggalSERelasi: `${tahun}-${String(bulanMulai).padStart(2, "0")}-10`,
-      noSE: `SE/${String(index + 1).padStart(4, "0")}/${tahun}`,
-      noPO: `PO/${String(index + 1).padStart(6, "0")}/${tahun}`,
-      submissionId: `SUB-${String(index + 1).padStart(8, "0")}`,
+      posAngg: `I.1001.23.21.0805.${String(randomNum2).padStart(3, "0")}`,
+      noSKUSKKO: `${randomNum1}/KEU.00.03/EVP MUM/${tahun}`,
+      requestTanggalSERelasi: realisasiPersen > 40 ? `${tahun}-${String(bulanMulai + 1).padStart(2, "0")}-15` : undefined,
+      submissionId: `TRE-V/${randomNum1}/${tahun}/00000${randomNum1 * 10}`,
       jenisPekerjaan: jenisPekerjaanMap[data.kategori][index % jenisPekerjaanMap[data.kategori].length],
       bebanTahun: `${tahun}`,
       batasPaguTerbayar: Math.floor(data.nilai * 0.95),
@@ -460,67 +495,28 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       try {
         setIsLoading(true);
 
-        // Fetch contracts
+        // Fetch contracts from new split tables
         const contractsRes = await fetch('/api/contracts');
         if (contractsRes.ok) {
           const { data: contractsData } = await contractsRes.json();
-
-          // Transform snake_case to camelCase
+          
+          // Data sudah dalam format camelCase dari API
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const transformedContracts: Contract[] = contractsData.map((data: any) => ({
-            id: data.id,
-            no: data.no,
-            uraianKegiatan: data.uraian_kegiatan,
-            noPerjanjian: data.no_perjanjian,
-            tanggalPerjanjian: data.tanggal_perjanjian,
-            tanggalBerakhir: data.tanggal_berakhir,
-            judulPekerjaan: data.judul_pekerjaan,
-            nilaiKontrak: data.nilai_kontrak,
-            vendor: data.vendor,
-            nilaiTagihanKontrakPusat: data.nilai_tagihan_kontrak_pusat,
-            nilaiTagihanUnitInduk: data.nilai_tagihan_unit_induk,
-            nilaiBeritaAcara: data.nilai_berita_acara,
-            noBeritaAcara: data.no_berita_acara,
-            tanggalBeritaAcara: data.tanggal_berita_acara,
-            noBeritaAcaraSKRelasi: data.no_berita_acara_sk_relasi,
-            tanggalArsip: data.tanggal_arsip,
-            noXPS: data.no_xps,
-            tanggalXPS: data.tanggal_xps,
-            kategori: data.kategori,
-            jenisAnggaran: data.jenis_anggaran,
-            unit: data.unit,
-            unitSektorK: data.unit_sektor_k,
-            noSKWE: data.no_sk_we,
-            posAngg: data.pos_angg,
-            noSKUSKKO: data.no_sku_skko,
-            requestTanggalSERelasi: data.request_tanggal_se_relasi,
-            noSE: data.no_se,
-            noPO: data.no_po,
-            submissionId: data.submission_id,
-            jenisPekerjaan: data.jenis_pekerjaan,
-            bebanTahun: data.beban_tahun,
-            batasPaguTerbayar: data.batas_pagu_terbayar,
-            unitTerbayar: data.unit_terbayar,
-            konfirmasiNonRutin: data.konfirmasi_non_rutin,
-            bidang: data.bidang,
-            picId: data.pic_id,
-            picName: data.pic_name,
-            entryBy: data.entry_by,
-            status: data.status,
-            totalTagihanDibayar: data.total_tagihan_dibayar,
-            sisaAnggaran: data.sisa_anggaran,
-            persentaseRealisasi: parseFloat(data.persentase_realisasi),
-            progressPekerjaan: parseFloat(data.progress_pekerjaan || '0'),
-            oldFlag: data.old_flag,
-            clickCB: data.click_cb,
-            createdAt: data.created_at,
-            createdBy: data.created_by,
-            updatedAt: data.updated_at,
-            updatedBy: data.updated_by,
-            keterangan: data.keterangan,
-            dokumenKontrak: data.dokumen_kontrak,
+            ...data,
+            // Ensure numeric fields are properly parsed
+            nilaiKontrak: Number(data.nilaiKontrak) || 0,
+            totalTagihanDibayar: Number(data.totalTagihanDibayar) || Number(data.terbayar) || 0,
+            sisaAnggaran: Number(data.sisaAnggaran) || 0,
+            persentaseRealisasi: parseFloat(data.persentaseRealisasi) || 0,
+            progressPekerjaan: parseFloat(data.progressPekerjaan) || 0,
           }));
 
           setContracts(transformedContracts);
+        } else {
+          // Fallback ke mock data jika API gagal
+          console.warn('Failed to fetch contracts from API, using mock data');
+          setContracts(generateMockContracts());
         }
 
         // Fetch invoices
@@ -529,6 +525,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           const { data: invoicesData } = await invoicesRes.json();
 
           // Transform snake_case to camelCase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const transformedInvoices: Invoice[] = invoicesData.map((data: any) => ({
             id: data.id,
             contractId: data.contract_id,
@@ -558,8 +555,9 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error('Error loading data from Supabase:', error);
         // Fallback ke mock data jika gagal
-        setContracts(generateMockContracts());
-        setInvoices(generateMockInvoices(contracts));
+        const mockContracts = generateMockContracts();
+        setContracts(mockContracts);
+        setInvoices(generateMockInvoices(mockContracts));
       } finally {
         setIsLoading(false);
       }

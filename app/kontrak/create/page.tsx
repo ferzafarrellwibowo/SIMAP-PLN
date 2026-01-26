@@ -4,27 +4,100 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useContractStore, CONTRACT_CATEGORY_LABELS, JENIS_ANGGARAN_LABELS } from "@/lib/store-new";
+import { useContractStore, CONTRACT_CATEGORY_LABELS } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
-import type { ContractCategory, JenisAnggaran } from "@/lib/types-new";
+import type { ContractCategory, JenisAnggaran, CRStatus } from "@/lib/types-new";
+
+// Helper function to generate auto IDs
+function generateNoPerjanjian(): string {
+  const year = new Date().getFullYear();
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  return `03${randomNum}Pj/STH.01.01/F0107${randomNum}00/${year}`;
+}
+
+function generateNoWBSPosAnggaran(): string {
+  const randomNum = Math.floor(Math.random() * 900) + 100;
+  return `I.1001.23.21.0805.${String(randomNum).padStart(3, "0")}`;
+}
+
+function generateNoSKKI(): string {
+  const year = new Date().getFullYear();
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  return `${randomNum}/KEU.00.03/EVP MUM/${year}`;
+}
+
+function generateNoSE(): string {
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  return `100369${randomNum}`;
+}
+
+function generateNoPO(): string {
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  return `310148${randomNum}`;
+}
+
+function generateSubmissionIdVIP(): string {
+  const year = new Date().getFullYear();
+  const randomNum1 = Math.floor(Math.random() * 9000) + 1000;
+  const randomNum2 = Math.floor(Math.random() * 90000) + 10000;
+  return `TRE-V/${randomNum1}/${year}/00000${randomNum2}`;
+}
+
+function generateNoPRK(): string {
+  const year = new Date().getFullYear();
+  const randomNum = Math.floor(Math.random() * 900) + 100;
+  return `${year}.KPST.21.${String(randomNum).padStart(3, "0")}`;
+}
+
+// Helper function to format currency to readable text
+function formatCurrencyText(value: string | number): string {
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (isNaN(num) || num === 0) return '';
+  
+  if (num >= 1000000000000) {
+    const triliun = num / 1000000000000;
+    return `Rp ${triliun.toLocaleString('id-ID', { maximumFractionDigits: 2 })} triliun`;
+  } else if (num >= 1000000000) {
+    const miliar = num / 1000000000;
+    return `Rp ${miliar.toLocaleString('id-ID', { maximumFractionDigits: 2 })} miliar`;
+  } else if (num >= 1000000) {
+    const juta = num / 1000000;
+    return `Rp ${juta.toLocaleString('id-ID', { maximumFractionDigits: 2 })} jt`;
+  } else if (num >= 1000) {
+    const ribu = num / 1000;
+    return `Rp ${ribu.toLocaleString('id-ID', { maximumFractionDigits: 2 })} rb`;
+  }
+  return `Rp ${num.toLocaleString('id-ID')}`;
+}
 
 export default function CreateContractPage() {
   const router = useRouter();
   const { user } = useAuth();
   const { createContract } = useContractStore();
 
+  // Form data untuk kategori investasi
   const [formData, setFormData] = useState({
-    uraianKegiatan: "",
-    noPerjanjian: "",
+    // Field yang perlu diinput manual untuk Investasi
+    kategori: "investasi" as ContractCategory,
     tanggalPerjanjian: "",
     tanggalBerakhir: "",
+    judulPRK: "",
+    nilaiPerjanjian: "",
+    namaVendor: "",
+    nilaiTagihan: "",
+    namaPekerjaan: "",
+    jenisAI: "AI" as JenisAnggaran,
+    crNotCR: "Not CR" as CRStatus,
+    unit: "",
+    keterangan: "",
+    
+    // Field untuk kategori lain (pemeliharaan & administrasi)
+    uraianKegiatan: "",
+    noPerjanjian: "",
     judulPekerjaan: "",
     nilaiKontrak: "",
     vendor: "",
     picName: "",
-    kategori: "investasi" as ContractCategory,
-    jenisAnggaran: "AI" as JenisAnggaran,
-    unit: "",
     unitSektorK: "",
     unitTerbayar: "",
     noSKWE: "",
@@ -37,8 +110,6 @@ export default function CreateContractPage() {
     bebanTahun: new Date().getFullYear().toString(),
     konfirmasiNonRutin: "Rutin",
     bidang: "",
-    keterangan: "",
-    // New fields
     requestTanggalSERelasi: "",
     noXPS: "",
     tanggalXPS: "",
@@ -60,14 +131,6 @@ export default function CreateContractPage() {
 
     // Clear error when user changes input
     if (errorMessage) setErrorMessage(null);
-
-    // Auto-update jenisAnggaran based on kategori
-    if (name === "kategori") {
-      setFormData((prev) => ({
-        ...prev,
-        jenisAnggaran: value === "investasi" ? "AI" : "AO",
-      }));
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,56 +139,138 @@ export default function CreateContractPage() {
     setErrorMessage(null);
 
     try {
-      // Validation
-      if (!formData.judulPekerjaan || !formData.noPerjanjian || !formData.vendor || !formData.nilaiKontrak) {
-        setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        setIsSubmitting(false);
-        return;
+      if (formData.kategori === "investasi") {
+        // Validation for Investasi category
+        if (!formData.tanggalPerjanjian || !formData.tanggalBerakhir || !formData.judulPRK || 
+            !formData.nilaiPerjanjian || !formData.namaVendor || !formData.nilaiTagihan ||
+            !formData.namaPekerjaan) {
+          setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Auto-generate fields for Investasi
+        const noPerjanjian = generateNoPerjanjian();
+        const noWBSPosAnggaran = generateNoWBSPosAnggaran();
+        const noSKKI = generateNoSKKI();
+        const noSE = generateNoSE();
+        const noPO = generateNoPO();
+        const submissionIdVIP = generateSubmissionIdVIP();
+        const noPRK = generateNoPRK();
+        const nilaiPerjanjian = parseFloat(formData.nilaiPerjanjian);
+        const nilaiTagihan = parseFloat(formData.nilaiTagihan);
+
+        // Create contract object for Investasi
+        const newContract = {
+          no: 0, // Will be auto-assigned by store
+          
+          // Investasi specific fields
+          noPerjanjian,
+          tanggalPerjanjian: formData.tanggalPerjanjian,
+          tanggalBerakhir: formData.tanggalBerakhir,
+          judulPRK: formData.judulPRK,
+          nilaiPerjanjian,
+          namaVendor: formData.namaVendor,
+          nilaiTagihan,
+          noWBSPosAnggaran,
+          noSKKI,
+          noSE,
+          noPO,
+          submissionIdVIP,
+          statusVIP: "belum_lunas" as const,
+          terbayar: 0,
+          namaPekerjaan: formData.namaPekerjaan,
+          jenisAI: formData.jenisAI,
+          noPRK,
+          crNotCR: formData.crNotCR,
+          
+          // Mapped fields for backward compatibility
+          uraianKegiatan: formData.judulPRK,
+          judulPekerjaan: formData.namaPekerjaan,
+          nilaiKontrak: nilaiPerjanjian,
+          vendor: formData.namaVendor,
+          nilaiTagihanKontrakPusat: nilaiTagihan,
+          nilaiTagihanUnitInduk: 0,
+          
+          // Category & Unit
+          kategori: "investasi" as ContractCategory,
+          jenisAnggaran: "AI" as JenisAnggaran,
+          unit: formData.unit || user?.unit || "",
+          
+          // Legacy field mappings
+          posAngg: noWBSPosAnggaran,
+          noSKUSKKO: noSKKI,
+          submissionId: submissionIdVIP,
+          
+          entryBy: user?.name || "Admin",
+          status: "aktif" as const,
+          keterangan: formData.keterangan,
+        };
+
+        await createContract(newContract);
+      } else {
+        // Validation for other categories (Pemeliharaan & Administrasi)
+        if (!formData.judulPekerjaan || !formData.noPerjanjian || !formData.vendor || !formData.nilaiKontrak) {
+          setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Create contract object for other categories
+        const newContract = {
+          no: 0,
+          uraianKegiatan: formData.uraianKegiatan,
+          noPerjanjian: formData.noPerjanjian,
+          tanggalPerjanjian: formData.tanggalPerjanjian,
+          tanggalBerakhir: formData.tanggalBerakhir,
+          judulPekerjaan: formData.judulPekerjaan,
+          nilaiKontrak: parseFloat(formData.nilaiKontrak),
+          vendor: formData.vendor,
+          picName: formData.picName,
+          nilaiTagihanKontrakPusat: 0,
+          nilaiTagihanUnitInduk: 0,
+          kategori: formData.kategori,
+          jenisAnggaran: "AO" as JenisAnggaran,
+          unit: formData.unit || user?.unit || "",
+          unitSektorK: formData.unitSektorK,
+          unitTerbayar: formData.unitTerbayar,
+          noSKWE: formData.noSKWE,
+          posAngg: formData.posAngg,
+          noSKUSKKO: formData.noSKUSKKO,
+          noSE: formData.noSE,
+          noPO: formData.noPO,
+          submissionId: formData.submissionId,
+          jenisPekerjaan: formData.jenisPekerjaan,
+          bebanTahun: formData.bebanTahun,
+          konfirmasiNonRutin: formData.konfirmasiNonRutin,
+          bidang: formData.bidang,
+          requestTanggalSERelasi: formData.requestTanggalSERelasi || undefined,
+          noXPS: formData.noXPS,
+          tanggalXPS: formData.tanggalXPS || undefined,
+          noBeritaAcara: formData.noBeritaAcara,
+          tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
+          noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
+          tanggalArsip: formData.tanggalArsip || undefined,
+          entryBy: user?.name || "Admin",
+          status: "aktif" as const,
+          
+          // Default values for new fields
+          judulPRK: formData.judulPekerjaan,
+          nilaiPerjanjian: parseFloat(formData.nilaiKontrak),
+          namaVendor: formData.vendor,
+          nilaiTagihan: 0,
+          statusVIP: "belum_lunas" as const,
+          terbayar: 0,
+          namaPekerjaan: formData.judulPekerjaan,
+          jenisAI: "AO" as JenisAnggaran,
+          crNotCR: "Not CR" as CRStatus,
+          keterangan: formData.keterangan,
+        };
+
+        await createContract(newContract);
       }
-
-      // Create contract object
-      const newContract = {
-        no: 0, // Will be auto-assigned by store
-        uraianKegiatan: formData.uraianKegiatan,
-        noPerjanjian: formData.noPerjanjian,
-        tanggalPerjanjian: formData.tanggalPerjanjian,
-        tanggalBerakhir: formData.tanggalBerakhir,
-        judulPekerjaan: formData.judulPekerjaan,
-        nilaiKontrak: parseFloat(formData.nilaiKontrak),
-        vendor: formData.vendor,
-        picName: formData.picName,
-        nilaiTagihanKontrakPusat: 0,
-        nilaiTagihanUnitInduk: 0,
-        kategori: formData.kategori,
-        jenisAnggaran: formData.jenisAnggaran,
-        unit: formData.unit || user?.unit || "",
-        unitSektorK: formData.unitSektorK,
-        unitTerbayar: formData.unitTerbayar,
-        noSKWE: formData.noSKWE,
-        posAngg: formData.posAngg,
-        noSKUSKKO: formData.noSKUSKKO,
-        noSE: formData.noSE,
-        noPO: formData.noPO,
-        submissionId: formData.submissionId,
-        jenisPekerjaan: formData.jenisPekerjaan,
-        bebanTahun: formData.bebanTahun,
-        konfirmasiNonRutin: formData.konfirmasiNonRutin,
-        bidang: formData.bidang,
-        keterangan: formData.keterangan,
-        // New fields
-        requestTanggalSERelasi: formData.requestTanggalSERelasi || undefined,
-        noXPS: formData.noXPS,
-        tanggalXPS: formData.tanggalXPS || undefined,
-        noBeritaAcara: formData.noBeritaAcara,
-        tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
-        noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
-        tanggalArsip: formData.tanggalArsip || undefined,
-        entryBy: user?.name || "Admin", // Auto-filled dengan nama user
-        status: "aktif" as const,
-      };
-
-      await createContract(newContract);
 
       // Redirect to contract list
       router.push("/kontrak");
@@ -154,6 +299,406 @@ export default function CreateContractPage() {
       </div>
     );
   }
+
+  // Render form based on category
+  const renderInvestasiForm = () => (
+    <>
+      {/* Informasi Dasar - Investasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="tanggalPerjanjian"
+              value={formData.tanggalPerjanjian}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Berakhir <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="tanggalBerakhir"
+              value={formData.tanggalBerakhir}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Judul PRK <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="judulPRK"
+              value={formData.judulPRK}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pembangunan GI 150kV Cawang"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Nilai & Vendor - Investasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="nilaiPerjanjian"
+              value={formData.nilaiPerjanjian}
+              onChange={handleChange}
+              required
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 15000000000"
+            />
+            {formData.nilaiPerjanjian && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiPerjanjian)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Vendor <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="namaVendor"
+              value={formData.namaVendor}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PT Wijaya Karya"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan/Nominal (Rp) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihan"
+              value={formData.nilaiTagihan}
+              onChange={handleChange}
+              required
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 3000000000"
+            />
+            {formData.nilaiTagihan && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihan)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Detail Pekerjaan - Investasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Pekerjaan <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="namaPekerjaan"
+              value={formData.namaPekerjaan}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pengadaan dan Pemasangan Trafo Daya 60 MVA GI Cawang"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Jenis AI
+            </label>
+            <select
+              name="jenisAI"
+              value={formData.jenisAI}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="AI">AI - Anggaran Investasi</option>
+              <option value="AO">AO - Anggaran Operasi</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              CR / Not CR
+            </label>
+            <select
+              name="crNotCR"
+              value={formData.crNotCR}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Not CR">Not CR</option>
+              <option value="CR">CR</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Unit - Investasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Unit
+            </label>
+            <input
+              type="text"
+              name="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PLN UP3 Jakarta Selatan"
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  const renderOtherCategoryForm = () => (
+    <>
+      {/* Informasi Dasar */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Dasar</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Judul Pekerjaan <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="judulPekerjaan"
+              value={formData.judulPekerjaan}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pemeliharaan Trafo GI"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No Perjanjian <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="noPerjanjian"
+              value={formData.noPerjanjian}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 0001/PLN/KTR/2026"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Uraian Kegiatan
+            </label>
+            <input
+              type="text"
+              name="uraianKegiatan"
+              value={formData.uraianKegiatan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pemeliharaan Rutin"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Vendor <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="vendor"
+              value={formData.vendor}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PT Wijaya Karya"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              PIC (Person In Charge)
+            </label>
+            <input
+              type="text"
+              name="picName"
+              value={formData.picName}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Budi Santoso"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Keuangan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Keuangan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Jenis Anggaran
+            </label>
+            <input
+              type="text"
+              value="AO - Anggaran Operasi"
+              disabled
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Kontrak (Rp) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="nilaiKontrak"
+              value={formData.nilaiKontrak}
+              onChange={handleChange}
+              required
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 15000000000"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Jenis Pekerjaan
+            </label>
+            <input
+              type="text"
+              name="jenisPekerjaan"
+              value={formData.jenisPekerjaan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pemeliharaan"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tanggal */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Jadwal</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Perjanjian
+            </label>
+            <input
+              type="date"
+              name="tanggalPerjanjian"
+              value={formData.tanggalPerjanjian}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Berakhir
+            </label>
+            <input
+              type="date"
+              name="tanggalBerakhir"
+              value={formData.tanggalBerakhir}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Beban Tahun
+            </label>
+            <input
+              type="text"
+              name="bebanTahun"
+              value={formData.bebanTahun}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="2026"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Unit & Lokasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit & Lokasi</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Unit
+            </label>
+            <input
+              type="text"
+              name="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PLN UP3 Jakarta Selatan"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Unit Sektor K
+            </label>
+            <input
+              type="text"
+              name="unitSektorK"
+              value={formData.unitSektorK}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Sektor A"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Bidang
+            </label>
+            <input
+              type="text"
+              name="bidang"
+              value={formData.bidang}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Operasi & Pemeliharaan"
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <div className="space-y-6">
@@ -197,443 +742,41 @@ export default function CreateContractPage() {
         onSubmit={handleSubmit}
         className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6"
       >
-        {/* Informasi Dasar */}
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Dasar</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Judul Pekerjaan <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="judulPekerjaan"
-                value={formData.judulPekerjaan}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Pembangunan GI 150kV"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No Perjanjian <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="noPerjanjian"
-                value={formData.noPerjanjian}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: 0001/PLN/KTR/2026"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Uraian Kegiatan
-              </label>
-              <input
-                type="text"
-                name="uraianKegiatan"
-                value={formData.uraianKegiatan}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Pengadaan Trafo 60 MVA"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Vendor <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="vendor"
-                value={formData.vendor}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: PT Wijaya Karya"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                PIC (Person In Charge)
-              </label>
-              <input
-                type="text"
-                name="picName"
-                value={formData.picName}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Budi Santoso"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Kategori & Keuangan */}
+        {/* Kategori Selection */}
         <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Kategori & Keuangan</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Kategori
-              </label>
-              <select
-                name="kategori"
-                value={formData.kategori}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="investasi">Investasi</option>
-                <option value="pemeliharaan">Pemeliharaan</option>
-                <option value="administrasi">Administrasi</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Jenis Anggaran
-              </label>
-              <input
-                type="text"
-                value={`${formData.jenisAnggaran} - ${JENIS_ANGGARAN_LABELS[formData.jenisAnggaran]}`}
-                disabled
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Nilai Kontrak (Rp) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                name="nilaiKontrak"
-                value={formData.nilaiKontrak}
-                onChange={handleChange}
-                required
-                min="0"
-                step="1000"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: 15000000000"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Jenis Pekerjaan
-              </label>
-              <input
-                type="text"
-                name="jenisPekerjaan"
-                value={formData.jenisPekerjaan}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Konstruksi"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Tanggal */}
-        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Jadwal</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Kategori Kontrak</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tanggal Perjanjian
-              </label>
-              <input
-                type="date"
-                name="tanggalPerjanjian"
-                value={formData.tanggalPerjanjian}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tanggal Berakhir
-              </label>
-              <input
-                type="date"
-                name="tanggalBerakhir"
-                value={formData.tanggalBerakhir}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Beban Tahun
-              </label>
-              <input
-                type="text"
-                name="bebanTahun"
-                value={formData.bebanTahun}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="2026"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Unit & Lokasi */}
-        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit & Lokasi</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Unit
-              </label>
-              <input
-                type="text"
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: PLN UP3 Jakarta Selatan"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Unit Sektor K
-              </label>
-              <input
-                type="text"
-                name="unitSektorK"
-                value={formData.unitSektorK}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Sektor A"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Unit Terbayar
-              </label>
-              <input
-                type="text"
-                name="unitTerbayar"
-                value={formData.unitTerbayar}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: PLN UP3 Jakarta Selatan"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Bidang
-              </label>
-              <input
-                type="text"
-                name="bidang"
-                value={formData.bidang}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: Pengembangan"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Dokumen & Nomor Referensi */}
-        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Dokumen & Nomor Referensi</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No SK/WE
-              </label>
-              <input
-                type="text"
-                name="noSKWE"
-                value={formData.noSKWE}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No SKU/SKKO
-              </label>
-              <input
-                type="text"
-                name="noSKUSKKO"
-                value={formData.noSKUSKKO}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No SE
-              </label>
-              <input
-                type="text"
-                name="noSE"
-                value={formData.noSE}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No PO
-              </label>
-              <input
-                type="text"
-                name="noPO"
-                value={formData.noPO}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Pos Anggaran
-              </label>
-              <input
-                type="text"
-                name="posAngg"
-                value={formData.posAngg}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Submission ID
-              </label>
-              <input
-                type="text"
-                name="submissionId"
-                value={formData.submissionId}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Konfirmasi/Non Rutin
-              </label>
-              <select
-                name="konfirmasiNonRutin"
-                value={formData.konfirmasiNonRutin}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            {(["investasi", "pemeliharaan", "administrasi"] as ContractCategory[]).map((cat) => (
+              <label
+                key={cat}
+                className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                  formData.kategori === cat
+                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                }`}
               >
-                <option value="Rutin">Rutin</option>
-                <option value="Non Rutin">Non Rutin</option>
-              </select>
-            </div>
+                <input
+                  type="radio"
+                  name="kategori"
+                  value={cat}
+                  checked={formData.kategori === cat}
+                  onChange={handleChange}
+                  className="sr-only"
+                />
+                <span className={`text-sm font-medium ${
+                  formData.kategori === cat
+                    ? "text-blue-700 dark:text-blue-300"
+                    : "text-gray-700 dark:text-gray-300"
+                }`}>
+                  {CONTRACT_CATEGORY_LABELS[cat]}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 
-        {/* Berita Acara & Arsip */}
-        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara & Arsip</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Request Tgl SE
-              </label>
-              <input
-                type="date"
-                name="requestTanggalSERelasi"
-                value={formData.requestTanggalSERelasi}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No. XPS
-              </label>
-              <input
-                type="text"
-                name="noXPS"
-                value={formData.noXPS}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: XPS/2026/001"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tanggal XPS
-              </label>
-              <input
-                type="date"
-                name="tanggalXPS"
-                value={formData.tanggalXPS}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No. Berita Acara
-              </label>
-              <input
-                type="text"
-                name="noBeritaAcara"
-                value={formData.noBeritaAcara}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: BA/2026/001"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tanggal Berita Acara
-              </label>
-              <input
-                type="date"
-                name="tanggalBeritaAcara"
-                value={formData.tanggalBeritaAcara}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                No. BA SK/Relasi
-              </label>
-              <input
-                type="text"
-                name="noBeritaAcaraSKRelasi"
-                value={formData.noBeritaAcaraSKRelasi}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Contoh: BA-SK/2026/001"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Tanggal Arsip
-              </label>
-              <input
-                type="date"
-                name="tanggalArsip"
-                value={formData.tanggalArsip}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Entry By
-              </label>
-              <input
-                type="text"
-                value={user?.name || "Admin"}
-                disabled
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed"
-              />
-            </div>
-          </div>
-        </div>
+        {/* Render form based on category */}
+        {formData.kategori === "investasi" ? renderInvestasiForm() : renderOtherCategoryForm()}
 
         {/* Keterangan */}
         <div className="mb-6">

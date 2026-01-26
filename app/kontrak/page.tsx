@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useContractStore, CONTRACT_CATEGORY_LABELS, CONTRACT_CATEGORY_COLORS, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, contractCategoryOptions, contractStatusOptions, jenisAnggaranOptions } from "@/lib/store-new";
+import { useContractStore, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, contractStatusOptions } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
-import type { ContractCategory, ContractStatus, JenisAnggaran } from "@/lib/types-new";
+import type { ContractCategory, ContractStatus } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(1)} M`;
@@ -14,32 +14,100 @@ function formatCurrency(value: number): string {
   return `Rp ${value.toLocaleString("id-ID")}`;
 }
 
-export default function KontrakPage() {
+// Tab configuration
+const TABS: { id: ContractCategory; label: string; icon: React.ReactNode; color: string }[] = [
+  {
+    id: "investasi",
+    label: "Investasi",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    ),
+    color: "bg-blue-500",
+  },
+  {
+    id: "pemeliharaan",
+    label: "Pemeliharaan",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    ),
+    color: "bg-amber-500",
+  },
+  {
+    id: "administrasi",
+    label: "Administrasi",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+    ),
+    color: "bg-purple-500",
+  },
+];
+
+export default function KontrakTabbedPage() {
   const { user } = useAuth();
   const { contracts } = useContractStore();
   const searchParams = useSearchParams();
   
   const initialKategori = searchParams.get("kategori") as ContractCategory | null;
   
+  // Active tab state
+  const [activeTab, setActiveTab] = useState<ContractCategory>(initialKategori || "investasi");
+  
+  // Filter states
   const [search, setSearch] = useState("");
-  const [kategori, setKategori] = useState<ContractCategory | "all">(initialKategori || "all");
   const [status, setStatus] = useState<ContractStatus | "all">("all");
-  const [jenisAnggaran, setJenisAnggaran] = useState<JenisAnggaran | "all">("all");
 
   // Check if any filter is active
-  const isFilterActive = search !== "" || kategori !== "all" || status !== "all" || jenisAnggaran !== "all";
+  const isFilterActive = search !== "" || status !== "all";
 
+  // Group contracts by category
+  const contractsByCategory = useMemo(() => {
+    return {
+      investasi: contracts.filter((c) => c.kategori === "investasi"),
+      pemeliharaan: contracts.filter((c) => c.kategori === "pemeliharaan"),
+      administrasi: contracts.filter((c) => c.kategori === "administrasi"),
+    };
+  }, [contracts]);
+
+  // Filter contracts for active tab
   const filteredContracts = useMemo(() => {
-    return contracts.filter((c) => {
+    const categoryContracts = contractsByCategory[activeTab];
+    
+    return categoryContracts.filter((c) => {
       const matchSearch = c.judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
         c.vendor.toLowerCase().includes(search.toLowerCase()) ||
         c.noPerjanjian.toLowerCase().includes(search.toLowerCase());
-      const matchKategori = kategori === "all" || c.kategori === kategori;
       const matchStatus = status === "all" || c.status === status;
-      const matchJenisAnggaran = jenisAnggaran === "all" || c.jenisAnggaran === jenisAnggaran;
-      return matchSearch && matchKategori && matchStatus && matchJenisAnggaran;
+      return matchSearch && matchStatus;
     });
-  }, [contracts, search, kategori, status, jenisAnggaran]);
+  }, [contractsByCategory, activeTab, search, status]);
+
+  // Calculate summary for each category
+  const categorySummary = useMemo(() => {
+    return {
+      investasi: {
+        total: contractsByCategory.investasi.length,
+        nilai: contractsByCategory.investasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        aktif: contractsByCategory.investasi.filter((c) => c.status === "aktif").length,
+      },
+      pemeliharaan: {
+        total: contractsByCategory.pemeliharaan.length,
+        nilai: contractsByCategory.pemeliharaan.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        aktif: contractsByCategory.pemeliharaan.filter((c) => c.status === "aktif").length,
+      },
+      administrasi: {
+        total: contractsByCategory.administrasi.length,
+        nilai: contractsByCategory.administrasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        aktif: contractsByCategory.administrasi.filter((c) => c.status === "aktif").length,
+      },
+    };
+  }, [contractsByCategory]);
 
   return (
     <div className="space-y-6">
@@ -48,12 +116,12 @@ export default function KontrakPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Kontrak</h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            {filteredContracts.length} kontrak ditemukan
+            Total {contracts.length} kontrak
           </p>
         </div>
         {user?.role === "admin" && (
           <Link
-            href="/kontrak/create"
+            href={`/kontrak/create?kategori=${activeTab}`}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,10 +132,60 @@ export default function KontrakPage() {
         )}
       </div>
 
+      {/* Category Tabs */}
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`relative flex items-center gap-3 p-4 rounded-lg transition-all ${
+                activeTab === tab.id
+                  ? "bg-gray-100 dark:bg-gray-800 ring-2 ring-blue-500"
+                  : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+              }`}
+            >
+              <div className={`p-2 rounded-lg ${tab.color} text-white`}>
+                {tab.icon}
+              </div>
+              <div className="flex-1 text-left">
+                <h3 className={`font-semibold ${
+                  activeTab === tab.id 
+                    ? "text-gray-900 dark:text-white" 
+                    : "text-gray-700 dark:text-gray-300"
+                }`}>
+                  {tab.label}
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {categorySummary[tab.id].total} kontrak • {categorySummary[tab.id].aktif} aktif
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-gray-500 dark:text-gray-400">Total Nilai</p>
+                <p className={`text-sm font-bold ${
+                  activeTab === tab.id 
+                    ? "text-gray-900 dark:text-white" 
+                    : "text-gray-700 dark:text-gray-300"
+                }`}>
+                  {formatCurrency(categorySummary[tab.id].nilai)}
+                </p>
+              </div>
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute inset-0 ring-2 ring-blue-500 rounded-lg pointer-events-none"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-6" : "md:grid-cols-5"}`}>
-          <div className="md:col-span-2">
+        <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+          <div className="md:col-span-1">
             <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
             <input
               type="text"
@@ -77,30 +195,7 @@ export default function KontrakPage() {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Jenis Anggaran</label>
-            <select
-              value={jenisAnggaran}
-              onChange={(e) => setJenisAnggaran(e.target.value as JenisAnggaran | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {jenisAnggaranOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Kategori</label>
-            <select
-              value={kategori}
-              onChange={(e) => setKategori(e.target.value as ContractCategory | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {contractCategoryOptions.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          </div>
+          
           <div>
             <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Status</label>
             <select
@@ -113,6 +208,7 @@ export default function KontrakPage() {
               ))}
             </select>
           </div>
+          
           {/* Reset Filter Button */}
           <AnimatePresence>
             {isFilterActive && (
@@ -127,9 +223,7 @@ export default function KontrakPage() {
                 <button
                   onClick={() => {
                     setSearch("");
-                    setKategori("all");
                     setStatus("all");
-                    setJenisAnggaran("all");
                   }}
                   className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
@@ -146,142 +240,174 @@ export default function KontrakPage() {
 
       {/* Contract List */}
       <div className="space-y-4">
-        {filteredContracts.length === 0 ? (
-          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className="text-gray-600 dark:text-gray-400">Tidak ada kontrak yang ditemukan</p>
-          </div>
-        ) : (
-          filteredContracts.map((contract, index) => (
+        <AnimatePresence mode="wait">
+          {filteredContracts.length === 0 ? (
             <motion.div
-              key={contract.id}
+              key="empty"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center"
+            >
+              <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p className="text-gray-600 dark:text-gray-400">Tidak ada kontrak {TABS.find(t => t.id === activeTab)?.label} yang ditemukan</p>
+              {user?.role === "admin" && (
+                <Link
+                  href={`/kontrak/create?kategori=${activeTab}`}
+                  className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Tambah Kontrak {TABS.find(t => t.id === activeTab)?.label}
+                </Link>
+              )}
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeTab}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="space-y-4"
             >
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                {/* Left Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-2 flex-wrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${JENIS_ANGGARAN_COLORS[contract.jenisAnggaran]}`}>
-                      {contract.jenisAnggaran}
-                    </span>
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CONTRACT_CATEGORY_COLORS[contract.kategori]}`}>
-                      {CONTRACT_CATEGORY_LABELS[contract.kategori]}
-                    </span>
-                    <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CONTRACT_STATUS_COLORS[contract.status]}`}>
-                      {CONTRACT_STATUS_LABELS[contract.status]}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    {contract.judulPekerjaan}
-                  </h3>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
-                    <p>
-                      <span className="font-medium">No Perjanjian:</span> {contract.noPerjanjian}
-                    </p>
-                    <p>
-                      <span className="font-medium">Vendor:</span> {contract.vendor}
-                    </p>
-                    <p>
-                      <span className="font-medium">Tanggal:</span> {new Date(contract.tanggalPerjanjian).toLocaleDateString("id-ID")}
-                    </p>
-                    <p>
-                      <span className="font-medium">Unit:</span> {contract.unit}
-                    </p>
-                    <p>
-                      <span className="font-medium">Bidang:</span> {contract.bidang || "-"}
-                    </p>
-                    <p>
-                      <span className="font-medium">Jenis:</span> {contract.jenisPekerjaan || "-"}
-                    </p>
-                    {contract.noPO && (
-                      <p>
-                        <span className="font-medium">No PO:</span> {contract.noPO}
-                      </p>
-                    )}
-                    {contract.noXPS && (
-                      <p>
-                        <span className="font-medium">No XPS:</span> {contract.noXPS}
-                      </p>
-                    )}
-                    <p>
-                      <span className="font-medium">PIC:</span> {contract.picName || "-"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right Content */}
-                <div className="flex flex-col items-end gap-3">
-                  <div className="text-right">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Nilai Kontrak</p>
-                    <p className="text-lg font-bold text-gray-900 dark:text-white">
-                      {formatCurrency(contract.nilaiKontrak)}
-                    </p>
-                  </div>
-                  
-                  <div className="w-48 space-y-2">
-                    {/* Serapan Anggaran */}
-                    <div>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-500 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">Serapan Anggaran</span>
-                        <span className={`font-medium ${
-                          contract.persentaseRealisasi > 90 ? "text-red-600" :
-                          contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
-                        }`}>
-                          {contract.persentaseRealisasi.toFixed(1)}%
+              {filteredContracts.map((contract, index) => (
+                <motion.div
+                  key={contract.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.03 }}
+                  className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+                >
+                  <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                    {/* Left Content */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${JENIS_ANGGARAN_COLORS[contract.jenisAnggaran]}`}>
+                          {JENIS_ANGGARAN_LABELS[contract.jenisAnggaran]}
                         </span>
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CONTRACT_STATUS_COLORS[contract.status]}`}>
+                          {CONTRACT_STATUS_LABELS[contract.status]}
+                        </span>
+                        {/* Show Status VIP for Investasi */}
+                        {activeTab === "investasi" && contract.statusVIP && (
+                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                            contract.statusVIP === "lunas" 
+                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                              : contract.statusVIP === "dokumen_tidak_lengkap"
+                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+                              : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                          }`}>
+                            {contract.statusVIP === "lunas" ? "Lunas" : 
+                             contract.statusVIP === "dokumen_tidak_lengkap" ? "Dok. Tidak Lengkap" : "Belum Lunas"}
+                          </span>
+                        )}
                       </div>
-                      <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${
-                            contract.persentaseRealisasi > 90 ? "bg-red-500" :
-                            contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
-                          }`}
-                          style={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
-                        />
+                      
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                        {contract.judulPekerjaan}
+                      </h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <p>
+                          <span className="font-medium">No Perjanjian:</span> {contract.noPerjanjian}
+                        </p>
+                        <p>
+                          <span className="font-medium">Vendor:</span> {contract.vendor}
+                        </p>
+                        <p>
+                          <span className="font-medium">Tanggal:</span> {new Date(contract.tanggalPerjanjian).toLocaleDateString("id-ID")}
+                        </p>
+                        <p>
+                          <span className="font-medium">Unit:</span> {contract.unit}
+                        </p>
+                        {activeTab === "investasi" && (
+                          <>
+                            <p>
+                              <span className="font-medium">CR/Not CR:</span> {contract.crNotCR || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">No PRK:</span> {contract.noPRK || "-"}
+                            </p>
+                          </>
+                        )}
+                        <p>
+                          <span className="font-medium">PIC:</span> {contract.picName || "-"}
+                        </p>
                       </div>
                     </div>
-                    
-                    {/* Progres Pekerjaan */}
-                    <div>
-                      <div className="flex justify-between text-xs mb-1">
-                        <span className="text-gray-500 dark:text-gray-400" title="Persentase penyelesaian fisik pekerjaan">Progres Pekerjaan</span>
-                        <span className={`font-medium ${
-                          contract.progressPekerjaan >= 90 ? "text-blue-600" :
-                          contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
-                        }`}>
-                          {contract.progressPekerjaan.toFixed(1)}%
-                        </span>
+
+                    {/* Right Content */}
+                    <div className="flex flex-col items-end gap-3">
+                      <div className="text-right">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Nilai Kontrak</p>
+                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                          {formatCurrency(contract.nilaiKontrak)}
+                        </p>
                       </div>
-                      <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${
-                            contract.progressPekerjaan >= 90 ? "bg-blue-500" :
-                            contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
-                          }`}
-                          style={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
-                        />
+                      
+                      <div className="w-48 space-y-2">
+                        {/* Serapan Anggaran */}
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-gray-500 dark:text-gray-400">Serapan</span>
+                            <span className={`font-medium ${
+                              contract.persentaseRealisasi > 90 ? "text-red-600" :
+                              contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
+                            }`}>
+                              {contract.persentaseRealisasi.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                contract.persentaseRealisasi > 90 ? "bg-red-500" :
+                                contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
+                              }`}
+                              style={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
+                            />
+                          </div>
+                        </div>
+                        
+                        {/* Progres Pekerjaan */}
+                        <div>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-gray-500 dark:text-gray-400">Progress</span>
+                            <span className={`font-medium ${
+                              contract.progressPekerjaan >= 90 ? "text-blue-600" :
+                              contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
+                            }`}>
+                              {contract.progressPekerjaan.toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all ${
+                                contract.progressPekerjaan >= 90 ? "bg-blue-500" :
+                                contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
+                              }`}
+                              style={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
+                            />
+                          </div>
+                        </div>
                       </div>
+
+                      <Link
+                        href={`/kontrak/${contract.id}?kategori=${activeTab}`}
+                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                      >
+                        Detail
+                      </Link>
                     </div>
                   </div>
-
-                  <Link
-                    href={`/kontrak/${contract.id}`}
-                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                  >
-                    Detail
-                  </Link>
-                </div>
-              </div>
+                </motion.div>
+              ))}
             </motion.div>
-          ))
-        )}
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
