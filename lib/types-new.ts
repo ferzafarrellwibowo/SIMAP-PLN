@@ -119,6 +119,22 @@ export interface Contract {
   konfirmasiNonRutin?: string;    // rangan/Konfirmasi/Non Rutin
   bidang?: string;                // BIDANG
 
+  // ============================================
+  // FIELD KHUSUS KATEGORI PEMELIHARAAN
+  // ============================================
+
+  judulPerjanjian?: string;       // Judul Perjanjian
+  msb?: string;                   // MSB
+  periodeAccrueBulan?: string;    // Periode Accrue - Bulan
+  periodeAccrueTahun?: string;    // Periode Accrue - Tahun
+  requestedBy?: string;           // Requested By
+  tanggalRequestSE?: string;      // Tanggal Request SE
+  tanggalSERilis?: string;        // Tanggal SE Rilis
+  terbayarPusat?: number;         // Terbayar STI Pusat
+  terbayarUnit?: number;          // Terbayar Unit
+  statusTerbayar?: string;        // Status Terbayar (Belum Terbayar, Sebagian Terbayar, Lunas)
+  rutinNonRutin?: string;         // Rutin/Non Rutin
+
   // PIC
   picId?: string;
   picName?: string;

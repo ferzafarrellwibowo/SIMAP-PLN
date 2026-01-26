@@ -49,6 +49,11 @@ function generateNoPRK(): string {
   return `${year}.KPST.21.${String(randomNum).padStart(3, "0")}`;
 }
 
+function generateNoBeritaAcaraPemeliharaan(): string {
+  const randomNum = Math.floor(Math.random() * 9000) + 1000;
+  return `${randomNum}/JKO/2024/012`;
+}
+
 // Helper function to format currency to readable text
 function formatCurrencyText(value: string | number): string {
   const num = typeof value === 'string' ? parseFloat(value) : value;
@@ -117,6 +122,31 @@ export default function CreateContractPage() {
     tanggalBeritaAcara: "",
     noBeritaAcaraSKRelasi: "",
     tanggalArsip: "",
+
+    // Field khusus Pemeliharaan
+    judulPerjanjian: "",
+    nilaiTagihanPusat: "",
+    nilaiTagihanUnitInduk: "",
+    noWBSPosAnggaran: "",
+    noSKKI: "",
+    tanggalRequestSE: "",
+    tanggalSERilis: "",
+    statusVIP: "belum_lunas",
+    periodeAccrueBulan: "",
+    periodeAccrueTahun: new Date().getFullYear().toString(),
+    requestedBy: "",
+    msb: "",
+    terbayarPusat: "",
+    terbayarUnit: "",
+    statusTerbayar: "Belum Terbayar",
+    rutinNonRutin: "Rutin",
+
+    // Field khusus Administrasi
+    nilaiTagihanKeseluruhan: "",
+    nilaiTagihanKhususPusat: "",
+    nilaiTagihanUnitSelainPusat: "",
+    statusBayar: "Belum Dibayar",
+    entryBy: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -209,63 +239,186 @@ export default function CreateContractPage() {
         };
 
         await createContract(newContract);
-      } else {
-        // Validation for other categories (Pemeliharaan & Administrasi)
-        if (!formData.judulPekerjaan || !formData.noPerjanjian || !formData.vendor || !formData.nilaiKontrak) {
+      } else if (formData.kategori === "pemeliharaan") {
+        // Validation for Pemeliharaan category
+        if (!formData.judulPerjanjian || !formData.namaVendor || !formData.nilaiPerjanjian || 
+            !formData.tanggalPerjanjian || !formData.tanggalBerakhir) {
           setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
           window.scrollTo({ top: 0, behavior: "smooth" });
           setIsSubmitting(false);
           return;
         }
 
-        // Create contract object for other categories
+        // Auto-generate fields for Pemeliharaan
+        const noPerjanjian = generateNoPerjanjian();
+        const noBeritaAcara = generateNoBeritaAcaraPemeliharaan();
+        const noWBSPosAnggaran = generateNoWBSPosAnggaran();
+        const noSKKI = generateNoSKKI();
+        const noSE = generateNoSE();
+        const noPO = generateNoPO();
+        const submissionIdVIP = generateSubmissionIdVIP();
+        const nilaiPerjanjian = parseFloat(formData.nilaiPerjanjian);
+        const nilaiTagihanPusat = parseFloat(formData.nilaiTagihanPusat || "0");
+        const nilaiTagihanUnitInduk = parseFloat(formData.nilaiTagihanUnitInduk || "0");
+
+        // Create contract object for Pemeliharaan
         const newContract = {
           no: 0,
+          
+          // Identitas Kontrak
           uraianKegiatan: formData.uraianKegiatan,
-          noPerjanjian: formData.noPerjanjian,
+          noPerjanjian,
           tanggalPerjanjian: formData.tanggalPerjanjian,
           tanggalBerakhir: formData.tanggalBerakhir,
-          judulPekerjaan: formData.judulPekerjaan,
-          nilaiKontrak: parseFloat(formData.nilaiKontrak),
-          vendor: formData.vendor,
-          picName: formData.picName,
-          nilaiTagihanKontrakPusat: 0,
-          nilaiTagihanUnitInduk: 0,
-          kategori: formData.kategori,
+          judulPerjanjian: formData.judulPerjanjian,
+          judulPekerjaan: formData.judulPerjanjian,
+          nilaiPerjanjian,
+          nilaiKontrak: nilaiPerjanjian,
+          namaVendor: formData.namaVendor,
+          vendor: formData.namaVendor,
+
+          // Tagihan
+          nilaiTagihanKontrakPusat: nilaiTagihanPusat,
+          nilaiTagihanUnitInduk,
+
+          // Berita Acara
+          noBeritaAcara,
+          tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
+
+          // Administrasi
+          noWBSPosAnggaran,
+          posAngg: noWBSPosAnggaran,
+          noSKKI,
+          noSKUSKKO: noSKKI,
+          tanggalRequestSE: formData.tanggalRequestSE || undefined,
+          requestTanggalSERelasi: formData.tanggalSERilis || undefined,
+          noSE,
+          noPO,
+          submissionIdVIP,
+          submissionId: submissionIdVIP,
+
+          // Detail Pekerjaan
+          namaPekerjaan: formData.namaPekerjaan,
+          msb: formData.msb,
+          bidang: formData.bidang,
+          statusVIP: formData.statusVIP as "lunas" | "belum_lunas" | "dokumen_tidak_lengkap",
+
+          // Periode & Request
+          periodeAccrueBulan: formData.periodeAccrueBulan,
+          periodeAccrueTahun: formData.periodeAccrueTahun,
+          requestedBy: formData.requestedBy,
+          keterangan: formData.keterangan,
+
+          // Pembayaran
+          terbayarPusat: parseFloat(formData.terbayarPusat || "0"),
+          terbayarUnit: parseFloat(formData.terbayarUnit || "0"),
+          terbayar: parseFloat(formData.terbayarPusat || "0") + parseFloat(formData.terbayarUnit || "0"),
+          statusTerbayar: formData.statusTerbayar,
+          rutinNonRutin: formData.rutinNonRutin,
+
+          // Category & Unit
+          kategori: "pemeliharaan" as ContractCategory,
           jenisAnggaran: "AO" as JenisAnggaran,
           unit: formData.unit || user?.unit || "",
-          unitSektorK: formData.unitSektorK,
-          unitTerbayar: formData.unitTerbayar,
-          noSKWE: formData.noSKWE,
-          posAngg: formData.posAngg,
-          noSKUSKKO: formData.noSKUSKKO,
-          noSE: formData.noSE,
-          noPO: formData.noPO,
-          submissionId: formData.submissionId,
-          jenisPekerjaan: formData.jenisPekerjaan,
-          bebanTahun: formData.bebanTahun,
-          konfirmasiNonRutin: formData.konfirmasiNonRutin,
-          bidang: formData.bidang,
-          requestTanggalSERelasi: formData.requestTanggalSERelasi || undefined,
-          noXPS: formData.noXPS,
-          tanggalXPS: formData.tanggalXPS || undefined,
-          noBeritaAcara: formData.noBeritaAcara,
-          tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
-          noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
-          tanggalArsip: formData.tanggalArsip || undefined,
-          entryBy: user?.username || "Admin",
-          status: "aktif" as const,
 
-          // Default values for new fields
-          judulPRK: formData.judulPekerjaan,
-          nilaiPerjanjian: parseFloat(formData.nilaiKontrak),
-          namaVendor: formData.vendor,
-          nilaiTagihan: 0,
-          statusVIP: "belum_lunas" as const,
-          terbayar: 0,
-          namaPekerjaan: formData.judulPekerjaan,
+          // Required fields with defaults
+          nilaiTagihan: nilaiTagihanPusat + nilaiTagihanUnitInduk,
+          judulPRK: formData.judulPerjanjian,
           jenisAI: "AO" as JenisAnggaran,
           crNotCR: "Not CR" as CRStatus,
+
+          entryBy: user?.username || "Admin",
+          status: "aktif" as const,
+        };
+
+        await createContract(newContract);
+      } else {
+        // Validation for Administrasi category
+        if (!formData.judulPerjanjian || !formData.namaVendor || 
+            !formData.nilaiPerjanjian || !formData.tanggalPerjanjian || !formData.tanggalBerakhir) {
+          setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setIsSubmitting(false);
+          return;
+        }
+
+        const nilaiPerjanjian = parseFloat(formData.nilaiPerjanjian);
+        const nilaiTagihanKeseluruhan = parseFloat(formData.nilaiTagihanKeseluruhan || "0");
+        const nilaiTagihanKhususPusat = parseFloat(formData.nilaiTagihanKhususPusat || "0");
+        const nilaiTagihanUnitSelainPusat = parseFloat(formData.nilaiTagihanUnitSelainPusat || "0");
+
+        // Auto-generate values for Administrasi
+        const noPerjanjian = generateNoPerjanjian();
+        const noBeritaAcara = generateNoBeritaAcaraPemeliharaan();
+        const noWBSPosAnggaran = generateNoWBSPosAnggaran();
+        const noSKKI = generateNoSKKI();
+        const noSE = generateNoSE();
+        const noPO = generateNoPO();
+        const submissionIdVIP = generateSubmissionIdVIP();
+
+        // Create contract object for Administrasi
+        const newContract = {
+          no: 0,
+          
+          // Identitas Kontrak
+          uraianKegiatan: formData.uraianKegiatan,
+          noPerjanjian,
+          tanggalPerjanjian: formData.tanggalPerjanjian,
+          tanggalBerakhir: formData.tanggalBerakhir,
+          judulPerjanjian: formData.judulPerjanjian,
+          judulPekerjaan: formData.judulPerjanjian,
+          nilaiPerjanjian,
+          nilaiKontrak: nilaiPerjanjian,
+          namaVendor: formData.namaVendor,
+          vendor: formData.namaVendor,
+
+          // Tagihan
+          nilaiTagihan: nilaiTagihanKeseluruhan,
+          nilaiTagihanKontrakPusat: nilaiTagihanKhususPusat,
+          nilaiTagihanUnitInduk: nilaiTagihanUnitSelainPusat,
+
+          // Berita Acara
+          noBeritaAcara,
+          tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
+
+          // Administrasi
+          posAngg: noWBSPosAnggaran,
+          noWBSPosAnggaran,
+          noSKUSKKO: noSKKI,
+          noSKKI,
+          tanggalRequestSE: formData.tanggalRequestSE || undefined,
+          requestTanggalSERelasi: formData.tanggalSERilis || undefined,
+          noSE,
+          noPO,
+          submissionId: submissionIdVIP,
+          submissionIdVIP,
+
+          // Detail Pekerjaan
+          namaPekerjaan: formData.namaPekerjaan,
+          bebanTahun: formData.bebanTahun,
+          bidang: formData.bidang,
+          picName: formData.picName,
+
+          // Pembayaran
+          terbayarPusat: parseFloat(formData.terbayarPusat || "0"),
+          terbayar: parseFloat(formData.terbayarPusat || "0"),
+          statusBayar: formData.statusBayar,
+          statusTerbayar: formData.statusBayar,
+          rutinNonRutin: formData.rutinNonRutin,
+
+          // Category & Unit
+          kategori: "administrasi" as ContractCategory,
+          jenisAnggaran: "AO" as JenisAnggaran,
+          unit: formData.unit || user?.unit || "",
+
+          // Required fields with defaults
+          judulPRK: formData.judulPerjanjian,
+          jenisAI: "AO" as JenisAnggaran,
+          crNotCR: "Not CR" as CRStatus,
+          statusVIP: "belum_lunas" as const,
+
+          entryBy: formData.entryBy || user?.username || "Admin",
+          status: "aktif" as const,
           keterangan: formData.keterangan,
         };
 
@@ -481,46 +634,103 @@ export default function CreateContractPage() {
           </div>
         </div>
       </div>
+
+      {/* Field Auto-Generate - Investasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nomor Administrasi</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. Perjanjian/Amandemen
+            </label>
+            <input
+              type="text"
+              disabled
+              value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. PRK
+            </label>
+            <input
+              type="text"
+              disabled
+              value="(tahun).KPST.21.xxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. WBS/Pos Anggaran
+            </label>
+            <input
+              type="text"
+              disabled
+              value="I.1001.23.21.0805.xxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SKKI
+            </label>
+            <input
+              type="text"
+              disabled
+              value="xxxx/KEU.00.03/EVP MUM/xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SE
+            </label>
+            <input
+              type="text"
+              disabled
+              value="100369xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. PO
+            </label>
+            <input
+              type="text"
+              disabled
+              value="310148xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div className="md:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Submission ID - Vendor Invoicing Portal
+            </label>
+            <input
+              type="text"
+              disabled
+              value="TRE-V/xxxx/xxxx/00000xxxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 
-  const renderOtherCategoryForm = () => (
+  // Form khusus untuk kategori Pemeliharaan
+  const renderPemeliharaanForm = () => (
     <>
-      {/* Informasi Dasar */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Dasar</h2>
+      {/* Informasi Perjanjian - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Judul Pekerjaan <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="judulPekerjaan"
-              value={formData.judulPekerjaan}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: Pemeliharaan Trafo GI"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              No Perjanjian <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="noPerjanjian"
-              value={formData.noPerjanjian}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: 0001/PLN/KTR/2026"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Uraian Kegiatan
+              Uraian Kegiatan/Mata Anggaran
             </label>
             <input
               type="text"
@@ -528,31 +738,373 @@ export default function CreateContractPage() {
               value={formData.uraianKegiatan}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: Pemeliharaan Rutin"
+              placeholder="Contoh: Pemeliharaan Peralatan Gardu Induk"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Vendor <span className="text-red-500">*</span>
+              No. Perjanjian/Amandemen
             </label>
             <input
               type="text"
-              name="vendor"
-              value={formData.vendor}
+              disabled
+              value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="tanggalPerjanjian"
+              value={formData.tanggalPerjanjian}
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: PT Wijaya Karya"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              PIC (Person In Charge)
+              Tanggal Berakhir <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="date"
+              name="tanggalBerakhir"
+              value={formData.tanggalBerakhir}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Judul Perjanjian <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              name="picName"
-              value={formData.picName}
+              name="judulPerjanjian"
+              value={formData.judulPerjanjian}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Perjanjian Pemeliharaan Peralatan GI Cawang"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Nilai & Vendor - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="nilaiPerjanjian"
+              value={formData.nilaiPerjanjian}
+              onChange={handleChange}
+              required
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 5000000000"
+            />
+            {formData.nilaiPerjanjian && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiPerjanjian)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Vendor <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="namaVendor"
+              value={formData.namaVendor}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PT Pembangunan Jaya"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan/Nominal STI Kantor Pusat (Rp)
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihanPusat"
+              value={formData.nilaiTagihanPusat}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 2500000000"
+            />
+            {formData.nilaiTagihanPusat && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihanPusat)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan/Nominal Unit Induk Seindonesia Raya (Rp)
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihanUnitInduk"
+              value={formData.nilaiTagihanUnitInduk}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 2500000000"
+            />
+            {formData.nilaiTagihanUnitInduk && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihanUnitInduk)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Berita Acara - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. Berita Acara
+            </label>
+            <input
+              type="text"
+              disabled
+              value="xxxx/JKO/2024/012"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Berita Acara
+            </label>
+            <input
+              type="date"
+              name="tanggalBeritaAcara"
+              value={formData.tanggalBeritaAcara}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Administrasi - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Administrasi</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. WBS/Pos Anggaran
+            </label>
+            <input
+              type="text"
+              disabled
+              value="I.1001.23.21.0805.xxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SKKI/SKKO
+            </label>
+            <input
+              type="text"
+              disabled
+              value="xxxx/KEU.00.03/EVP MUM/2024"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Request SE
+            </label>
+            <input
+              type="date"
+              name="tanggalRequestSE"
+              value={formData.tanggalRequestSE}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal SE Rilis
+            </label>
+            <input
+              type="date"
+              name="tanggalSERilis"
+              value={formData.tanggalSERilis}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SE
+            </label>
+            <input
+              type="text"
+              disabled
+              value="100369xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. PO
+            </label>
+            <input
+              type="text"
+              disabled
+              value="310148xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div className="md:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Submission ID - Vendor Invoicing Portal
+              <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(Auto-generate)</span>
+            </label>
+            <input
+              type="text"
+              disabled
+              value="TRE-V/xxxx/xxxx/00000xxxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Detail Pekerjaan - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="md:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Pekerjaan
+            </label>
+            <input
+              type="text"
+              name="namaPekerjaan"
+              value={formData.namaPekerjaan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pemeliharaan Trafo Daya GI Cawang"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              MSB
+            </label>
+            <input
+              type="text"
+              name="msb"
+              value={formData.msb}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: MSB-001"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Bidang
+            </label>
+            <input
+              type="text"
+              name="bidang"
+              value={formData.bidang}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Operasi & Pemeliharaan"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Status VIP
+            </label>
+            <select
+              name="statusVIP"
+              value={formData.statusVIP}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="belum_lunas">Belum Lunas</option>
+              <option value="lunas">Lunas</option>
+              <option value="dokumen_tidak_lengkap">Dokumen Tidak Lengkap</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Periode & Request - Pemeliharaan */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Periode & Request</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Periode Accrue - Bulan
+            </label>
+            <select
+              name="periodeAccrueBulan"
+              value={formData.periodeAccrueBulan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Pilih Bulan</option>
+              <option value="01">Januari</option>
+              <option value="02">Februari</option>
+              <option value="03">Maret</option>
+              <option value="04">April</option>
+              <option value="05">Mei</option>
+              <option value="06">Juni</option>
+              <option value="07">Juli</option>
+              <option value="08">Agustus</option>
+              <option value="09">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Periode Accrue - Tahun
+            </label>
+            <input
+              type="text"
+              name="periodeAccrueTahun"
+              value={formData.periodeAccrueTahun}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="2024"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Requested By
+            </label>
+            <input
+              type="text"
+              name="requestedBy"
+              value={formData.requestedBy}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Budi Santoso"
@@ -561,79 +1113,418 @@ export default function CreateContractPage() {
         </div>
       </div>
 
-      {/* Keuangan */}
+      {/* Pembayaran - Pemeliharaan */}
       <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Keuangan</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pembayaran</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Jenis Anggaran
-            </label>
-            <input
-              type="text"
-              value="AO - Anggaran Operasi"
-              disabled
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Nilai Kontrak (Rp) <span className="text-red-500">*</span>
+              Terbayar STI Pusat (Rp)
             </label>
             <input
               type="number"
-              name="nilaiKontrak"
-              value={formData.nilaiKontrak}
+              name="terbayarPusat"
+              value={formData.terbayarPusat}
               onChange={handleChange}
-              required
               min="0"
               step="1000"
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: 15000000000"
+              placeholder="Contoh: 0"
             />
+            {formData.terbayarPusat && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.terbayarPusat)}
+              </p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Jenis Pekerjaan
+              Terbayar Unit (Rp)
             </label>
             <input
-              type="text"
-              name="jenisPekerjaan"
-              value={formData.jenisPekerjaan}
+              type="number"
+              name="terbayarUnit"
+              value={formData.terbayarUnit}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 0"
+            />
+            {formData.terbayarUnit && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.terbayarUnit)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Status Terbayar
+            </label>
+            <select
+              name="statusTerbayar"
+              value={formData.statusTerbayar}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: Pemeliharaan"
-            />
+            >
+              <option value="Belum Terbayar">Belum Terbayar</option>
+              <option value="Sebagian Terbayar">Sebagian Terbayar</option>
+              <option value="Lunas">Lunas</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Rutin/Non Rutin
+            </label>
+            <select
+              name="rutinNonRutin"
+              value={formData.rutinNonRutin}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Rutin">Rutin</option>
+              <option value="Non Rutin">Non Rutin</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Tanggal */}
+      {/* Unit - Pemeliharaan */}
       <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Jadwal</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Tanggal Perjanjian
+              Unit
+            </label>
+            <input
+              type="text"
+              name="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PLN UP3 Jakarta Selatan"
+            />
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  // Form khusus untuk kategori Administrasi
+  const renderAdministrasiForm = () => (
+    <>
+      {/* Informasi Perjanjian - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Uraian Kegiatan/Mata Anggaran
+            </label>
+            <input
+              type="text"
+              name="uraianKegiatan"
+              value={formData.uraianKegiatan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Pengadaan ATK Kantor Pusat"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. Perjanjian/Amandemen
+            </label>
+            <input
+              type="text"
+              disabled
+              value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               name="tanggalPerjanjian"
               value={formData.tanggalPerjanjian}
               onChange={handleChange}
+              required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Tanggal Berakhir
+              Tanggal Berakhir <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               name="tanggalBerakhir"
               value={formData.tanggalBerakhir}
               onChange={handleChange}
+              required
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Judul Perjanjian <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="judulPerjanjian"
+              value={formData.judulPerjanjian}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Perjanjian Pengadaan Jasa Kebersihan"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Nilai & Vendor - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              name="nilaiPerjanjian"
+              value={formData.nilaiPerjanjian}
+              onChange={handleChange}
+              required
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 500000000"
+            />
+            {formData.nilaiPerjanjian && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiPerjanjian)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Vendor <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              name="namaVendor"
+              value={formData.namaVendor}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: PT Jasa Bersih"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Tagihan - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tagihan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan Keseluruhan (Rp)
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihanKeseluruhan"
+              value={formData.nilaiTagihanKeseluruhan}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 500000000"
+            />
+            {formData.nilaiTagihanKeseluruhan && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihanKeseluruhan)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan Khusus Kantor Pusat (Rp)
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihanKhususPusat"
+              value={formData.nilaiTagihanKhususPusat}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 300000000"
+            />
+            {formData.nilaiTagihanKhususPusat && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihanKhususPusat)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nilai Tagihan Unit selain Kantor Pusat (Rp)
+            </label>
+            <input
+              type="number"
+              name="nilaiTagihanUnitSelainPusat"
+              value={formData.nilaiTagihanUnitSelainPusat}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 200000000"
+            />
+            {formData.nilaiTagihanUnitSelainPusat && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.nilaiTagihanUnitSelainPusat)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Berita Acara - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. Berita Acara
+            </label>
+            <input
+              type="text"
+              disabled
+              value="xxxx/JKO/2024/012"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Berita Acara
+            </label>
+            <input
+              type="date"
+              name="tanggalBeritaAcara"
+              value={formData.tanggalBeritaAcara}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Administrasi - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Administrasi</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. WBS/Pos Anggaran
+            </label>
+            <input
+              type="text"
+              disabled
+              value="I.1001.23.21.0805.xxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SKKI/SKKO
+            </label>
+            <input
+              type="text"
+              disabled
+              value="xxxx/KEU.00.03/EVP MUM/xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal Request
+            </label>
+            <input
+              type="date"
+              name="tanggalRequestSE"
+              value={formData.tanggalRequestSE}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Tanggal SE Release
+            </label>
+            <input
+              type="date"
+              name="tanggalSERilis"
+              value={formData.tanggalSERilis}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. SE
+            </label>
+            <input
+              type="text"
+              disabled
+              value="100369xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              No. PO
+            </label>
+            <input
+              type="text"
+              disabled
+              value="310148xxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+          <div className="md:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Submission ID
+            </label>
+            <input
+              type="text"
+              disabled
+              value="TRE-V/xxxx/xxxx/00000xxxxx"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Detail Pekerjaan - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="md:col-span-2 lg:col-span-3">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Nama Pekerjaan
+            </label>
+            <input
+              type="text"
+              name="namaPekerjaan"
+              value={formData.namaPekerjaan}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Jasa Kebersihan Gedung Kantor Pusat"
             />
           </div>
           <div>
@@ -649,39 +1540,6 @@ export default function CreateContractPage() {
               placeholder="2026"
             />
           </div>
-        </div>
-      </div>
-
-      {/* Unit & Lokasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit & Lokasi</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Unit
-            </label>
-            <input
-              type="text"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: PLN UP3 Jakarta Selatan"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Unit Sektor K
-            </label>
-            <input
-              type="text"
-              name="unitSektorK"
-              value={formData.unitSektorK}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: Sektor A"
-            />
-          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Bidang
@@ -692,7 +1550,109 @@ export default function CreateContractPage() {
               value={formData.bidang}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: Operasi & Pemeliharaan"
+              placeholder="Contoh: Umum & Administrasi"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              PIC
+            </label>
+            <input
+              type="text"
+              name="picName"
+              value={formData.picName}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Budi Santoso"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Pembayaran - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pembayaran</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Terbayar Pusat (Rp)
+            </label>
+            <input
+              type="number"
+              name="terbayarPusat"
+              value={formData.terbayarPusat}
+              onChange={handleChange}
+              min="0"
+              step="1000"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: 0"
+            />
+            {formData.terbayarPusat && (
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {formatCurrencyText(formData.terbayarPusat)}
+              </p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Status Bayar
+            </label>
+            <select
+              name="statusBayar"
+              value={formData.statusBayar}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Belum Dibayar">Belum Dibayar</option>
+              <option value="Sebagian Dibayar">Sebagian Dibayar</option>
+              <option value="Lunas">Lunas</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Rutin/Non Rutin
+            </label>
+            <select
+              name="rutinNonRutin"
+              value={formData.rutinNonRutin}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="Rutin">Rutin</option>
+              <option value="Non Rutin">Non Rutin</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Entry & Unit - Administrasi */}
+      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Entry & Unit</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Entry By
+            </label>
+            <input
+              type="text"
+              name="entryBy"
+              value={formData.entryBy}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Admin"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Unit
+            </label>
+            <input
+              type="text"
+              name="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contoh: Kantor Pusat"
             />
           </div>
         </div>
@@ -774,11 +1734,13 @@ export default function CreateContractPage() {
         </div>
 
         {/* Render form based on category */}
-        {formData.kategori === "investasi" ? renderInvestasiForm() : renderOtherCategoryForm()}
+        {formData.kategori === "investasi" && renderInvestasiForm()}
+        {formData.kategori === "pemeliharaan" && renderPemeliharaanForm()}
+        {formData.kategori === "administrasi" && renderAdministrasiForm()}
 
         {/* Keterangan */}
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Keterangan</h2>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Keterangan/Konfirmasi</h2>
           <textarea
             name="keterangan"
             value={formData.keterangan}
