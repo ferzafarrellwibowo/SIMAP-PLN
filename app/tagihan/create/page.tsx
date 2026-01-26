@@ -73,22 +73,29 @@ export default function CreateTagihanPage() {
   useEffect(() => {
     if (selectedContract && !formData.nomorTagihan) {
       const year = new Date().getFullYear();
+      const month = String(new Date().getMonth() + 1).padStart(2, "0");
       const invoiceCount = existingInvoices.length + 1;
       // Build a tidy contract key:
-      // Prefer sanitized noPerjanjian, fallback to numeric `no`, then last 8 chars of id
       const contractKey = selectedContract.noPerjanjian
         ? selectedContract.noPerjanjian
           .toString()
-          .replace(/[^A-Za-z0-9]/g, "-") // replace non-alnum with '-'
-          .replace(/-+/g, "-") // collapse multiple dashes
-          .replace(/(^-|-$)/g, "") // trim leading/trailing dashes
+          .replace(/[^A-Za-z0-9]/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/(^-|-$)/g, "")
           .toUpperCase()
         : (typeof selectedContract.no !== "undefined" ? `NO${String(selectedContract.no).padStart(3, "0")}` : selectedContract.id.slice(-8).toUpperCase());
 
       const generatedNumber = `BA/${contractKey}/${String(invoiceCount).padStart(2, "0")}/${year}`;
+
+      // Auto-generate No Berita Acara Format: xxxx/JKO/2024/012
+      const randomNum = Math.floor(Math.random() * 9000) + 1000;
+      const generatedBA = `${randomNum}/JKO/${year}/012`;
+
       setFormData((prev) => ({
         ...prev,
         nomorTagihan: generatedNumber,
+        noBeritaAcara: prev.noBeritaAcara || generatedBA,
+        tanggalBeritaAcara: prev.tanggalBeritaAcara || new Date().toISOString().split("T")[0],
       }));
     }
   }, [selectedContract, existingInvoices.length, formData.nomorTagihan]);

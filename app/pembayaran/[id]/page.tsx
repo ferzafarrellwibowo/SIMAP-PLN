@@ -101,7 +101,7 @@ export default function PembayaranDetailPage() {
       // Refresh data
       const updated = await getSubscriptionById(subscriptionId);
       setSubscription(updated);
-      
+
       // Update selected month
       const updatedPayment = updated?.payments.find((p) => p.id === selectedMonth.id);
       if (updatedPayment) {
@@ -129,7 +129,7 @@ export default function PembayaranDetailPage() {
 
       if (monthsToPay.length > 0) {
         await markPaymentsAsPaid(subscription.id, selectedYear, monthsToPay);
-        
+
         // Refresh data
         const updated = await getSubscriptionById(subscriptionId);
         setSubscription(updated);
@@ -149,7 +149,7 @@ export default function PembayaranDetailPage() {
     setUpdating(true);
     try {
       await resetYearPayments(subscription.id, selectedYear);
-      
+
       // Refresh data
       const updated = await getSubscriptionById(subscriptionId);
       setSubscription(updated);
@@ -350,8 +350,8 @@ export default function PembayaranDetailPage() {
                 disabled={!payment || updating}
                 className={`p-3 rounded-lg border-2 transition-all ${
                   isSelected
-                    ? "border-blue-500 ring-2 ring-blue-500/50"
-                    : "border-transparent"
+                  ? "border-blue-500 ring-2 ring-blue-500/50"
+                  : "border-transparent"
                 } ${
                   isPaid
                     ? "bg-emerald-100 dark:bg-emerald-900/30 hover:bg-emerald-200 dark:hover:bg-emerald-900/50"
@@ -362,10 +362,10 @@ export default function PembayaranDetailPage() {
               >
                 <p className={`text-xs font-medium ${
                   isPaid
-                    ? "text-emerald-700 dark:text-emerald-400"
-                    : isGap
-                    ? "text-amber-700 dark:text-amber-400"
-                    : "text-red-700 dark:text-red-400"
+                  ? "text-emerald-700 dark:text-emerald-400"
+                  : isGap
+                    "text-amber-700 dark:text-amber-400"
+                    "text-red-700 dark:text-red-400"
                 }`}>
                   {month.short}
                 </p>
@@ -385,153 +385,160 @@ export default function PembayaranDetailPage() {
                   )}
                 </div>
               </button>
-            );
+        );
           })}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-emerald-500"></div>
+          <span className="text-gray-600 dark:text-gray-400">Lunas</span>
         </div>
-        <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-emerald-500"></div>
-            <span className="text-gray-600 dark:text-gray-400">Lunas</span>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-amber-500"></div>
+          <span className="text-gray-600 dark:text-gray-400">Terlewat</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4 rounded bg-red-500"></div>
+          <span className="text-gray-600 dark:text-gray-400">Belum Bayar</span>
+        </div>
+      </div>
+    </div>
+
+      {/* Selected Month Action */ }
+  {
+    selectedMonth && user?.role === "admin" && (
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-gray-900 dark:text-white">
+              {MONTHS_ID.find((m) => m.value === selectedMonth.bulan)?.name} {selectedMonth.tahun}
+            </h3>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Status saat ini:
+              </span>
+              {selectedMonth.status === "PAID" ? (
+                <Badge variant="success">Lunas</Badge>
+              ) : yearSummary?.gapMonths.includes(selectedMonth.bulan) ? (
+                <Badge variant="warning">Terlewat</Badge>
+              ) : (
+                <Badge variant="destructive">Belum Bayar</Badge>
+              )}
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Nilai: {formatCurrency(subscription.anggaran_per_bulan)}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-amber-500"></div>
-            <span className="text-gray-600 dark:text-gray-400">Terlewat</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-500"></div>
-            <span className="text-gray-600 dark:text-gray-400">Belum Bayar</span>
+          <div className="flex gap-2 flex-wrap">
+            <button
+              onClick={handleTogglePayment}
+              disabled={updating}
+              className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium disabled:opacity-50 ${selectedMonth.status === "PAID"
+                  ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
+                  : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
+                }`}
+            >
+              {updating ? "Menyimpan..." : selectedMonth.status === "PAID" ? "Tandai Belum Bayar" : "Tandai Lunas"}
+            </button>
+            {selectedMonth.status === "UNPAID" && selectedMonth.bulan > 1 && (
+              <button
+                onClick={() => handlePayUntilMonth(selectedMonth.bulan)}
+                disabled={updating}
+                className="px-4 py-2 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                {updating ? "Menyimpan..." : `Bayar Jan - ${MONTHS_ID.find((m) => m.value === selectedMonth.bulan)?.short}`}
+              </button>
+            )}
           </div>
         </div>
       </div>
+    )
+  }
 
-      {/* Selected Month Action */}
-      {selectedMonth && user?.role === "admin" && (
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white">
-                {MONTHS_ID.find((m) => m.value === selectedMonth.bulan)?.name} {selectedMonth.tahun}
-              </h3>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Status saat ini:
-                </span>
-                {selectedMonth.status === "PAID" ? (
-                  <Badge variant="success">Lunas</Badge>
-                ) : yearSummary?.gapMonths.includes(selectedMonth.bulan) ? (
-                  <Badge variant="warning">Terlewat</Badge>
-                ) : (
-                  <Badge variant="destructive">Belum Bayar</Badge>
-                )}
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Nilai: {formatCurrency(subscription.anggaran_per_bulan)}
-              </p>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              <button
-                onClick={handleTogglePayment}
-                disabled={updating}
-                className={`px-4 py-2 rounded-lg transition-colors text-sm font-medium disabled:opacity-50 ${
-                  selectedMonth.status === "PAID"
-                    ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400"
-                    : "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-400"
-                }`}
-              >
-                {updating ? "Menyimpan..." : selectedMonth.status === "PAID" ? "Tandai Belum Bayar" : "Tandai Lunas"}
-              </button>
-              {selectedMonth.status === "UNPAID" && selectedMonth.bulan > 1 && (
-                <button
-                  onClick={() => handlePayUntilMonth(selectedMonth.bulan)}
-                  disabled={updating}
-                  className="px-4 py-2 bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors text-sm font-medium disabled:opacity-50"
-                >
-                  {updating ? "Menyimpan..." : `Bayar Jan - ${MONTHS_ID.find((m) => m.value === selectedMonth.bulan)?.short}`}
-                </button>
-              )}
-            </div>
+  {/* Quick Actions for Admin */ }
+  {
+    user?.role === "admin" && (
+      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+          Aksi Cepat
+        </h3>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handlePayUntilMonth(3)}
+            disabled={updating}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
+          >
+            Bayar Q1 (Jan-Mar)
+          </button>
+          <button
+            onClick={() => handlePayUntilMonth(6)}
+            disabled={updating}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
+          >
+            Bayar H1 (Jan-Jun)
+          </button>
+          <button
+            onClick={() => handlePayUntilMonth(9)}
+            disabled={updating}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
+          >
+            Bayar Q1-Q3 (Jan-Sep)
+          </button>
+          <button
+            onClick={() => handlePayUntilMonth(12)}
+            disabled={updating}
+            className="px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors text-sm disabled:opacity-50"
+          >
+            Bayar Semua (Lunas)
+          </button>
+        </div>
+      </div>
+    )
+  }
+
+  {/* Gap Warning */ }
+  {
+    yearSummary?.hasGaps && (
+      <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl p-6">
+        <div className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <h4 className="font-semibold text-amber-800 dark:text-amber-200">
+              Perhatian: Ada Pembayaran Terlewat
+            </h4>
+            <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+              Bulan {yearSummary.gapMonths.map((m) => MONTHS_ID.find((mo) => mo.value === m)?.name).join(", ")} belum dibayar meskipun bulan setelahnya sudah terbayar.
+              Segera lakukan pembayaran untuk bulan yang terlewat.
+            </p>
           </div>
         </div>
-      )}
+      </div>
+    )
+  }
 
-      {/* Quick Actions for Admin */}
-      {user?.role === "admin" && (
-        <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-            Aksi Cepat
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => handlePayUntilMonth(3)}
-              disabled={updating}
-              className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
-            >
-              Bayar Q1 (Jan-Mar)
-            </button>
-            <button
-              onClick={() => handlePayUntilMonth(6)}
-              disabled={updating}
-              className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
-            >
-              Bayar H1 (Jan-Jun)
-            </button>
-            <button
-              onClick={() => handlePayUntilMonth(9)}
-              disabled={updating}
-              className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm disabled:opacity-50"
-            >
-              Bayar Q1-Q3 (Jan-Sep)
-            </button>
-            <button
-              onClick={() => handlePayUntilMonth(12)}
-              disabled={updating}
-              className="px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg hover:bg-emerald-200 dark:hover:bg-emerald-900/50 transition-colors text-sm disabled:opacity-50"
-            >
-              Bayar Semua (Lunas)
-            </button>
+  {/* Completed Message */ }
+  {
+    isFullyPaid && (
+      <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-xl p-6">
+        <div className="flex items-start gap-3">
+          <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h4 className="font-semibold text-emerald-800 dark:text-emerald-200">
+              Pembayaran Lengkap
+            </h4>
+            <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
+              Semua pembayaran untuk tahun {selectedYear} telah lunas.
+              Total pembayaran: {formatCurrency(subscription.anggaran_per_bulan * 12)}
+            </p>
           </div>
         </div>
-      )}
-
-      {/* Gap Warning */}
-      {yearSummary?.hasGaps && (
-        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-xl p-6">
-          <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-            </svg>
-            <div>
-              <h4 className="font-semibold text-amber-800 dark:text-amber-200">
-                Perhatian: Ada Pembayaran Terlewat
-              </h4>
-              <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
-                Bulan {yearSummary.gapMonths.map((m) => MONTHS_ID.find((mo) => mo.value === m)?.name).join(", ")} belum dibayar meskipun bulan setelahnya sudah terbayar.
-                Segera lakukan pembayaran untuk bulan yang terlewat.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Completed Message */}
-      {isFullyPaid && (
-        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 rounded-xl p-6">
-          <div className="flex items-start gap-3">
-            <svg className="w-6 h-6 text-emerald-600 dark:text-emerald-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div>
-              <h4 className="font-semibold text-emerald-800 dark:text-emerald-200">
-                Pembayaran Lengkap
-              </h4>
-              <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">
-                Semua pembayaran untuk tahun {selectedYear} telah lunas.
-                Total pembayaran: {formatCurrency(subscription.anggaran_per_bulan * 12)}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
+    )
+  }
+    </div >
   );
 }

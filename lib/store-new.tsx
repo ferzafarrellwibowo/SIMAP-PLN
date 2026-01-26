@@ -113,20 +113,20 @@ function generateMockContracts(): Contract[] {
     // Generate unique numbers for auto-generated fields (Investasi)
     const randomNum1 = 1000 + index * 100 + Math.floor(Math.random() * 100);
     const randomNum2 = 100 + index * 10;
-    
+
     // Determine status VIP based on realisasi
     const statusVIP = realisasiPersen >= 100 ? "lunas" : "belum_lunas";
 
     return {
       id: `CTR-${String(index + 1).padStart(3, "0")}`,
       no: index + 1,
-      
+
       // ============================================
       // FIELD KHUSUS KATEGORI INVESTASI
       // ============================================
-      
+
       // Auto-generated fields for Investasi
-      noPerjanjian: data.kategori === "investasi" 
+      noPerjanjian: data.kategori === "investasi"
         ? `03${randomNum1}Pj/STH.01.01/F0107${randomNum1}00/${tahun}`
         : `${String(index + 1).padStart(4, "0")}/PLN/KTR/${tahun}`,
       tanggalPerjanjian,
@@ -149,7 +149,7 @@ function generateMockContracts(): Contract[] {
       jenisAI: data.kategori === "investasi" ? "AI" : "AO",
       noPRK: `${tahun}.KPST.21.${String(randomNum2).padStart(3, "0")}`,
       crNotCR: (index % 3 === 0 ? "CR" : "Not CR") as "CR" | "Not CR",
-      
+
       // ============================================
       // BACKWARD COMPATIBILITY FIELDS
       // ============================================
@@ -281,8 +281,8 @@ export const JENIS_ANGGARAN_COLORS: Record<JenisAnggaran, string> = {
 };
 
 export const CONTRACT_STATUS_LABELS: Record<ContractStatus, string> = {
-  aktif: "Aktif",
-  selesai: "Selesai",
+  aktif: "Belum Lunas",
+  selesai: "Lunas",
   bermasalah: "Bermasalah",
 };
 
@@ -499,7 +499,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         const contractsRes = await fetch('/api/contracts');
         if (contractsRes.ok) {
           const { data: contractsData } = await contractsRes.json();
-          
+
           // Data sudah dalam format camelCase dari API
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const transformedContracts: Contract[] = contractsData.map((data: any) => ({
@@ -510,6 +510,21 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
             sisaAnggaran: Number(data.sisaAnggaran) || 0,
             persentaseRealisasi: parseFloat(data.persentaseRealisasi) || 0,
             progressPekerjaan: parseFloat(data.progressPekerjaan) || 0,
+
+            // Map new API fields if they exist in response (camelCase key from API)
+            judulPRK: data.judulPRK,
+            namaPekerjaan: data.namaPekerjaan,
+            noPRK: data.noPRK,
+            nilaiPerjanjian: Number(data.nilaiPerjanjian) || 0,
+            nilaiTagihan: Number(data.nilaiTagihan) || 0,
+            namaVendor: data.namaVendor,
+            terbayar: Number(data.terbayar) || 0,
+            jenisAI: data.jenisAI,
+            crNotCR: data.crNotCR,
+            statusVIP: data.statusVIP,
+            noWBSPosAnggaran: data.noWBSPosAnggaran,
+            noSKKI: data.noSKKI,
+            requestTanggalSE: data.requestTanggalSE,
           }));
 
           setContracts(transformedContracts);
@@ -556,6 +571,7 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
         console.error('Error loading data from Supabase:', error);
         // Fallback ke mock data jika gagal
         const mockContracts = generateMockContracts();
+        // @ts-ignore
         setContracts(mockContracts);
         setInvoices(generateMockInvoices(mockContracts));
       } finally {
@@ -775,7 +791,21 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           persentaseRealisasi: data.persentase_realisasi,
           progressPekerjaan: data.progress_pekerjaan || 0,
           oldFlag: data.old_flag,
-          clickCB: data.click_cb,
+          // Investasi fields
+          judulPRK: data.judul_prk,
+          namaPekerjaan: data.nama_pekerjaan,
+          noPRK: data.no_prk,
+          nilaiPerjanjian: data.nilai_perjanjian,
+          nilaiTagihan: data.nilai_tagihan,
+          namaVendor: data.nama_vendor,
+          terbayar: data.terbayar,
+          jenisAI: data.jenis_ai,
+          crNotCR: data.cr_not_cr,
+          statusVIP: data.status_vip,
+          noWBSPosAnggaran: data.no_wbs_pos_anggaran,
+          noSKKI: data.no_skki,
+          requestTanggalSE: data.request_tanggal_se,
+
           createdAt: data.created_at,
           createdBy: data.created_by,
           updatedAt: data.updated_at,

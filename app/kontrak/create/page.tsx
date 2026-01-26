@@ -53,7 +53,7 @@ function generateNoPRK(): string {
 function formatCurrencyText(value: string | number): string {
   const num = typeof value === 'string' ? parseFloat(value) : value;
   if (isNaN(num) || num === 0) return '';
-  
+
   if (num >= 1000000000000) {
     const triliun = num / 1000000000000;
     return `Rp ${triliun.toLocaleString('id-ID', { maximumFractionDigits: 2 })} triliun`;
@@ -90,7 +90,7 @@ export default function CreateContractPage() {
     crNotCR: "Not CR" as CRStatus,
     unit: "",
     keterangan: "",
-    
+
     // Field untuk kategori lain (pemeliharaan & administrasi)
     uraianKegiatan: "",
     noPerjanjian: "",
@@ -141,9 +141,9 @@ export default function CreateContractPage() {
     try {
       if (formData.kategori === "investasi") {
         // Validation for Investasi category
-        if (!formData.tanggalPerjanjian || !formData.tanggalBerakhir || !formData.judulPRK || 
-            !formData.nilaiPerjanjian || !formData.namaVendor || !formData.nilaiTagihan ||
-            !formData.namaPekerjaan) {
+        if (!formData.tanggalPerjanjian || !formData.tanggalBerakhir || !formData.judulPRK ||
+          !formData.nilaiPerjanjian || !formData.namaVendor || !formData.nilaiTagihan ||
+          !formData.namaPekerjaan) {
           setErrorMessage("Mohon lengkapi field yang wajib diisi (ditandai dengan *)");
           window.scrollTo({ top: 0, behavior: "smooth" });
           setIsSubmitting(false);
@@ -164,7 +164,7 @@ export default function CreateContractPage() {
         // Create contract object for Investasi
         const newContract = {
           no: 0, // Will be auto-assigned by store
-          
+
           // Investasi specific fields
           noPerjanjian,
           tanggalPerjanjian: formData.tanggalPerjanjian,
@@ -184,7 +184,7 @@ export default function CreateContractPage() {
           jenisAI: formData.jenisAI,
           noPRK,
           crNotCR: formData.crNotCR,
-          
+
           // Mapped fields for backward compatibility
           uraianKegiatan: formData.judulPRK,
           judulPekerjaan: formData.namaPekerjaan,
@@ -192,18 +192,18 @@ export default function CreateContractPage() {
           vendor: formData.namaVendor,
           nilaiTagihanKontrakPusat: nilaiTagihan,
           nilaiTagihanUnitInduk: 0,
-          
+
           // Category & Unit
           kategori: "investasi" as ContractCategory,
           jenisAnggaran: "AI" as JenisAnggaran,
           unit: formData.unit || user?.unit || "",
-          
+
           // Legacy field mappings
           posAngg: noWBSPosAnggaran,
           noSKUSKKO: noSKKI,
           submissionId: submissionIdVIP,
-          
-          entryBy: user?.name || "Admin",
+
+          entryBy: user?.username || "Admin",
           status: "aktif" as const,
           keterangan: formData.keterangan,
         };
@@ -253,9 +253,9 @@ export default function CreateContractPage() {
           tanggalBeritaAcara: formData.tanggalBeritaAcara || undefined,
           noBeritaAcaraSKRelasi: formData.noBeritaAcaraSKRelasi,
           tanggalArsip: formData.tanggalArsip || undefined,
-          entryBy: user?.name || "Admin",
+          entryBy: user?.username || "Admin",
           status: "aktif" as const,
-          
+
           // Default values for new fields
           judulPRK: formData.judulPekerjaan,
           nilaiPerjanjian: parseFloat(formData.nilaiKontrak),
@@ -749,11 +749,10 @@ export default function CreateContractPage() {
             {(["investasi", "pemeliharaan", "administrasi"] as ContractCategory[]).map((cat) => (
               <label
                 key={cat}
-                className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  formData.kategori === cat
-                    ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                }`}
+                className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${formData.kategori === cat
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
+                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  }`}
               >
                 <input
                   type="radio"
@@ -763,11 +762,10 @@ export default function CreateContractPage() {
                   onChange={handleChange}
                   className="sr-only"
                 />
-                <span className={`text-sm font-medium ${
-                  formData.kategori === cat
-                    ? "text-blue-700 dark:text-blue-300"
-                    : "text-gray-700 dark:text-gray-300"
-                }`}>
+                <span className={`text-sm font-medium ${formData.kategori === cat
+                  ? "text-blue-700 dark:text-blue-300"
+                  : "text-gray-700 dark:text-gray-300"
+                  }`}>
                   {CONTRACT_CATEGORY_LABELS[cat]}
                 </span>
               </label>

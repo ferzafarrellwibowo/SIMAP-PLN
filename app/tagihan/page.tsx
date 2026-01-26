@@ -76,11 +76,14 @@ export default function TagihanPage() {
 
   const filteredInvoices = useMemo(() => {
     let filtered = invoices.filter((inv) => {
-      const contract = contracts.find((c) => c.id === inv.contractId);
+      const contract = contracts.find((c) => c.id === inv.contractId) ||
+        contracts.find((c) => c.noPerjanjian === inv.noPerjanjian);
+      const searchLower = search.toLowerCase();
       const matchSearch =
-        inv.nomorTagihan.toLowerCase().includes(search.toLowerCase()) ||
-        contract?.judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
-        contract?.vendor.toLowerCase().includes(search.toLowerCase());
+        inv.nomorTagihan.toLowerCase().includes(searchLower) ||
+        (contract?.judulPekerjaan?.toLowerCase() || "").includes(searchLower) ||
+        (contract?.vendor?.toLowerCase() || "").includes(searchLower) ||
+        (inv.noPerjanjian?.toLowerCase() || "").includes(searchLower);
       const matchStatus = status === "all" || inv.status === status;
 
       // Filter by year
@@ -112,8 +115,9 @@ export default function TagihanPage() {
     return filtered;
   }, [invoices, contracts, search, status, sortBy, filterMonth, filterYear]);
 
-  const getContractInfo = (contractId: string) => {
-    return contracts.find((c) => c.id === contractId);
+  const getContractInfo = (invoice: { contractId: string, noPerjanjian: string }) => {
+    return contracts.find((c) => c.id === invoice.contractId) ||
+      contracts.find((c) => c.noPerjanjian === invoice.noPerjanjian);
   };
 
   const [isUpdating, setIsUpdating] = useState(false);
@@ -362,7 +366,7 @@ export default function TagihanPage() {
                 </tr>
               ) : (
                 filteredInvoices.map((invoice, index) => {
-                  const contract = getContractInfo(invoice.contractId);
+                  const contract = getContractInfo(invoice);
                   const age = daysAgo(invoice.tanggalDiajukan);
                   const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
 
@@ -380,17 +384,21 @@ export default function TagihanPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan}>
-                          {contract?.judulPekerjaan && contract.judulPekerjaan.length > 25
-                            ? contract.judulPekerjaan.substring(0, 25) + "..."
-                            : contract?.judulPekerjaan}
+                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan || invoice.noPerjanjian || "-"}>
+                          {contract?.judulPekerjaan
+                            ? (contract.judulPekerjaan.length > 25
+                              ? contract.judulPekerjaan.substring(0, 25) + "..."
+                              : contract.judulPekerjaan)
+                            : (invoice.noPerjanjian || "-")}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={contract?.vendor}>
-                          {contract?.vendor && contract.vendor.length > 12
-                            ? contract.vendor.substring(0, 12) + "..."
-                            : contract?.vendor}
+                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={contract?.vendor || "-"}>
+                          {contract?.vendor
+                            ? (contract.vendor.length > 12
+                              ? contract.vendor.substring(0, 12) + "..."
+                              : contract.vendor)
+                            : "-"}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -513,7 +521,7 @@ export default function TagihanPage() {
             </div>
           ) : (
             filteredInvoices.map((invoice, index) => {
-              const contract = getContractInfo(invoice.contractId);
+              const contract = getContractInfo(invoice);
               const age = daysAgo(invoice.tanggalDiajukan);
               const isPending = invoice.status === "diajukan" || invoice.status === "diterima";
 
@@ -531,7 +539,7 @@ export default function TagihanPage() {
                         {invoice.nomorTagihan}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
-                        {contract?.judulPekerjaan}
+                        {contract?.judulPekerjaan || invoice.noPerjanjian || "-"}
                       </p>
                     </div>
                     <span className={`ml-2 inline-flex px-2 py-0.5 text-xs font-medium rounded-full shrink-0 ${INVOICE_STATUS_COLORS[invoice.status]}`}>
@@ -543,7 +551,7 @@ export default function TagihanPage() {
                     <span className="font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(invoice.nilaiTagihan)}
                     </span>
-                    <span>{contract?.vendor}</span>
+                    <span>{contract?.vendor || "-"}</span>
                     <span>{new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}</span>
                     {isPending && (
                       <span className={`font-medium ${age > 7 ? "text-red-600" : age > 3 ? "text-yellow-600" : "text-gray-600"}`}>
