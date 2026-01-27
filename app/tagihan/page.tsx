@@ -384,20 +384,20 @@ export default function TagihanPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={contract?.judulPekerjaan || invoice.noPerjanjian || "-"}>
-                          {contract?.judulPekerjaan
-                            ? (contract.judulPekerjaan.length > 25
-                              ? contract.judulPekerjaan.substring(0, 25) + "..."
-                              : contract.judulPekerjaan)
+                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={(contract?.judulPekerjaan || contract?.judulPerjanjian) || invoice.noPerjanjian || "-"}>
+                          {(contract?.judulPekerjaan || contract?.judulPerjanjian)
+                            ? ((contract.judulPekerjaan || contract.judulPerjanjian || "").length > 25
+                              ? (contract.judulPekerjaan || contract.judulPerjanjian || "").substring(0, 25) + "..."
+                              : (contract.judulPekerjaan || contract.judulPerjanjian))
                             : (invoice.noPerjanjian || "-")}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={contract?.vendor || "-"}>
-                          {contract?.vendor
-                            ? (contract.vendor.length > 12
-                              ? contract.vendor.substring(0, 12) + "..."
-                              : contract.vendor)
+                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={(contract?.vendor || contract?.namaVendor) || "-"}>
+                          {(contract?.vendor || contract?.namaVendor)
+                            ? ((contract.vendor || contract.namaVendor || "").length > 12
+                              ? (contract.vendor || contract.namaVendor || "").substring(0, 12) + "..."
+                              : (contract.vendor || contract.namaVendor))
                             : "-"}
                         </span>
                       </td>

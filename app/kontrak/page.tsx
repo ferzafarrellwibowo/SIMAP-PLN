@@ -80,9 +80,13 @@ export default function KontrakTabbedPage() {
     const categoryContracts = contractsByCategory[activeTab];
     
     return categoryContracts.filter((c) => {
-      const matchSearch = c.judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
-        c.vendor.toLowerCase().includes(search.toLowerCase()) ||
-        c.noPerjanjian.toLowerCase().includes(search.toLowerCase());
+      const judulPekerjaan = c.judulPekerjaan || c.judulPerjanjian || "";
+      const vendor = c.vendor || c.namaVendor || "";
+      const noPerjanjian = c.noPerjanjian || "";
+      
+      const matchSearch = judulPekerjaan.toLowerCase().includes(search.toLowerCase()) ||
+        vendor.toLowerCase().includes(search.toLowerCase()) ||
+        noPerjanjian.toLowerCase().includes(search.toLowerCase());
       const matchStatus = status === "all" || c.status === status;
       return matchSearch && matchStatus;
     });
@@ -93,17 +97,17 @@ export default function KontrakTabbedPage() {
     return {
       investasi: {
         total: contractsByCategory.investasi.length,
-        nilai: contractsByCategory.investasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        nilai: contractsByCategory.investasi.reduce((sum, c) => sum + (c.nilaiKontrak || c.nilaiPerjanjian || 0), 0),
         aktif: contractsByCategory.investasi.filter((c) => c.status === "aktif").length,
       },
       pemeliharaan: {
         total: contractsByCategory.pemeliharaan.length,
-        nilai: contractsByCategory.pemeliharaan.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        nilai: contractsByCategory.pemeliharaan.reduce((sum, c) => sum + (c.nilaiKontrak || c.nilaiPerjanjian || 0), 0),
         aktif: contractsByCategory.pemeliharaan.filter((c) => c.status === "aktif").length,
       },
       administrasi: {
         total: contractsByCategory.administrasi.length,
-        nilai: contractsByCategory.administrasi.reduce((sum, c) => sum + c.nilaiKontrak, 0),
+        nilai: contractsByCategory.administrasi.reduce((sum, c) => sum + (c.nilaiKontrak || c.nilaiPerjanjian || 0), 0),
         aktif: contractsByCategory.administrasi.filter((c) => c.status === "aktif").length,
       },
     };
@@ -292,23 +296,10 @@ export default function KontrakTabbedPage() {
                         <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${CONTRACT_STATUS_COLORS[contract.status]}`}>
                           {CONTRACT_STATUS_LABELS[contract.status]}
                         </span>
-                        {/* Show Status VIP for Investasi */}
-                        {activeTab === "investasi" && contract.statusVIP && (
-                          <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                            contract.statusVIP === "lunas" 
-                              ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-                              : contract.statusVIP === "dokumen_tidak_lengkap"
-                              ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-                              : "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
-                          }`}>
-                            {contract.statusVIP === "lunas" ? "Lunas" : 
-                             contract.statusVIP === "dokumen_tidak_lengkap" ? "Dok. Tidak Lengkap" : "Belum Lunas"}
-                          </span>
-                        )}
                       </div>
                       
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                        {contract.judulPekerjaan}
+                        {contract.judulPekerjaan || contract.judulPerjanjian || "-"}
                       </h3>
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
@@ -316,7 +307,7 @@ export default function KontrakTabbedPage() {
                           <span className="font-medium">No Perjanjian:</span> {contract.noPerjanjian}
                         </p>
                         <p>
-                          <span className="font-medium">Vendor:</span> {contract.vendor}
+                          <span className="font-medium">Vendor:</span> {contract.vendor || contract.namaVendor || "-"}
                         </p>
                         <p>
                           <span className="font-medium">Tanggal:</span> {new Date(contract.tanggalPerjanjian).toLocaleDateString("id-ID")}
@@ -332,11 +323,36 @@ export default function KontrakTabbedPage() {
                             <p>
                               <span className="font-medium">No PRK:</span> {contract.noPRK || "-"}
                             </p>
+                            <p>
+                              <span className="font-medium">Jenis AI:</span> {contract.jenisAI || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">No SE:</span> {contract.noSE || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">No PO:</span> {contract.noPO || "-"}
+                            </p>
                           </>
                         )}
-                        <p>
-                          <span className="font-medium">PIC:</span> {contract.picName || "-"}
-                        </p>
+                        {activeTab === "pemeliharaan" && (
+                          <>
+                            <p>
+                              <span className="font-medium">Bidang:</span> {contract.bidang || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">MSB:</span> {contract.msb || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Rutin/Non Rutin:</span> {contract.rutinNonRutin || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Requested By:</span> {contract.requestedBy || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Periode Accrue:</span> {contract.periodeAccrue || "-"}
+                            </p>
+                          </>
+                        )}
                       </div>
                     </div>
 
@@ -345,7 +361,7 @@ export default function KontrakTabbedPage() {
                       <div className="text-right">
                         <p className="text-xs text-gray-500 dark:text-gray-400">Nilai Kontrak</p>
                         <p className="text-lg font-bold text-gray-900 dark:text-white">
-                          {formatCurrency(contract.nilaiKontrak)}
+                          {formatCurrency(contract.nilaiKontrak || contract.nilaiPerjanjian || 0)}
                         </p>
                       </div>
                       

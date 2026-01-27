@@ -76,8 +76,6 @@ function mapInvestmentContract(row: any) {
     unitTerbayar: row.unit_terbayar,
     konfirmasiNonRutin: row.konfirmasi_non_rutin,
     bidang: row.bidang,
-    picId: row.pic_id,
-    picName: row.pic_name,
     entryBy: row.entry_by,
     progressPekerjaan: row.progress_pekerjaan || 0,
     oldFlag: row.old_flag,
@@ -93,64 +91,79 @@ function mapInvestmentContract(row: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapMaintenanceContract(row: any) {
-  const calculatedStatus = calculateContractStatus({
-    tanggalBerakhir: row.tanggal_berakhir,
-    progressPekerjaan: parseFloat(row.progress_pekerjaan || '0'),
-  });
+  // Calculate terbayar from STI Pusat + Unit
+  const terbayarSTIPusat = row.terbayar_sti_pusat || 0;
+  const terbayarUnit = row.terbayar_unit || 0;
+  const totalTerbayar = terbayarSTIPusat + terbayarUnit;
+  
+  // Calculate nilaiTagihan from STI Pusat + Unit Induk
+  const nilaiTagihanSTIPusat = row.nilai_tagihan_sti_pusat || 0;
+  const nilaiTagihanUnitInduk = row.nilai_tagihan_unit_induk || 0;
+  const totalNilaiTagihan = nilaiTagihanSTIPusat + nilaiTagihanUnitInduk;
+  
+  const nilaiPerjanjian = row.nilai_perjanjian || 0;
+  const sisaAnggaran = nilaiPerjanjian - totalTerbayar;
+  const persentaseRealisasi = nilaiPerjanjian > 0 ? (totalTerbayar / nilaiPerjanjian) * 100 : 0;
+  
+  // For maintenance without progress_pekerjaan, use status_terbayar
+  const statusTerbayar = row.status_terbayar || 'Belum Lunas';
+  const calculatedStatus = statusTerbayar === 'Lunas' ? 'selesai' as const : 'aktif' as const;
 
   return {
     id: row.id,
     no: row.no,
-    kategori: 'pemeliharaan',
+    kategori: 'pemeliharaan' as const,
+    
+    // New schema fields - mapped to both old and new field names for compatibility
     uraianKegiatan: row.uraian_kegiatan,
     noPerjanjian: row.no_perjanjian,
     tanggalPerjanjian: row.tanggal_perjanjian,
     tanggalBerakhir: row.tanggal_berakhir,
-    judulPekerjaan: row.judul_pekerjaan,
-    nilaiKontrak: row.nilai_kontrak || 0,
-    vendor: row.vendor,
-    jenisAnggaran: row.jenis_anggaran || 'AO',
-    unit: row.unit,
-    status: calculatedStatus,
-    // Additional fields
-    nilaiTagihan: row.nilai_tagihan || 0,
-    totalTagihanDibayar: row.total_tagihan_dibayar || 0,
-    sisaAnggaran: row.sisa_anggaran || (row.nilai_kontrak - (row.total_tagihan_dibayar || 0)),
-    persentaseRealisasi: row.persentase_realisasi || 0,
+    judulPerjanjian: row.judul_perjanjian,
+    nilaiPerjanjian: nilaiPerjanjian,
+    namaVendor: row.nama_vendor,
+    nilaiTagihanSTIPusat: nilaiTagihanSTIPusat,
+    nilaiTagihanUnitInduk: nilaiTagihanUnitInduk,
     noBeritaAcara: row.no_berita_acara,
     tanggalBeritaAcara: row.tanggal_berita_acara,
-    nilaiBeritaAcara: row.nilai_berita_acara,
-    noBeritaAcaraSKRelasi: row.no_berita_acara_sk_relasi,
-    tanggalArsip: row.tanggal_arsip,
-    noXPS: row.no_xps,
-    tanggalXPS: row.tanggal_xps,
-    unitSektorK: row.unit_sektor_k,
-    noSKWE: row.no_skwe,
-    posAngg: row.pos_angg,
-    noSKUSKKO: row.no_sku_skko,
+    noWBSPosAnggaran: row.no_wbs_pos_anggaran,
+    noSKKISKKO: row.no_skki_skko,
+    tanggalRequestSE: row.tanggal_request_se,
+    tanggalSERilis: row.tanggal_se_rilis,
     noSE: row.no_se,
     noPO: row.no_po,
-    submissionId: row.submission_id,
-    requestTanggalSE: row.request_tanggal_se,
-    requestTanggalSERelasi: row.request_tanggal_se_relasi,
-    jenisPekerjaan: row.jenis_pekerjaan,
-    bebanTahun: row.beban_tahun,
-    batasPaguTerbayar: row.batas_pagu_terbayar,
-    unitTerbayar: row.unit_terbayar,
-    konfirmasiNonRutin: row.konfirmasi_non_rutin,
+    submissionIdVIP: row.submission_id_vip,
+    namaPekerjaan: row.nama_pekerjaan,
+    msb: row.msb,
     bidang: row.bidang,
-    picId: row.pic_id,
-    picName: row.pic_name,
-    entryBy: row.entry_by,
-    progressPekerjaan: row.progress_pekerjaan || 0,
-    oldFlag: row.old_flag,
-    clickCB: row.click_cb,
+    statusVIP: row.status_vip || 'belum_lunas',
+    periodeAccrue: row.periode_accrue,
+    requestedBy: row.requested_by,
     keterangan: row.keterangan,
-    dokumenKontrak: row.dokumen_kontrak,
+    terbayarSTIPusat: terbayarSTIPusat,
+    terbayarUnit: terbayarUnit,
+    statusTerbayar: statusTerbayar,
+    rutinNonRutin: row.rutin_non_rutin,
+    
+    // Backward compatibility fields - used by UI components
+    judulPekerjaan: row.judul_perjanjian || row.nama_pekerjaan, // Map to judulPerjanjian
+    nilaiKontrak: nilaiPerjanjian, // Map to nilaiPerjanjian
+    vendor: row.nama_vendor, // Map to namaVendor
+    jenisAnggaran: 'AO', // Maintenance is always AO
+    unit: row.msb || '-',
+    status: calculatedStatus,
+    
+    // Calculated fields
+    nilaiTagihan: totalNilaiTagihan,
+    totalTagihanDibayar: totalTerbayar,
+    terbayar: totalTerbayar,
+    sisaAnggaran: sisaAnggaran,
+    persentaseRealisasi: persentaseRealisasi,
+    progressPekerjaan: persentaseRealisasi, // Use persentaseRealisasi as progress
+    
+    // Timestamps
     createdAt: row.created_at,
-    createdBy: row.created_by,
     updatedAt: row.updated_at,
-    updatedBy: row.updated_by,
   };
 }
 

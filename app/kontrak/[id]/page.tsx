@@ -9,7 +9,8 @@ import { useAuth } from "@/lib/auth-new";
 import AlertPopup from "@/components/ui/alert-popup";
 
 
-function formatCurrency(value: number): string {
+function formatCurrency(value: number | undefined | null): string {
+  if (!value || value === 0) return "Rp 0";
   if (value >= 1000000000) return `Rp ${(value / 1000000000).toFixed(2)} M`;
   if (value >= 1000000) return `Rp ${(value / 1000000).toFixed(0)} jt`;
   return `Rp ${value.toLocaleString("id-ID")}`;
@@ -34,7 +35,7 @@ export default function KontrakDetailPage() {
   const invoices = useMemo(() => getInvoicesByContract(contractId), [contractId, getInvoicesByContract]);
 
   const [isEditingProgress, setIsEditingProgress] = useState(false);
-  const [progressValue, setProgressValue] = useState(contract?.progressPekerjaan.toString() || "0");
+  const [progressValue, setProgressValue] = useState((contract?.progressPekerjaan || 0).toString());
   const [isSavingProgress, setIsSavingProgress] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -68,7 +69,7 @@ export default function KontrakDetailPage() {
   };
 
   const handleCancelEdit = () => {
-    setProgressValue(contract?.progressPekerjaan.toString() || "0");
+    setProgressValue((contract?.progressPekerjaan || 0).toString());
     setIsEditingProgress(false);
     setErrorMessage(null);
   };
@@ -111,7 +112,7 @@ export default function KontrakDetailPage() {
             <span className="text-sm text-gray-500 dark:text-gray-400">Detail Kontrak</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {contract.judulPekerjaan}
+            {contract.judulPekerjaan || contract.judulPerjanjian || "-"}
           </h1>
           <div className="flex items-center gap-2 flex-wrap">
             <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${JENIS_ANGGARAN_COLORS[contract.jenisAnggaran]}`}>
@@ -177,7 +178,7 @@ export default function KontrakDetailPage() {
             </div>
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Vendor</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.vendor}</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.vendor || contract.namaVendor || "-"}</p>
             </div>
 
             <div>
@@ -260,13 +261,16 @@ export default function KontrakDetailPage() {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Status VIP</p>
-                  <span className={`inline-flex px-2 py-0.5 text-xs font-medium rounded ${contract.statusVIP === "lunas" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" :
-                    contract.statusVIP === "dokumen_tidak_lengkap" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" :
-                      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300"
+                  <span className={`inline-flex px-2.5 py-1 text-xs font-bold rounded-md border-2 ${
+                    contract.statusVIP === "lunas" 
+                      ? "bg-white text-green-700 border-green-600 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-600" 
+                      : contract.statusVIP === "dokumen_tidak_lengkap" 
+                      ? "bg-white text-red-700 border-red-600 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-600" 
+                      : "bg-white text-amber-700 border-amber-600 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-600"
                     }`}>
-                    {contract.statusVIP === "lunas" ? "Lunas" :
-                      contract.statusVIP === "dokumen_tidak_lengkap" ? "Dokumen Tidak Lengkap" :
-                        "Belum Lunas"}
+                    {contract.statusVIP === "lunas" ? "✓ Lunas" :
+                      contract.statusVIP === "dokumen_tidak_lengkap" ? "✗ Dokumen Tidak Lengkap" :
+                        "○ Belum Lunas"}
                   </span>
                 </div>
               </div>
@@ -274,43 +278,193 @@ export default function KontrakDetailPage() {
           )}
 
           {/* Legacy Information (Only show if NOT investment or if fields are populated) */}
-          {contract.kategori !== "investasi" && (
+          {contract.kategori === "pemeliharaan" && (
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Detail Pekerjaan Pemeliharaan</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="md:col-span-3">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Judul Perjanjian</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.judulPerjanjian || "-"}</p>
+                </div>
+                <div className="md:col-span-3">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Nama Pekerjaan</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.namaPekerjaan || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">MSB</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.msb || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Bidang</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.bidang || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Rutin / Non Rutin</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.rutinNonRutin || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Periode Accrue</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.periodeAccrue || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Requested By</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.requestedBy || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Status Terbayar</p>
+                  <span className={`inline-flex px-2.5 py-1 text-xs font-bold rounded-md border-2 ${
+                    contract.statusTerbayar === "lunas" || contract.statusTerbayar === "Lunas" 
+                      ? "bg-white text-green-700 border-green-600 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-600" 
+                      : contract.statusTerbayar === "sebagian_terbayar" 
+                      ? "bg-white text-amber-700 border-amber-600 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-600" 
+                      : "bg-white text-red-700 border-red-600 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-600"
+                  }`}>
+                    {contract.statusTerbayar === "lunas" || contract.statusTerbayar === "Lunas" 
+                      ? "✓ Lunas"
+                      : contract.statusTerbayar === "sebagian_terbayar"
+                      ? "◐ Sebagian Terbayar"
+                      : "○ Belum Terbayar"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Nomor-Nomor Administrasi */}
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-4 mb-3">Nomor Administrasi</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No. WBS / Pos Anggaran</p>
+                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400 font-mono">{contract.noWBSPosAnggaran || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No. SKKI / SKKO</p>
+                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400 font-mono">{contract.noSKKISKKO || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No. SE</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 font-mono">{contract.noSE || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No. PO</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 font-mono">{contract.noPO || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Submission ID (VIP)</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 font-mono">{contract.submissionIdVIP || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Status VIP</p>
+                  <span className={`inline-flex px-2.5 py-1 text-xs font-bold rounded-md border-2 ${
+                    contract.statusVIP === "lunas" 
+                      ? "bg-white text-green-700 border-green-600 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-600" 
+                      : contract.statusVIP === "dokumen_tidak_lengkap" 
+                      ? "bg-white text-red-700 border-red-600 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-600" 
+                      : "bg-white text-amber-700 border-amber-600 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-600"
+                  }`}>
+                    {contract.statusVIP === "lunas" ? "✓ Lunas" :
+                      contract.statusVIP === "dokumen_tidak_lengkap" ? "✗ Dokumen Tidak Lengkap" :
+                      "○ Belum Lunas"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Berita Acara & Tanggal */}
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-4 mb-3">Berita Acara & Tanggal</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">No. Berita Acara</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.noBeritaAcara || "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tanggal Berita Acara</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.tanggalBeritaAcara ? formatDate(contract.tanggalBeritaAcara) : "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tanggal Request SE</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.tanggalRequestSE ? formatDate(contract.tanggalRequestSE) : "-"}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Tanggal SE Rilis</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.tanggalSERilis ? formatDate(contract.tanggalSERilis) : "-"}</p>
+                </div>
+              </div>
+
+              {/* Nilai Tagihan */}
+              <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-4 mb-3">Nilai Tagihan & Pembayaran</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Nilai Tagihan STI Pusat</p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanSTIPusat)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Nilai Tagihan Unit Induk</p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanUnitInduk)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Tagihan</p>
+                  <p className="text-sm font-bold text-blue-600 dark:text-blue-400">{formatCurrency((contract.nilaiTagihanSTIPusat || 0) + (contract.nilaiTagihanUnitInduk || 0))}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Terbayar STI Pusat</p>
+                  <p className="text-sm font-bold text-green-600 dark:text-green-400">{formatCurrency(contract.terbayarSTIPusat)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Terbayar Unit</p>
+                  <p className="text-sm font-bold text-green-600 dark:text-green-400">{formatCurrency(contract.terbayarUnit)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Total Terbayar</p>
+                  <p className="text-sm font-bold text-green-700 dark:text-green-300">{formatCurrency((contract.terbayarSTIPusat || 0) + (contract.terbayarUnit || 0))}</p>
+                </div>
+              </div>
+
+              {/* Keterangan */}
+              {contract.keterangan && (
+                <div className="mt-4">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Keterangan</p>
+                  <p className="text-sm text-gray-900 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">{contract.keterangan}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Administrasi specific fields */}
+          {contract.kategori === "administrasi" && (
             <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Informasi Tambahan</h3>
-              {/* ... existing fields for non-investment ... */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Request Tgl SE Relasi</p>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.requestTanggalSERelasi ? formatDate(contract.requestTanggalSERelasi) : "-"}</p>
                 </div>
-                {/* Add other legacy fields here if needed */}
               </div>
             </div>
           )}
 
-          {/* Metadata Section */}
-          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Informasi Tambahan</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Entry By</p>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.entryBy || "-"}</p>
-              </div>
-
-              {contract.oldFlag && (
+          {/* Metadata Section - Only for non-pemeliharaan or minimal info */}
+          {contract.kategori !== "pemeliharaan" && (
+            <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-3">Informasi Tambahan</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Old Flag</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.oldFlag}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Entry By</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.entryBy || "-"}</p>
                 </div>
-              )}
-              {contract.keterangan && (
-                <div className="md:col-span-2 lg:col-span-3">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Keterangan</p>
-                  <p className="text-sm text-gray-900 dark:text-gray-100">{contract.keterangan}</p>
-                </div>
-              )}
+
+                {contract.oldFlag && (
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Old Flag</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{contract.oldFlag}</p>
+                  </div>
+                )}
+                {contract.keterangan && (
+                  <div className="md:col-span-2 lg:col-span-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Keterangan</p>
+                    <p className="text-sm text-gray-900 dark:text-gray-100">{contract.keterangan}</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </motion.div>
 
         {/* Financial Summary */}
@@ -325,7 +479,7 @@ export default function KontrakDetailPage() {
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Nilai Kontrak</p>
-              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiKontrak)}</p>
+              <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiKontrak || contract.nilaiPerjanjian)}</p>
             </div>
 
             <div className="h-px bg-gray-200 dark:bg-gray-700" />
@@ -334,19 +488,19 @@ export default function KontrakDetailPage() {
             <div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">Serapan Anggaran</span>
-                <span className={`font-semibold ${contract.persentaseRealisasi > 90 ? "text-red-600" :
-                  contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
+                <span className={`font-semibold ${(contract.persentaseRealisasi || 0) > 90 ? "text-red-600" :
+                  (contract.persentaseRealisasi || 0) > 50 ? "text-yellow-600" : "text-green-600"
                   }`}>
-                  {contract.persentaseRealisasi.toFixed(1)}%
+                  {(contract.persentaseRealisasi || 0).toFixed(1)}%
                 </span>
               </div>
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(contract.persentaseRealisasi, 100)}%` }}
+                  animate={{ width: `${Math.min(contract.persentaseRealisasi || 0, 100)}%` }}
                   transition={{ duration: 0.8 }}
-                  className={`h-full rounded-full ${contract.persentaseRealisasi > 90 ? "bg-red-500" :
-                    contract.persentaseRealisasi > 50 ? "bg-yellow-500" : "bg-green-500"
+                  className={`h-full rounded-full ${(contract.persentaseRealisasi || 0) > 90 ? "bg-red-500" :
+                    (contract.persentaseRealisasi || 0) > 50 ? "bg-yellow-500" : "bg-green-500"
                     }`}
                 />
               </div>
@@ -359,10 +513,10 @@ export default function KontrakDetailPage() {
                 <div className="flex items-center gap-2">
                   {!isEditingProgress ? (
                     <>
-                      <span className={`font-semibold ${contract.progressPekerjaan >= 90 ? "text-blue-600" :
-                        contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
+                      <span className={`font-semibold ${(contract.progressPekerjaan || 0) >= 90 ? "text-blue-600" :
+                        (contract.progressPekerjaan || 0) >= 50 ? "text-teal-600" : "text-green-600"
                         }`}>
-                        {contract.progressPekerjaan.toFixed(1)}%
+                        {(contract.progressPekerjaan || 0).toFixed(1)}%
                       </span>
                       {user?.role === "admin" && (
                         <button
@@ -424,10 +578,10 @@ export default function KontrakDetailPage() {
               <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: `${Math.min(contract.progressPekerjaan, 100)}%` }}
+                  animate={{ width: `${Math.min(contract.progressPekerjaan || 0, 100)}%` }}
                   transition={{ duration: 0.8, delay: 0.2 }}
-                  className={`h-full rounded-full ${contract.progressPekerjaan >= 90 ? "bg-blue-500" :
-                    contract.progressPekerjaan >= 50 ? "bg-teal-500" : "bg-green-500"
+                  className={`h-full rounded-full ${(contract.progressPekerjaan || 0) >= 90 ? "bg-blue-500" :
+                    (contract.progressPekerjaan || 0) >= 50 ? "bg-teal-500" : "bg-green-500"
                     }`}
                 />
               </div>
@@ -436,11 +590,11 @@ export default function KontrakDetailPage() {
             <div className="grid grid-cols-2 gap-3">
               <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                 <p className="text-xs text-green-600 dark:text-green-400 mb-1">Serapan</p>
-                <p className="text-sm font-bold text-green-700 dark:text-green-300">{formatCurrency(contract.totalTagihanDibayar)}</p>
+                <p className="text-sm font-bold text-green-700 dark:text-green-300">{formatCurrency(contract.totalTagihanDibayar || contract.terbayar)}</p>
               </div>
               <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">Sisa Anggaran</p>
-                <p className="text-sm font-bold text-blue-700 dark:text-blue-300">{formatCurrency(contract.sisaAnggaran)}</p>
+                <p className="text-sm font-bold text-blue-700 dark:text-blue-300">{formatCurrency(contract.sisaAnggaran || 0)}</p>
               </div>
             </div>
 
@@ -450,11 +604,11 @@ export default function KontrakDetailPage() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Tagihan Kontrak Pusat</span>
-                <span className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanKontrakPusat)}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanKontrakPusat || 0)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600 dark:text-gray-400">Tagihan Unit Induk</span>
-                <span className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanUnitInduk)}</span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{formatCurrency(contract.nilaiTagihanUnitInduk || 0)}</span>
               </div>
               {contract.nilaiBeritaAcara && (
                 <div className="flex justify-between text-sm">

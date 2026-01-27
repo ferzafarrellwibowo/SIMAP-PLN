@@ -418,7 +418,7 @@ function generateAlerts(contracts: Contract[], invoices: Invoice[]): Alert[] {
         type: "kontrak_hampir_habis",
         severity: "critical",
         title: "Anggaran Hampir Habis",
-        message: `Kontrak "${contract.judulPekerjaan}" sudah mencapai ${contract.persentaseRealisasi.toFixed(1)}% serapan anggaran.`,
+        message: `Kontrak "${contract.judulPekerjaan || contract.judulPerjanjian || 'Unknown'}" sudah mencapai ${contract.persentaseRealisasi.toFixed(1)}% serapan anggaran.`,
         contractId: contract.id,
         createdAt: new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
       });
@@ -433,7 +433,7 @@ function generateAlerts(contracts: Contract[], invoices: Invoice[]): Alert[] {
         type: "kontrak_akan_berakhir",
         severity: daysUntilEnd <= 7 ? "critical" : "warning",
         title: "Kontrak Akan Berakhir",
-        message: `Kontrak "${contract.judulPekerjaan}" akan berakhir dalam ${daysUntilEnd} hari (${endDate.toLocaleDateString("id-ID")}).`,
+        message: `Kontrak "${contract.judulPekerjaan || contract.judulPerjanjian || 'Unknown'}" akan berakhir dalam ${daysUntilEnd} hari (${endDate.toLocaleDateString("id-ID")}).`,
         contractId: contract.id,
         createdAt: new Date(now.getTime() - Math.random() * 48 * 60 * 60 * 1000).toISOString(),
       });

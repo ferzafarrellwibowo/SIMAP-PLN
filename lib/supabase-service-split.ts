@@ -506,54 +506,44 @@ function mapInvestmentContract(row: any): ContractInvestment {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mapMaintenanceContract(row: any): ContractMaintenance {
+  // Mapping sesuai struktur tabel baru contract_maintenance
   return {
     id: row.id,
     no: row.no,
     kategori: "pemeliharaan",
+    
+    // Field sesuai requirement baru
+    uraianKegiatan: row.uraian_kegiatan,
     noPerjanjian: row.no_perjanjian,
     tanggalPerjanjian: row.tanggal_perjanjian,
     tanggalBerakhir: row.tanggal_berakhir,
-    judulPekerjaan: row.judul_pekerjaan,
-    uraianKegiatan: row.uraian_kegiatan,
-    jenisPekerjaan: row.jenis_pekerjaan,
-    nilaiKontrak: row.nilai_kontrak || 0,
-    nilaiTagihan: row.nilai_tagihan || 0,
-    totalTagihanDibayar: row.total_tagihan_dibayar || 0,
-    sisaAnggaran: row.sisa_anggaran || 0,
-    persentaseRealisasi: row.persentase_realisasi || 0,
-    vendor: row.vendor,
-    status: row.status || "aktif",
-    jenisAnggaran: row.jenis_anggaran || "AO",
+    judulPerjanjian: row.judul_perjanjian,
+    nilaiPerjanjian: row.nilai_perjanjian || 0,
+    namaVendor: row.nama_vendor,
+    nilaiTagihanSTIPusat: row.nilai_tagihan_sti_pusat || 0,
+    nilaiTagihanUnitInduk: row.nilai_tagihan_unit_induk || 0,
     noBeritaAcara: row.no_berita_acara,
     tanggalBeritaAcara: row.tanggal_berita_acara,
-    nilaiBeritaAcara: row.nilai_berita_acara,
-    noBeritaAcaraSKRelasi: row.no_berita_acara_sk_relasi,
-    tanggalArsip: row.tanggal_arsip,
-    noXPS: row.no_xps,
-    tanggalXPS: row.tanggal_xps,
-    unit: row.unit,
-    unitSektorK: row.unit_sektor_k,
-    noSKWE: row.no_skwe,
-    posAngg: row.pos_angg,
-    noSKUSKKO: row.no_sku_skko,
+    noWBSPosAnggaran: row.no_wbs_pos_anggaran,
+    noSKKISKKO: row.no_skki_skko,
+    tanggalRequestSE: row.tanggal_request_se,
+    tanggalSERilis: row.tanggal_se_rilis,
     noSE: row.no_se,
     noPO: row.no_po,
-    submissionId: row.submission_id,
-    requestTanggalSE: row.request_tanggal_se,
-    requestTanggalSERelasi: row.request_tanggal_se_relasi,
-    bebanTahun: row.beban_tahun,
-    batasPaguTerbayar: row.batas_pagu_terbayar,
-    unitTerbayar: row.unit_terbayar,
-    konfirmasiNonRutin: row.konfirmasi_non_rutin,
+    submissionIdVIP: row.submission_id_vip,
+    namaPekerjaan: row.nama_pekerjaan,
+    msb: row.msb,
     bidang: row.bidang,
-    picId: row.pic_id,
-    picName: row.pic_name,
-    entryBy: row.entry_by,
-    progressPekerjaan: row.progress_pekerjaan || 0,
-    oldFlag: row.old_flag,
-    clickCB: row.click_cb,
+    statusVIP: row.status_vip,
+    periodeAccrue: row.periode_accrue,
+    requestedBy: row.requested_by,
     keterangan: row.keterangan,
-    dokumenKontrak: row.dokumen_kontrak,
+    terbayarSTIPusat: row.terbayar_sti_pusat || 0,
+    terbayarUnit: row.terbayar_unit || 0,
+    statusTerbayar: row.status_terbayar,
+    rutinNonRutin: row.rutin_non_rutin,
+    
+    // Metadata
     createdAt: row.created_at,
     createdBy: row.created_by,
     updatedAt: row.updated_at,
@@ -680,19 +670,36 @@ function mapMaintenanceToDb(contract: Partial<ContractMaintenance>): Record<stri
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: Record<string, any> = {};
 
+  // Mapping sesuai struktur tabel baru contract_maintenance
+  if (contract.uraianKegiatan !== undefined) result.uraian_kegiatan = contract.uraianKegiatan;
   if (contract.noPerjanjian !== undefined) result.no_perjanjian = contract.noPerjanjian;
   if (contract.tanggalPerjanjian !== undefined) result.tanggal_perjanjian = contract.tanggalPerjanjian;
   if (contract.tanggalBerakhir !== undefined) result.tanggal_berakhir = contract.tanggalBerakhir;
-  if (contract.judulPekerjaan !== undefined) result.judul_pekerjaan = contract.judulPekerjaan;
-  if (contract.uraianKegiatan !== undefined) result.uraian_kegiatan = contract.uraianKegiatan;
-  if (contract.nilaiKontrak !== undefined) result.nilai_kontrak = contract.nilaiKontrak;
-  if (contract.nilaiTagihan !== undefined) result.nilai_tagihan = contract.nilaiTagihan;
-  if (contract.totalTagihanDibayar !== undefined) result.total_tagihan_dibayar = contract.totalTagihanDibayar;
-  if (contract.vendor !== undefined) result.vendor = contract.vendor;
-  if (contract.status !== undefined) result.status = contract.status;
-  if (contract.jenisAnggaran !== undefined) result.jenis_anggaran = contract.jenisAnggaran;
-  if (contract.unit !== undefined) result.unit = contract.unit;
+  if (contract.judulPerjanjian !== undefined) result.judul_perjanjian = contract.judulPerjanjian;
+  if (contract.nilaiPerjanjian !== undefined) result.nilai_perjanjian = contract.nilaiPerjanjian;
+  if (contract.namaVendor !== undefined) result.nama_vendor = contract.namaVendor;
+  if (contract.nilaiTagihanSTIPusat !== undefined) result.nilai_tagihan_sti_pusat = contract.nilaiTagihanSTIPusat;
+  if (contract.nilaiTagihanUnitInduk !== undefined) result.nilai_tagihan_unit_induk = contract.nilaiTagihanUnitInduk;
+  if (contract.noBeritaAcara !== undefined) result.no_berita_acara = contract.noBeritaAcara;
+  if (contract.tanggalBeritaAcara !== undefined) result.tanggal_berita_acara = contract.tanggalBeritaAcara;
+  if (contract.noWBSPosAnggaran !== undefined) result.no_wbs_pos_anggaran = contract.noWBSPosAnggaran;
+  if (contract.noSKKISKKO !== undefined) result.no_skki_skko = contract.noSKKISKKO;
+  if (contract.tanggalRequestSE !== undefined) result.tanggal_request_se = contract.tanggalRequestSE;
+  if (contract.tanggalSERilis !== undefined) result.tanggal_se_rilis = contract.tanggalSERilis;
+  if (contract.noSE !== undefined) result.no_se = contract.noSE;
+  if (contract.noPO !== undefined) result.no_po = contract.noPO;
+  if (contract.submissionIdVIP !== undefined) result.submission_id_vip = contract.submissionIdVIP;
+  if (contract.namaPekerjaan !== undefined) result.nama_pekerjaan = contract.namaPekerjaan;
+  if (contract.msb !== undefined) result.msb = contract.msb;
+  if (contract.bidang !== undefined) result.bidang = contract.bidang;
+  if (contract.statusVIP !== undefined) result.status_vip = contract.statusVIP;
+  if (contract.periodeAccrue !== undefined) result.periode_accrue = contract.periodeAccrue;
+  if (contract.requestedBy !== undefined) result.requested_by = contract.requestedBy;
   if (contract.keterangan !== undefined) result.keterangan = contract.keterangan;
+  if (contract.terbayarSTIPusat !== undefined) result.terbayar_sti_pusat = contract.terbayarSTIPusat;
+  if (contract.terbayarUnit !== undefined) result.terbayar_unit = contract.terbayarUnit;
+  if (contract.statusTerbayar !== undefined) result.status_terbayar = contract.statusTerbayar;
+  if (contract.rutinNonRutin !== undefined) result.rutin_non_rutin = contract.rutinNonRutin;
 
   return result;
 }

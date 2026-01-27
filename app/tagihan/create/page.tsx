@@ -411,7 +411,7 @@ export default function CreateTagihanPage() {
                     .filter((c) => c.status === "aktif")
                     .map((contract) => (
                       <option key={contract.id} value={contract.id}>
-                        {contract.noPerjanjian} - {contract.judulPekerjaan}
+                        {contract.noPerjanjian} - {contract.judulPekerjaan || contract.judulPerjanjian || "-"}
                       </option>
                     ))}
                 </select>
@@ -434,13 +434,13 @@ export default function CreateTagihanPage() {
                       Judul Pekerjaan
                     </p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {selectedContract.judulPekerjaan}
+                      {selectedContract.judulPekerjaan || selectedContract.judulPerjanjian || "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">Vendor</p>
                     <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {selectedContract.vendor}
+                      {selectedContract.vendor || selectedContract.namaVendor || "-"}
                     </p>
                   </div>
                   <div>

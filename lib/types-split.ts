@@ -142,26 +142,104 @@ export interface ContractInvestment extends BaseContract {
 // CONTRACT MAINTENANCE (Pemeliharaan - AO)
 // ============================================
 
-export interface ContractMaintenance extends BaseContract {
+export interface ContractMaintenance {
+  // Primary Key
+  id: string;
+  no: number;
   kategori: "pemeliharaan";
   
-  // Pekerjaan
-  judulPekerjaan: string;
+  // Uraian Kegiatan/Mata Anggaran
   uraianKegiatan?: string;
-  jenisPekerjaan?: string;
   
-  // Nilai
-  nilaiKontrak: number;
-  nilaiTagihan: number;
-  totalTagihanDibayar: number;
-  sisaAnggaran: number;
-  persentaseRealisasi: number;
+  // No. Perjanjian/Amandemen
+  noPerjanjian: string;
   
-  // Vendor
-  vendor: string;
+  // Tanggal Perjanjian/Amandemen
+  tanggalPerjanjian: string;
   
-  // Jenis
-  jenisAnggaran: JenisAnggaran;
+  // Tanggal Berakhir
+  tanggalBerakhir: string;
+  
+  // Judul Perjanjian
+  judulPerjanjian: string;
+  
+  // Nilai Perjanjian
+  nilaiPerjanjian: number;
+  
+  // Nama Vendor
+  namaVendor: string;
+  
+  // Nilai Tagihan/Nominal STI Kantor Pusat
+  nilaiTagihanSTIPusat: number;
+  
+  // Nilai Tagihan/Nominal Unit Induk Seindonesia Raya
+  nilaiTagihanUnitInduk: number;
+  
+  // No. Berita Acara
+  noBeritaAcara?: string;
+  
+  // Tanggal Berita Acara
+  tanggalBeritaAcara?: string;
+  
+  // No. WBS/Pos Anggaran
+  noWBSPosAnggaran?: string;
+  
+  // No. SKKI/SKKO
+  noSKKISKKO?: string;
+  
+  // Tanggal Request SE
+  tanggalRequestSE?: string;
+  
+  // Tanggal SE Rilis
+  tanggalSERilis?: string;
+  
+  // No. SE
+  noSE?: string;
+  
+  // No. PO
+  noPO?: string;
+  
+  // Submission ID - Vendor Invoicing Portal
+  submissionIdVIP?: string;
+  
+  // Nama Pekerjaan
+  namaPekerjaan?: string;
+  
+  // MSB
+  msb?: string;
+  
+  // Bidang
+  bidang?: string;
+  
+  // Status VIP
+  statusVIP?: string;
+  
+  // Periode Accrue Bulan/Tahun
+  periodeAccrue?: string;
+  
+  // Requested By
+  requestedBy?: string;
+  
+  // Keterangan/Konfirmasi
+  keterangan?: string;
+  
+  // Terbayar STI Pusat
+  terbayarSTIPusat: number;
+  
+  // Terbayar Unit
+  terbayarUnit: number;
+  
+  // Status Terbayar
+  statusTerbayar?: string;
+  
+  // Rutin/Non Rutin
+  rutinNonRutin?: string;
+  
+  // Metadata
+  createdAt: string;
+  createdBy?: string;
+  updatedAt: string;
+  updatedBy?: string;
 }
 
 // ============================================
