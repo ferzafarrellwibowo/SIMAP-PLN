@@ -362,10 +362,10 @@ export default function PembayaranDetailPage() {
               >
                 <p className={`text-xs font-medium ${
                   isPaid
-                  ? "text-emerald-700 dark:text-emerald-400"
-                  : isGap
-                    "text-amber-700 dark:text-amber-400"
-                    "text-red-700 dark:text-red-400"
+                    ? "text-emerald-700 dark:text-emerald-400"
+                    : isGap
+                      ? "text-amber-700 dark:text-amber-400"
+                      : "text-red-700 dark:text-red-400"
                 }`}>
                   {month.short}
                 </p>

@@ -75,7 +75,7 @@ export function StatusPieChart({ data }: StatusChartProps) {
           {data.map((item) => (
             <div
               key={item.name}
-              className="flex flex-col items-center rounded-lg bg-gray-50 p-2 dark:bg-gray-800/50"
+              className="flex flex-col items-center rounded-lg bg-gray-100 p-2 dark:bg-gray-700/50 border border-gray-200/50 dark:border-gray-600/30"
             >
               <div
                 className="h-3 w-3 rounded-full mb-1"

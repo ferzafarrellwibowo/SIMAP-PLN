@@ -99,7 +99,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
 
           {/* Stats */}
           <div className="space-y-4">
-            <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800/50">
+            <div className="rounded-lg bg-gray-100 p-4 dark:bg-gray-700/50 border border-gray-200/50 dark:border-gray-600/30">
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 Pagu
               </p>
@@ -107,7 +107,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
                 {formatCurrency(data.total)}
               </p>
             </div>
-            <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-950/30">
+            <div className="rounded-lg bg-blue-100 p-4 dark:bg-blue-900/40 border border-blue-200/50 dark:border-blue-800/30">
               <p className="text-sm text-blue-600 dark:text-blue-400">
                 Serapan
               </p>
@@ -115,7 +115,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
                 {formatCurrency(data.used)}
               </p>
             </div>
-            <div className="rounded-lg bg-emerald-50 p-4 dark:bg-emerald-950/30">
+            <div className="rounded-lg bg-emerald-100 p-4 dark:bg-emerald-900/40 border border-emerald-200/50 dark:border-emerald-800/30">
               <p className="text-sm text-emerald-600 dark:text-emerald-400">
                 Sisa Anggaran
               </p>

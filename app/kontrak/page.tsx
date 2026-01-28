@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useContractStore, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, contractStatusOptions } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
+import { exportContractsToExcel } from "@/lib/export-excel";
 import type { ContractCategory, ContractStatus } from "@/lib/types-new";
 
 function formatCurrency(value: number): string {
@@ -62,6 +63,20 @@ export default function KontrakTabbedPage() {
   // Filter states
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<ContractStatus | "all">("all");
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Handle Excel export
+  const handleExportExcel = async () => {
+    setIsExporting(true);
+    try {
+      await exportContractsToExcel(contracts);
+    } catch (error) {
+      console.error("Export failed:", error);
+      alert("Gagal mengekspor data ke Excel");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Check if any filter is active
   const isFilterActive = search !== "" || status !== "all";
@@ -119,21 +134,45 @@ export default function KontrakTabbedPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Kontrak</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Total {contracts.length} kontrak
           </p>
         </div>
-        {user?.role === "admin" && (
-          <Link
-            href={`/kontrak/create?kategori=${activeTab}`}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportExcel}
+            disabled={isExporting || contracts.length === 0}
+            className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Tambah Kontrak
-          </Link>
-        )}
+            {isExporting ? (
+              <>
+                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Mengekspor...
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export Excel
+              </>
+            )}
+          </button>
+          {user?.role === "admin" && (
+            <Link
+              href={`/kontrak/create?kategori=${activeTab}`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Tambah Kontrak
+            </Link>
+          )}
+        </div>
       </div>
 
       {/* Category Tabs */}
@@ -145,8 +184,8 @@ export default function KontrakTabbedPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex items-center gap-3 p-4 rounded-lg transition-all ${
                 activeTab === tab.id
-                  ? "bg-gray-100 dark:bg-gray-800 ring-2 ring-blue-500"
-                  : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                  ? "bg-blue-50 dark:bg-gray-800 ring-2 ring-blue-500 shadow-sm"
+                  : "bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800 hover:shadow-sm"
               }`}
             >
               <div className={`p-2 rounded-lg ${tab.color} text-white`}>
@@ -178,7 +217,7 @@ export default function KontrakTabbedPage() {
                 <motion.div
                   layoutId="activeTabIndicator"
                   className="absolute inset-0 ring-2 ring-blue-500 rounded-lg pointer-events-none"
-                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  transition={{ type: "spring", bounce: 0, duration: 0}}
                 />
               )}
             </button>
@@ -284,7 +323,7 @@ export default function KontrakTabbedPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+                  className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     {/* Left Content */}
@@ -371,8 +410,8 @@ export default function KontrakTabbedPage() {
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-gray-500 dark:text-gray-400">Serapan</span>
                             <span className={`font-medium ${
-                              contract.persentaseRealisasi > 90 ? "text-red-600" :
-                              contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
+                              contract.persentaseRealisasi > 90 ? "text-red-600 dark:text-red-400" :
+                              contract.persentaseRealisasi > 50 ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"
                             }`}>
                               {contract.persentaseRealisasi.toFixed(1)}%
                             </span>
@@ -393,8 +432,8 @@ export default function KontrakTabbedPage() {
                           <div className="flex justify-between text-xs mb-1">
                             <span className="text-gray-500 dark:text-gray-400">Progress</span>
                             <span className={`font-medium ${
-                              contract.progressPekerjaan >= 90 ? "text-blue-600" :
-                              contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
+                              contract.progressPekerjaan >= 90 ? "text-blue-600 dark:text-blue-400" :
+                              contract.progressPekerjaan >= 50 ? "text-teal-600 dark:text-teal-400" : "text-green-600 dark:text-green-400"
                             }`}>
                               {contract.progressPekerjaan.toFixed(1)}%
                             </span>
@@ -413,7 +452,7 @@ export default function KontrakTabbedPage() {
 
                       <Link
                         href={`/kontrak/${contract.id}?kategori=${activeTab}`}
-                        className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                        className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-lg text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                       >
                         Detail
                       </Link>

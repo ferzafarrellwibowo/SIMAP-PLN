@@ -13,6 +13,9 @@ import {
   CATEGORY_COLORS as SUB_CATEGORY_COLORS,
   SubscriptionCategory
 } from "@/lib/subscription-types";
+import { CategoryBarCharts } from "@/components/laporan/category-bar-charts";
+import SubscriptionBarChart from "@/components/laporan/subscription-bar-chart";
+import { exportLaporanPDF } from "@/lib/export-pdf";
 
 // Dot colors for light mode visibility (darker shades)
 const SUB_CATEGORY_DOT_COLORS: Record<SubscriptionCategory, string> = {
@@ -178,6 +181,15 @@ export default function LaporanPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportPDF = () => {
+    exportLaporanPDF({
+      contractStats: categoryStats,
+      overallContractStats: overallStats,
+      subscriptionStats: subscriptionStats,
+      overallSubStats: overallSubStats,
+    });
+  };
+
   return (
     <div className="space-y-12 pb-12">
       {/* SECTION 1: KONTRAK */}
@@ -190,15 +202,17 @@ export default function LaporanPage() {
               Ringkasan data kontrak dan tagihan proyek
             </p>
           </div>
-          <button
-            onClick={handleExport}
-            className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors flex items-center gap-2"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Export CSV
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExportPDF}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors flex items-center gap-2"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+              Export PDF
+            </button>
+          </div>
         </div>
 
         {/* Overall Summary */}
@@ -229,6 +243,18 @@ export default function LaporanPage() {
               <p className="!text-blue-100 text-xs">{overallStats.tagihanPending} pending</p>
             </div>
           </div>
+        </motion.div>
+
+        {/* Bar Charts Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <CategoryBarCharts 
+            contractData={categoryStats}
+            subscriptionData={subscriptionStats}
+          />
         </motion.div>
 
         {/* Category Details */}
@@ -429,6 +455,10 @@ export default function LaporanPage() {
                 </div>
               </div>
             </motion.div>
+            {/* Subscription Chart (Langganan per Kategori) */}
+            <div className="pt-6">
+              <SubscriptionBarChart subscriptionData={subscriptionStats} />
+            </div>
 
             {/* Subscription Detail Table */}
             <motion.div
