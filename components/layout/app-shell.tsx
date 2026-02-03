@@ -79,13 +79,13 @@ export function AppShell({ children }: SidebarProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/80">
+      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-3">
+              <Link href="/dashboard" className="flex items-center gap-3">
                 <Image
                   src="/Logo_PLN.svg"
                   alt="Logo PLN"
@@ -94,10 +94,10 @@ export function AppShell({ children }: SidebarProps) {
                   className="h-14 w-14"
                 />
                 <div>
-                  <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <h1 className="text-lg font-bold text-gray-900">
                     Monitoring Proyek
                   </h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-xs text-gray-500">
                     PT PLN (Persero)
                   </p>
                 </div>
@@ -117,8 +117,8 @@ export function AppShell({ children }: SidebarProps) {
                       href={item.href}
                       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+                          ? "bg-blue-100 text-blue-700"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
                       {item.icon}
@@ -131,7 +131,7 @@ export function AppShell({ children }: SidebarProps) {
             {/* User Menu */}
             <div className="flex items-center gap-4">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                <p className="text-sm font-medium text-gray-900">
                   {user?.name}
                 </p>
                 <span className={`inline-flex px-2 py-0.5 text-xs rounded-full ${ROLE_COLORS[user?.role || "pic"]}`}>
@@ -140,7 +140,7 @@ export function AppShell({ children }: SidebarProps) {
               </div>
               <button
                 onClick={logout}
-                className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                className="p-2 rounded-lg text-gray-500 hover:text-red-600 hover:bg-red-50 transition-colors"
                 title="Logout"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +152,7 @@ export function AppShell({ children }: SidebarProps) {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="md:hidden border-t border-gray-200 dark:border-gray-800">
+        <div className="md:hidden border-t border-gray-200">
           <div className="flex overflow-x-auto px-4 py-2 gap-2">
             {navigation
               .filter((item) => item.show)
@@ -165,8 +165,8 @@ export function AppShell({ children }: SidebarProps) {
                     href={item.href}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                       isActive
-                        ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                        : "text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
                     {item.icon}
@@ -194,9 +194,9 @@ export function AppShell({ children }: SidebarProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900 mt-8">
+      <footer className="border-t border-gray-200 bg-white mt-8">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-center text-sm text-gray-500">
             © 2026 PT PLN (Persero) - Sistem Monitoring Proyek & Anggaran
           </p>
         </div>

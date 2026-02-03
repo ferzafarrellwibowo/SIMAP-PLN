@@ -766,13 +766,13 @@ export const STATUS_LABELS: Record<ProjectLifecycleStatus, string> = {
 };
 
 export const STATUS_COLORS: Record<ProjectLifecycleStatus, string> = {
-  draft: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-  initiated: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  planned: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300",
-  on_progress: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300",
-  on_hold: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-  completed: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-  cancelled: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  draft: "bg-gray-100 text-gray-800",
+  initiated: "bg-blue-100 text-blue-800",
+  planned: "bg-indigo-100 text-indigo-800",
+  on_progress: "bg-cyan-100 text-cyan-800",
+  on_hold: "bg-amber-100 text-amber-800",
+  completed: "bg-emerald-100 text-emerald-800",
+  cancelled: "bg-red-100 text-red-800",
 };
 
 export const HEALTH_LABELS: Record<HealthStatus, string> = {
@@ -782,7 +782,7 @@ export const HEALTH_LABELS: Record<HealthStatus, string> = {
 };
 
 export const HEALTH_COLORS: Record<HealthStatus, string> = {
-  green: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-  yellow: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300",
-  red: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  green: "bg-emerald-100 text-emerald-800",
+  yellow: "bg-amber-100 text-amber-800",
+  red: "bg-red-100 text-red-800",
 };

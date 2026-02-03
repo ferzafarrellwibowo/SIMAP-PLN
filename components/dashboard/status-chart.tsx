@@ -25,11 +25,11 @@ export function StatusPieChart({ data }: StatusChartProps) {
     if (active && payload && payload.length) {
       const item = payload[0];
       return (
-        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-          <p className="font-medium text-gray-900 dark:text-gray-100">
+        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+          <p className="font-medium text-gray-900">
             {item.name}
           </p>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-sm text-gray-600">
             {item.value} proyek ({((item.value / total) * 100).toFixed(1)}%)
           </p>
         </div>
@@ -66,7 +66,7 @@ export function StatusPieChart({ data }: StatusChartProps) {
               verticalAlign="bottom"
               height={36}
               formatter={(value) => (
-                <span className="text-sm text-gray-600 dark:text-gray-400">{value}</span>
+                <span className="text-sm text-gray-600">{value}</span>
               )}
             />
           </PieChart>
@@ -75,16 +75,16 @@ export function StatusPieChart({ data }: StatusChartProps) {
           {data.map((item) => (
             <div
               key={item.name}
-              className="flex flex-col items-center rounded-lg bg-gray-100 p-2 dark:bg-gray-700/50 border border-gray-200/50 dark:border-gray-600/30"
+              className="flex flex-col items-center rounded-lg bg-gray-100 p-2 border border-gray-200/50"
             >
               <div
                 className="h-3 w-3 rounded-full mb-1"
                 style={{ backgroundColor: item.color }}
               />
-              <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              <span className="text-lg font-bold text-gray-900">
                 {item.value}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 text-center">
+              <span className="text-xs text-gray-500 text-center">
                 {item.name}
               </span>
             </div>

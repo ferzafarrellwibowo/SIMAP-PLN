@@ -65,26 +65,26 @@ const ContractTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0]?.payload;
     return (
-      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-2xl dark:border-gray-600 dark:bg-gray-800">
-        <p className="font-bold text-gray-800 dark:text-white mb-3 pb-2 border-b border-gray-300 dark:border-gray-600">
+      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-2xl">
+        <p className="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-300">
           {label}
         </p>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between items-center gap-4">
-            <span className="text-gray-600 dark:text-gray-400">Pagu:</span>
-            <span className="font-semibold text-gray-800 dark:text-white">{formatCurrency(data.totalNilai)}</span>
+            <span className="text-gray-600">Pagu:</span>
+            <span className="font-semibold text-gray-800">{formatCurrency(data.totalNilai)}</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <span className="text-gray-600 dark:text-gray-400">Realisasi:</span>
-            <span className="font-semibold text-emerald-700 dark:text-emerald-400">{formatCurrency(data.totalDibayar)}</span>
+            <span className="text-gray-600">Realisasi:</span>
+            <span className="font-semibold text-emerald-700">{formatCurrency(data.totalDibayar)}</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <span className="text-gray-600 dark:text-gray-400">Sisa:</span>
-            <span className="font-semibold text-blue-700 dark:text-blue-400">{formatCurrency(data.sisaAnggaran)}</span>
+            <span className="text-gray-600">Sisa:</span>
+            <span className="font-semibold text-blue-700">{formatCurrency(data.sisaAnggaran)}</span>
           </div>
-          <div className="flex justify-between items-center gap-4 pt-2 border-t border-gray-200 dark:border-gray-700">
-            <span className="text-gray-600 dark:text-gray-400">Kontrak:</span>
-            <span className="font-semibold text-gray-800 dark:text-white">{data.totalKontrak} <span className="text-xs text-gray-500 dark:text-gray-400">({data.kontrakAktif} aktif)</span></span>
+          <div className="flex justify-between items-center gap-4 pt-2 border-t border-gray-200">
+            <span className="text-gray-600">Kontrak:</span>
+            <span className="font-semibold text-gray-800">{data.totalKontrak} <span className="text-xs text-gray-500">({data.kontrakAktif} aktif)</span></span>
           </div>
         </div>
       </div>
@@ -103,7 +103,7 @@ const CustomLegend = ({ payload }: any) => {
             className="w-3 h-3 rounded-sm" 
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+          <span className="text-sm text-gray-600 font-medium">
             {entry.value}
           </span>
         </div>
@@ -129,7 +129,7 @@ export function CategoryBarCharts({ contractData, subscriptionData }: CategoryBa
     <Card hover={false} className="overflow-hidden">
       <CardHeader className="pb-2">
         <CardTitle>
-          <span className="text-lg font-semibold text-gray-900 dark:text-white">Kontrak per Kategori</span>
+          <span className="text-lg font-semibold text-gray-900">Kontrak per Kategori</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
@@ -150,7 +150,7 @@ export function CategoryBarCharts({ contractData, subscriptionData }: CategoryBa
                 strokeDasharray="3 3" 
                 vertical={false}
                 stroke="#e5e7eb"
-                className="dark:stroke-gray-700"
+                className=""
               />
               <XAxis
                 dataKey="name"
@@ -166,7 +166,7 @@ export function CategoryBarCharts({ contractData, subscriptionData }: CategoryBa
                   fontSize: 11, 
                   fill: '#9ca3af',
                 }}
-                className="dark:[&_text]:fill-gray-500"
+                className=""
                 tickFormatter={(value) => {
                   if (value >= 1000000000) return `${(value / 1000000000).toFixed(0)}M`;
                   if (value >= 1000000) return `${(value / 1000000).toFixed(0)}jt`;

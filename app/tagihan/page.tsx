@@ -197,8 +197,8 @@ export default function TagihanPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Tagihan</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <h1 className="text-2xl font-bold text-gray-900">Daftar Tagihan</h1>
+          <p className="text-sm text-gray-600">
             {filteredInvoices.length} tagihan ditemukan
           </p>
         </div>
@@ -218,43 +218,43 @@ export default function TagihanPage() {
 
       {/* Status Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-amber-100 dark:bg-yellow-900/30 rounded-xl p-4 border border-amber-300 dark:border-yellow-700">
-          <p className="text-sm text-amber-800 dark:text-yellow-300 font-medium">Diajukan</p>
-          <p className="text-2xl font-bold text-amber-950 dark:text-yellow-200 mt-1">{statusStats.diajukan}</p>
+        <div className="bg-amber-100 rounded-xl p-4 border border-amber-300">
+          <p className="text-sm text-amber-800 font-medium">Diajukan</p>
+          <p className="text-2xl font-bold text-amber-950 mt-1">{statusStats.diajukan}</p>
         </div>
-        <div className="bg-blue-100 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-300 dark:border-blue-700">
-          <p className="text-sm text-blue-800 dark:text-blue-300 font-medium">Diterima</p>
-          <p className="text-2xl font-bold text-blue-950 dark:text-blue-200 mt-1">{statusStats.diterima}</p>
+        <div className="bg-blue-100 rounded-xl p-4 border border-blue-300">
+          <p className="text-sm text-blue-800 font-medium">Diterima</p>
+          <p className="text-2xl font-bold text-blue-950 mt-1">{statusStats.diterima}</p>
         </div>
-        <div className="bg-emerald-100 dark:bg-green-900/30 rounded-xl p-4 border border-emerald-300 dark:border-green-700">
-          <p className="text-sm text-emerald-800 dark:text-green-300 font-medium">Dibayar</p>
-          <p className="text-2xl font-bold text-emerald-950 dark:text-green-200 mt-1">{statusStats.dibayar}</p>
+        <div className="bg-emerald-100 rounded-xl p-4 border border-emerald-300">
+          <p className="text-sm text-emerald-800 font-medium">Dibayar</p>
+          <p className="text-2xl font-bold text-emerald-950 mt-1">{statusStats.dibayar}</p>
         </div>
-        <div className="bg-red-100 dark:bg-red-900/30 rounded-xl p-4 border border-red-300 dark:border-red-700">
-          <p className="text-sm text-red-800 dark:text-red-300 font-medium">Ditolak</p>
-          <p className="text-2xl font-bold text-red-950 dark:text-red-200 mt-1">{statusStats.ditolak}</p>
+        <div className="bg-red-100 rounded-xl p-4 border border-red-300">
+          <p className="text-sm text-red-800 font-medium">Ditolak</p>
+          <p className="text-2xl font-bold text-red-950 mt-1">{statusStats.ditolak}</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isFilterActive ? "lg:grid-cols-6" : "lg:grid-cols-5"}`}>
           <div className="md:col-span-2 lg:col-span-1">
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Pencarian</label>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nomor tagihan, kontrak, atau vendor..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as InvoiceStatus | "all")}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {invoiceStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -262,11 +262,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Urutkan</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Urutkan</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as "terbaru" | "tertinggi" | "terendah")}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="terbaru">Terbaru</option>
               <option value="tertinggi">Nilai Tertinggi</option>
@@ -274,11 +274,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Tahun</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Tahun</label>
             <select
               value={filterYear}
               onChange={(e) => setFilterYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Tahun</option>
               {availableYears.map((year) => (
@@ -289,11 +289,11 @@ export default function TagihanPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Bulan</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Bulan</label>
             <select
               value={filterMonth}
               onChange={(e) => setFilterMonth(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Bulan</option>
               <option value="1">Januari</option>
@@ -328,7 +328,7 @@ export default function TagihanPage() {
                     setFilterYear("all");
                     setFilterMonth("all");
                   }}
-                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -342,12 +342,12 @@ export default function TagihanPage() {
       </div>
 
       {/* Invoice List */}
-      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
         {/* Desktop Table - Hidden on Mobile */}
         <div className="hidden lg:block">
           <table className="w-full table-fixed">
-            <thead className="bg-gray-50 dark:bg-gray-800/80">
-              <tr className="text-center text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+            <thead className="bg-gray-50">
+              <tr className="text-center text-xs font-medium text-gray-600 uppercase tracking-wider">
                 <th className="px-4 py-3 w-[22%]">No Tagihan</th>
                 <th className="px-4 py-3 w-[20%]">Kontrak</th>
                 <th className="px-4 py-3 w-[14%]">Vendor</th>
@@ -357,10 +357,10 @@ export default function TagihanPage() {
                 {canEditStatus && <th className="px-4 py-3 w-[8%]">Aksi</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-200">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={canEditStatus ? 8 : 7} className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={canEditStatus ? 8 : 7} className="px-4 py-12 text-center text-gray-500">
                     Tidak ada tagihan yang ditemukan
                   </td>
                 </tr>
@@ -376,15 +376,15 @@ export default function TagihanPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: index * 0.03 }}
-                      className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                      className="hover:bg-gray-50"
                     >
                       <td className="px-4 py-3 text-center">
-                        <span className="font-medium text-gray-900 dark:text-white text-sm truncate block" title={invoice.nomorTagihan}>
+                        <span className="font-medium text-gray-900 text-sm truncate block" title={invoice.nomorTagihan}>
                           {invoice.nomorTagihan}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-700 dark:text-gray-200 text-sm truncate block" title={(contract?.judulPekerjaan || contract?.judulPerjanjian) || invoice.noPerjanjian || "-"}>
+                        <span className="text-gray-700 text-sm truncate block" title={(contract?.judulPekerjaan || contract?.judulPerjanjian) || invoice.noPerjanjian || "-"}>
                           {(contract?.judulPekerjaan || contract?.judulPerjanjian)
                             ? ((contract.judulPekerjaan || contract.judulPerjanjian || "").length > 25
                               ? (contract.judulPekerjaan || contract.judulPerjanjian || "").substring(0, 25) + "..."
@@ -393,7 +393,7 @@ export default function TagihanPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-600 dark:text-gray-300 text-sm truncate block" title={(contract?.vendor || contract?.namaVendor) || "-"}>
+                        <span className="text-gray-600 text-sm truncate block" title={(contract?.vendor || contract?.namaVendor) || "-"}>
                           {(contract?.vendor || contract?.namaVendor)
                             ? ((contract.vendor || contract.namaVendor || "").length > 12
                               ? (contract.vendor || contract.namaVendor || "").substring(0, 12) + "..."
@@ -402,12 +402,12 @@ export default function TagihanPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="font-semibold text-gray-900 dark:text-white text-sm whitespace-nowrap">
+                        <span className="font-semibold text-gray-900 text-sm whitespace-nowrap">
                           {formatCurrency(invoice.nilaiTagihan)}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className="text-gray-600 dark:text-gray-300 text-xs whitespace-nowrap">
+                        <span className="text-gray-600 text-xs whitespace-nowrap">
                           {new Date(invoice.tanggalDiajukan).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "2-digit" })}
                         </span>
                       </td>
@@ -424,12 +424,12 @@ export default function TagihanPage() {
 
                             if (!canEdit) {
                               return (
-                                <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                                <span className="text-xs text-gray-400 italic">
                                   {invoice.status === "ditolak" ? "Final" : invoice.status === "dibayar" ? (
                                     <span className="flex flex-col leading-tight">
                                       <span>Final</span>
                                       {invoice.dibayarOleh && (
-                                        <span className="text-green-600 dark:text-green-400 not-italic truncate max-w-[60px]" title={invoice.dibayarOleh}>
+                                        <span className="text-green-600 not-italic truncate max-w-[60px]" title={invoice.dibayarOleh}>
                                           {invoice.dibayarOleh}
                                         </span>
                                       )}
@@ -448,7 +448,7 @@ export default function TagihanPage() {
                                       value={dibayarOleh}
                                       onChange={(e) => setDibayarOleh(e.target.value)}
                                       placeholder="Pembayar..."
-                                      className="text-xs px-2 py-1 w-full border border-green-300 dark:border-green-500 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                      className="text-xs px-2 py-1 w-full border border-green-300 rounded bg-white text-gray-900"
                                       autoFocus
                                     />
                                     <div className="flex gap-1">
@@ -461,7 +461,7 @@ export default function TagihanPage() {
                                       </button>
                                       <button
                                         onClick={handleCancelEdit}
-                                        className="px-2 py-1 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                                        className="px-2 py-1 text-xs text-red-500 hover:bg-red-50 rounded"
                                       >
                                         ✕
                                       </button>
@@ -471,9 +471,9 @@ export default function TagihanPage() {
                               }
 
                               return (
-                                <div className="inline-flex items-center w-auto bg-white dark:bg-gray-700 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-600 shadow-sm">
+                                <div className="inline-flex items-center w-auto bg-white rounded-lg overflow-hidden border border-gray-300 shadow-sm">
                                   <select
-                                    className="text-xs px-3 py-2 bg-transparent text-gray-900 dark:text-white border-none focus:ring-0 focus:outline-none cursor-pointer"
+                                    className="text-xs px-3 py-2 bg-transparent text-gray-900 border-none focus:ring-0 focus:outline-none cursor-pointer"
                                     defaultValue=""
                                     onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                                   >
@@ -484,7 +484,7 @@ export default function TagihanPage() {
                                   </select>
                                   <button
                                     onClick={handleCancelEdit}
-                                    className="px-2 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors border-l border-gray-300 dark:border-gray-600"
+                                    className="px-2 py-2 text-gray-400 hover:text-gray-600 transition-colors border-l border-gray-300"
                                   >
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -497,7 +497,7 @@ export default function TagihanPage() {
                             return (
                               <button
                                 onClick={() => setSelectedInvoice(invoice.id)}
-                                className="text-xs px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                                className="text-xs px-2 py-1 bg-blue-50 text-blue-600 border border-blue-200 rounded hover:bg-blue-100"
                               >
                                 Ubah
                               </button>
@@ -514,9 +514,9 @@ export default function TagihanPage() {
         </div>
 
         {/* Mobile Card View */}
-        <div className="lg:hidden divide-y divide-gray-200 dark:divide-gray-700">
+        <div className="lg:hidden divide-y divide-gray-200">
           {filteredInvoices.length === 0 ? (
-            <div className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
+            <div className="px-4 py-12 text-center text-gray-500">
               Tidak ada tagihan yang ditemukan
             </div>
           ) : (
@@ -531,14 +531,14 @@ export default function TagihanPage() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: index * 0.03 }}
-                  className="p-4 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className="p-4 hover:bg-gray-50"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">
+                      <p className="font-medium text-gray-900 text-sm truncate">
                         {invoice.nomorTagihan}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
+                      <p className="text-xs text-gray-500 truncate mt-0.5">
                         {contract?.judulPekerjaan || invoice.noPerjanjian || "-"}
                       </p>
                     </div>
@@ -547,8 +547,8 @@ export default function TagihanPage() {
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600 dark:text-gray-400">
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600">
+                    <span className="font-semibold text-gray-900">
                       {formatCurrency(invoice.nilaiTagihan)}
                     </span>
                     <span>{contract?.vendor || "-"}</span>
@@ -568,7 +568,7 @@ export default function TagihanPage() {
 
                         if (!canEdit) {
                           return (
-                            <span className="text-xs text-gray-400 dark:text-gray-500 italic">
+                            <span className="text-xs text-gray-400 italic">
                               {invoice.status === "dibayar" && invoice.dibayarOleh
                                 ? `Final • oleh: ${invoice.dibayarOleh}`
                                 : "Final"}
@@ -585,7 +585,7 @@ export default function TagihanPage() {
                                   value={dibayarOleh}
                                   onChange={(e) => setDibayarOleh(e.target.value)}
                                   placeholder="Nama pembayar..."
-                                  className="flex-1 text-sm px-3 py-1.5 border border-green-300 dark:border-green-600 rounded-lg bg-white dark:bg-gray-700"
+                                  className="flex-1 text-sm px-3 py-1.5 border border-green-300 rounded-lg bg-white"
                                   autoFocus
                                 />
                                 <button
@@ -601,9 +601,9 @@ export default function TagihanPage() {
                           }
 
                           return (
-                            <div className="flex items-center w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm">
+                            <div className="flex items-center w-full bg-white rounded-lg overflow-hidden border border-gray-300 shadow-sm">
                               <select
-                                className="flex-1 text-sm px-3 py-2 bg-transparent text-gray-900 dark:text-gray-100 border-none focus:ring-0 focus:outline-none cursor-pointer"
+                                className="flex-1 text-sm px-3 py-2 bg-transparent text-gray-900 border-none focus:ring-0 focus:outline-none cursor-pointer"
                                 defaultValue=""
                                 onChange={(e) => handleStatusChange(invoice.id, e.target.value as InvoiceStatus)}
                               >
@@ -612,7 +612,7 @@ export default function TagihanPage() {
                                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                                 ))}
                               </select>
-                              <button onClick={handleCancelEdit} className="px-3 py-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors border-l border-gray-300 dark:border-gray-700">✕</button>
+                              <button onClick={handleCancelEdit} className="px-3 py-2 text-gray-400 hover:text-gray-600 transition-colors border-l border-gray-300">✕</button>
                             </div>
                           );
                         }
@@ -620,7 +620,7 @@ export default function TagihanPage() {
                         return (
                           <button
                             onClick={() => setSelectedInvoice(invoice.id)}
-                            className="text-sm px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-lg"
+                            className="text-sm px-3 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 rounded-lg"
                           >
                             Ubah Status
                           </button>

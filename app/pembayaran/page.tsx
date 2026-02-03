@@ -178,11 +178,11 @@ export default function PembayaranPage() {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-xl p-6 text-center">
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
         <svg className="w-12 h-12 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <p className="text-red-700 dark:text-red-300">{error}</p>
+        <p className="text-red-700">{error}</p>
       </div>
     );
   }
@@ -192,10 +192,10 @@ export default function PembayaranPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             Status Pembayaran Langganan
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-gray-600">
             {filteredSubscriptions.length} langganan ditemukan
           </p>
         </div>
@@ -222,27 +222,27 @@ export default function PembayaranPage() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Total Langganan</p>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <p className="text-sm text-gray-500">Total Langganan</p>
+            <p className="text-2xl font-bold text-gray-900">
               {summaryStats.total}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Lunas {selectedYear}</p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <p className="text-sm text-gray-500">Lunas {selectedYear}</p>
+            <p className="text-2xl font-bold text-emerald-600">
               {summaryStats.complete}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Ada Terlewat</p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <p className="text-sm text-gray-500">Ada Terlewat</p>
+            <p className="text-2xl font-bold text-amber-600">
               {summaryStats.hasGaps}
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-            <p className="text-sm text-gray-500 dark:text-gray-400">Belum Bayar {selectedYear}</p>
-            <p className="text-2xl font-bold text-red-600 dark:text-red-400">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <p className="text-sm text-gray-500">Belum Bayar {selectedYear}</p>
+            <p className="text-2xl font-bold text-red-600">
               {formatCurrency(summaryStats.totalUnpaid)}
             </p>
           </div>
@@ -250,10 +250,10 @@ export default function PembayaranPage() {
       )}
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-7" : "md:grid-cols-6"}`}>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Pencarian
             </label>
             <input
@@ -261,17 +261,17 @@ export default function PembayaranPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari nama layanan, vendor, atau nomor perjanjian..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Kategori
             </label>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value as SubscriptionCategory | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Kategori</option>
               <option value="utilitas">{CATEGORY_LABELS.utilitas}</option>
@@ -286,13 +286,13 @@ export default function PembayaranPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Tahun Mulai
             </label>
             <select
               value={tahunMulai}
               onChange={(e) => setTahunMulai(e.target.value === "all" ? "all" : Number(e.target.value))}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua</option>
               {tahunOptions.map((year) => (
@@ -301,13 +301,13 @@ export default function PembayaranPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Tahun Selesai
             </label>
             <select
               value={tahunSelesai}
               onChange={(e) => setTahunSelesai(e.target.value === "all" ? "all" : Number(e.target.value))}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua</option>
               {tahunOptions.map((year) => (
@@ -316,13 +316,13 @@ export default function PembayaranPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">
+            <label className="block text-sm font-medium text-gray-800 mb-1">
               Status Pembayaran
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">Semua Status</option>
               <option value="complete">Lunas Semua</option>
@@ -349,7 +349,7 @@ export default function PembayaranPage() {
                     setTahunSelesai("all");
                     setStatusFilter("all");
                   }}
-                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -372,9 +372,9 @@ export default function PembayaranPage() {
       ) : (
         <div className="space-y-4">
           {filteredSubscriptions.length === 0 ? (
-            <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
               <svg
-                className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4"
+                className="w-16 h-16 mx-auto text-gray-400 mb-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -386,7 +386,7 @@ export default function PembayaranPage() {
                   d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
                 />
               </svg>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-600">
                 {subscriptions.length === 0
                   ? "Belum ada data langganan. Klik 'Tambah Langganan' untuk menambahkan."
                   : "Tidak ada langganan yang sesuai filter."}
@@ -409,7 +409,7 @@ export default function PembayaranPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     {/* Left Content */}
@@ -419,29 +419,29 @@ export default function PembayaranPage() {
                           {CATEGORY_LABELS[sub.kategori as SubscriptionCategory] || sub.kategori}
                         </span>
                         {paidPercentageYear === 100 ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-emerald-100 text-emerald-700">
                             Lunas {selectedYear}
                           </span>
                         ) : yearSummary.hasGaps ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-amber-100 text-amber-700">
                             Ada Terlewat
                           </span>
                         ) : paidCount > 0 ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
                             Dalam Proses
                           </span>
                         ) : (
-                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                          <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">
                             Belum Bayar
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
                         {sub.nama_layanan}
                       </h3>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600">
                         <p>
                           <span className="font-medium">No. Perjanjian:</span>{" "}
                           {sub.no_perjanjian}
@@ -464,7 +464,7 @@ export default function PembayaranPage() {
 
                       {/* Gap Warning */}
                       {yearSummary.hasGaps && (
-                        <div className="mt-3 flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400">
+                        <div className="mt-3 flex items-center gap-2 text-sm text-amber-700">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                           </svg>
@@ -481,10 +481,10 @@ export default function PembayaranPage() {
                     {/* Right Content */}
                     <div className="flex flex-col items-end gap-3">
                       <div className="text-right">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500">
                           Terbayar {selectedYear}
                         </p>
-                        <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">
+                        <p className="text-lg font-bold text-emerald-600">
                           {formatCurrency(yearSummary.totalPaidAmount)}
                         </p>
                       </div>
@@ -493,7 +493,7 @@ export default function PembayaranPage() {
                         {/* Status Pembayaran Bar */}
                         <div>
                           <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-500 dark:text-gray-400">
+                            <span className="text-gray-500">
                               Status Pembayaran
                             </span>
                             <span
@@ -507,7 +507,7 @@ export default function PembayaranPage() {
                               {paidCount}/12 bulan ({paidPercentageYear}%)
                             </span>
                           </div>
-                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${paidPercentageYear === 100
                                 ? "bg-emerald-500"
@@ -522,7 +522,7 @@ export default function PembayaranPage() {
 
                         {/* Compact Month Indicator */}
                         <div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+                          <p className="text-xs text-gray-500 mb-1">
                             Detail Bulan {selectedYear}
                           </p>
                           <CompactMonthIndicatorFromPayments
@@ -535,14 +535,14 @@ export default function PembayaranPage() {
                       <div className="flex gap-2">
                         <Link
                           href={`/pembayaran/${sub.id}`}
-                          className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                          className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
                         >
                           Detail
                         </Link>
                         {user?.role === "admin" && (
                           <button
                             onClick={() => handleDeleteClick(sub)}
-                            className="px-3 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-lg text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
+                            className="px-3 py-2 bg-red-100 text-red-700 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors"
                             title="Hapus Langganan"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -573,37 +573,37 @@ export default function PembayaranPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full mx-4 z-10"
+            className="relative bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4 z-10"
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-gray-900">
                   Hapus Langganan?
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-gray-500">
                   Tindakan ini tidak dapat dibatalkan
                 </p>
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-4">
-              <p className="font-medium text-gray-900 dark:text-white mb-1">
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <p className="font-medium text-gray-900 mb-1">
                 {subscriptionToDelete.nama_layanan}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-gray-600">
                 No. Perjanjian: {subscriptionToDelete.no_perjanjian}
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-gray-600">
                 Vendor: {subscriptionToDelete.vendor}
               </p>
             </div>
 
-            <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+            <p className="text-sm text-red-600 mb-4">
               ⚠️ Semua data pembayaran terkait langganan ini juga akan dihapus.
             </p>
 
@@ -611,7 +611,7 @@ export default function PembayaranPage() {
               <button
                 onClick={handleCancelDelete}
                 disabled={isDeleting}
-                className="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
               >
                 Batal
               </button>

@@ -133,8 +133,8 @@ export default function KontrakTabbedPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Daftar Kontrak</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <h1 className="text-2xl font-bold text-gray-900">Daftar Kontrak</h1>
+          <p className="text-sm text-gray-500">
             Total {contracts.length} kontrak
           </p>
         </div>
@@ -176,7 +176,7 @@ export default function KontrakTabbedPage() {
       </div>
 
       {/* Category Tabs */}
-      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-2">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-2">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           {TABS.map((tab) => (
             <button
@@ -184,8 +184,8 @@ export default function KontrakTabbedPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`relative flex items-center gap-3 p-4 rounded-lg transition-all ${
                 activeTab === tab.id
-                  ? "bg-blue-50 dark:bg-gray-800 ring-2 ring-blue-500 shadow-sm"
-                  : "bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800 hover:shadow-sm"
+                  ? "bg-blue-50 ring-2 ring-blue-500 shadow-sm"
+                  : "bg-gray-100 hover:bg-gray-200 hover:shadow-sm"
               }`}
             >
               <div className={`p-2 rounded-lg ${tab.color} text-white`}>
@@ -194,21 +194,21 @@ export default function KontrakTabbedPage() {
               <div className="flex-1 text-left">
                 <h3 className={`font-semibold ${
                   activeTab === tab.id 
-                    ? "text-gray-900 dark:text-white" 
-                    : "text-gray-700 dark:text-gray-300"
+                    ? "text-gray-900" 
+                    : "text-gray-700"
                 }`}>
                   {tab.label}
                 </h3>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500">
                   {categorySummary[tab.id].total} kontrak • {categorySummary[tab.id].aktif} aktif
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-xs text-gray-500 dark:text-gray-400">Total Nilai</p>
+                <p className="text-xs text-gray-500">Total Nilai</p>
                 <p className={`text-sm font-bold ${
                   activeTab === tab.id 
-                    ? "text-gray-900 dark:text-white" 
-                    : "text-gray-700 dark:text-gray-300"
+                    ? "text-gray-900" 
+                    : "text-gray-700"
                 }`}>
                   {formatCurrency(categorySummary[tab.id].nilai)}
                 </p>
@@ -226,25 +226,25 @@ export default function KontrakTabbedPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
         <div className={`grid grid-cols-1 gap-4 ${isFilterActive ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
           <div className="md:col-span-1">
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Pencarian</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Pencarian</label>
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Cari judul, vendor, atau nomor..."
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-1">Status</label>
+            <label className="block text-sm font-medium text-gray-800 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as ContractStatus | "all")}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               {contractStatusOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -268,7 +268,7 @@ export default function KontrakTabbedPage() {
                     setSearch("");
                     setStatus("all");
                   }}
-                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -290,12 +290,12 @@ export default function KontrakTabbedPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-12 text-center"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center"
             >
-              <svg className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <p className="text-gray-600 dark:text-gray-400">Tidak ada kontrak {TABS.find(t => t.id === activeTab)?.label} yang ditemukan</p>
+              <p className="text-gray-600">Tidak ada kontrak {TABS.find(t => t.id === activeTab)?.label} yang ditemukan</p>
               {user?.role === "admin" && (
                 <Link
                   href={`/kontrak/create?kategori=${activeTab}`}
@@ -323,7 +323,7 @@ export default function KontrakTabbedPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.03 }}
-                  className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md hover:border-gray-300 dark:hover:border-gray-600 transition-all"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md hover:border-gray-300 transition-all"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
                     {/* Left Content */}
@@ -337,11 +337,11 @@ export default function KontrakTabbedPage() {
                         </span>
                       </div>
                       
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
                         {contract.judulPekerjaan || contract.judulPerjanjian || "-"}
                       </h3>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-gray-600">
                         <p>
                           <span className="font-medium">No Perjanjian:</span> {contract.noPerjanjian}
                         </p>
@@ -398,8 +398,8 @@ export default function KontrakTabbedPage() {
                     {/* Right Content */}
                     <div className="flex flex-col items-end gap-3">
                       <div className="text-right">
-                        <p className="text-xs text-gray-500 dark:text-gray-400">Nilai Kontrak</p>
-                        <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        <p className="text-xs text-gray-500">Nilai Kontrak</p>
+                        <p className="text-lg font-bold text-gray-900">
                           {formatCurrency(contract.nilaiKontrak || contract.nilaiPerjanjian || 0)}
                         </p>
                       </div>
@@ -408,15 +408,15 @@ export default function KontrakTabbedPage() {
                         {/* Serapan Anggaran */}
                         <div>
                           <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-500 dark:text-gray-400">Serapan</span>
+                            <span className="text-gray-500">Serapan</span>
                             <span className={`font-medium ${
-                              contract.persentaseRealisasi > 90 ? "text-red-600 dark:text-red-400" :
-                              contract.persentaseRealisasi > 50 ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"
+                              contract.persentaseRealisasi > 90 ? "text-red-600" :
+                              contract.persentaseRealisasi > 50 ? "text-yellow-600" : "text-green-600"
                             }`}>
                               {contract.persentaseRealisasi.toFixed(1)}%
                             </span>
                           </div>
-                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${
                                 contract.persentaseRealisasi > 90 ? "bg-red-500" :
@@ -430,15 +430,15 @@ export default function KontrakTabbedPage() {
                         {/* Progres Pekerjaan */}
                         <div>
                           <div className="flex justify-between text-xs mb-1">
-                            <span className="text-gray-500 dark:text-gray-400">Progress</span>
+                            <span className="text-gray-500">Progress</span>
                             <span className={`font-medium ${
-                              contract.progressPekerjaan >= 90 ? "text-blue-600 dark:text-blue-400" :
-                              contract.progressPekerjaan >= 50 ? "text-teal-600 dark:text-teal-400" : "text-green-600 dark:text-green-400"
+                              contract.progressPekerjaan >= 90 ? "text-blue-600" :
+                              contract.progressPekerjaan >= 50 ? "text-teal-600" : "text-green-600"
                             }`}>
                               {contract.progressPekerjaan.toFixed(1)}%
                             </span>
                           </div>
-                          <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all ${
                                 contract.progressPekerjaan >= 90 ? "bg-blue-500" :
@@ -452,7 +452,7 @@ export default function KontrakTabbedPage() {
 
                       <Link
                         href={`/kontrak/${contract.id}?kategori=${activeTab}`}
-                        className="px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded-lg text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                        className="px-4 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-sm font-medium hover:bg-blue-100 transition-colors"
                       >
                         Detail
                       </Link>

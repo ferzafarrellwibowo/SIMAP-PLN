@@ -127,15 +127,15 @@ export const CATEGORY_LABELS: Record<SubscriptionCategory, string> = {
 };
 
 export const CATEGORY_COLORS: Record<SubscriptionCategory, string> = {
-  utilitas: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  software: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
-  jasa: "bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400",
-  perlengkapan: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  properti: "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400",
-  transportasi: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
-  karyawan: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-  pemasaran: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400",
-  lainnya: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+  utilitas: "bg-blue-100 text-blue-700",
+  software: "bg-purple-100 text-purple-700",
+  jasa: "bg-cyan-100 text-cyan-700",
+  perlengkapan: "bg-amber-100 text-amber-700",
+  properti: "bg-indigo-100 text-indigo-700",
+  transportasi: "bg-orange-100 text-orange-700",
+  karyawan: "bg-emerald-100 text-emerald-700",
+  pemasaran: "bg-pink-100 text-pink-700",
+  lainnya: "bg-gray-100 text-gray-700",
 };
 
 export const STATUS_LABELS: Record<SubscriptionStatus, string> = {

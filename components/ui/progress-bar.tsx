@@ -42,17 +42,17 @@ export function ProgressBar({
     <div className={cn("w-full", className)}>
       {showLabel && (
         <div className="flex justify-between mb-1">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-gray-700">
             Progress
           </span>
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className="text-sm font-medium text-gray-700">
             {percentage.toFixed(1)}%
           </span>
         </div>
       )}
       <div
         className={cn(
-          "w-full rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden",
+          "w-full rounded-full bg-gray-200 overflow-hidden",
           sizeMap[size]
         )}
       >
@@ -80,12 +80,12 @@ export function DualProgressBar({ planned, actual, className }: DualProgressBarP
         <span className="text-gray-500">Rencana: {planned}%</span>
         <span className="text-gray-500">Realisasi: {actual}%</span>
       </div>
-      <div className="relative h-3 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className="relative h-3 rounded-full bg-gray-200 overflow-hidden">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${planned}%` }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="absolute h-full rounded-full bg-blue-200 dark:bg-blue-900"
+          className="absolute h-full rounded-full bg-blue-200"
         />
         <motion.div
           initial={{ width: 0 }}

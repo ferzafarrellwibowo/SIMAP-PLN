@@ -34,22 +34,22 @@ const SubscriptionTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0]?.payload;
     return (
-      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-2xl dark:border-gray-600 dark:bg-gray-800">
-        <p className="font-bold text-gray-800 dark:text-white mb-3 pb-2 border-b border-gray-300 dark:border-gray-600">
+      <div className="rounded-lg border border-gray-300 bg-white p-4 shadow-2xl">
+        <p className="font-bold text-gray-800 mb-3 pb-2 border-b border-gray-300">
           {label}
         </p>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between items-center gap-4">
-            <span className="text-gray-600 dark:text-gray-400">Anggaran/Bulan:</span>
-            <span className="font-semibold text-gray-800 dark:text-white">{formatCurrency(data.totalAnggaranBulanan)}</span>
+            <span className="text-gray-600">Anggaran/Bulan:</span>
+            <span className="font-semibold text-gray-800">{formatCurrency(data.totalAnggaranBulanan)}</span>
           </div>
           <div className="flex justify-between items-center gap-4">
-            <span className="text-gray-600 dark:text-gray-400">Total Terbayar:</span>
-            <span className="font-semibold text-emerald-700 dark:text-emerald-400">{formatCurrency(data.totalTerbayar)}</span>
+            <span className="text-gray-600">Total Terbayar:</span>
+            <span className="font-semibold text-emerald-700">{formatCurrency(data.totalTerbayar)}</span>
           </div>
-          <div className="flex justify-between items-center gap-4 pt-2 border-t border-gray-200 dark:border-gray-700">
-            <span className="text-gray-600 dark:text-gray-400">Langganan:</span>
-            <span className="font-semibold text-gray-800 dark:text-white">{data.totalSubs} <span className="text-xs text-gray-500 dark:text-gray-400">({data.activeSubs} aktif)</span></span>
+          <div className="flex justify-between items-center gap-4 pt-2 border-t border-gray-200">
+            <span className="text-gray-600">Langganan:</span>
+            <span className="font-semibold text-gray-800">{data.totalSubs} <span className="text-xs text-gray-500">({data.activeSubs} aktif)</span></span>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ const CustomLegend = ({ payload }: any) => {
             className="w-3 h-3 rounded-sm" 
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+          <span className="text-sm text-gray-600 font-medium">
             {entry.value}
           </span>
         </div>
@@ -91,7 +91,7 @@ export default function SubscriptionBarChart({ subscriptionData }: Props) {
     <Card hover={false} className="overflow-hidden">
       <CardHeader className="pb-2">
         <CardTitle>
-          <span className="text-lg font-semibold text-gray-900 dark:text-white">Langganan per Kategori</span>
+          <span className="text-lg font-semibold text-gray-900">Langganan per Kategori</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
@@ -113,7 +113,7 @@ export default function SubscriptionBarChart({ subscriptionData }: Props) {
                   strokeDasharray="3 3" 
                   vertical={false}
                   stroke="#e5e7eb"
-                  className="dark:stroke-gray-700"
+                  className=""
                 />
                 <XAxis
                   dataKey="name"
@@ -129,7 +129,7 @@ export default function SubscriptionBarChart({ subscriptionData }: Props) {
                     fontSize: 11, 
                     fill: '#9ca3af',
                   }}
-                  className="dark:[&_text]:fill-gray-500"
+                  className=""
                   tickFormatter={(value) => {
                     if (value >= 1000000000) return `${(value / 1000000000).toFixed(0)}M`;
                     if (value >= 1000000) return `${(value / 1000000).toFixed(0)}jt`;
@@ -167,12 +167,12 @@ export default function SubscriptionBarChart({ subscriptionData }: Props) {
           ) : (
             <div className="h-full flex items-center justify-center">
               <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                 </div>
-                <p className="text-gray-500 dark:text-gray-400 font-medium">Belum ada data langganan</p>
+                <p className="text-gray-500 font-medium">Belum ada data langganan</p>
               </div>
             </div>
           )}

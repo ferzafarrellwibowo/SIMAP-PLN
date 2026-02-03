@@ -24,8 +24,8 @@ export function ProgressChart({ data }: ProgressChartProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800">
-          <p className="font-medium text-gray-900 dark:text-gray-100 mb-2">
+        <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+          <p className="font-medium text-gray-900 mb-2">
             {label}
           </p>
           {payload.map((entry: any) => (
@@ -37,7 +37,7 @@ export function ProgressChart({ data }: ProgressChartProps) {
               {entry.name}: {Number(entry.value).toFixed(1)}%
             </p>
           ))}
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-xs text-gray-500">
             Deviasi: {(payload[0]?.value - payload[1]?.value).toFixed(1)}%
           </p>
         </div>
@@ -95,7 +95,7 @@ export function ProgressChart({ data }: ProgressChartProps) {
               verticalAlign="top"
               height={36}
               formatter={(value) => (
-                <span className="text-sm text-gray-600 dark:text-gray-400">
+                <span className="text-sm text-gray-600">
                   {value === "rencana" ? "Rencana" : "Realisasi"}
                 </span>
               )}

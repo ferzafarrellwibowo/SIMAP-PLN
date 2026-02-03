@@ -24,25 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id">
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  // Light mode sebagai DEFAULT - hanya gunakan dark jika explicitly set
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
         {/* Favicon: sediakan beberapa link agar browser dapat memilih ukuran terbaik */}
         {/* SVG (scalable) */}
         <link rel="icon" href="/logoPLN1.svg" type="image/svg+xml" />
@@ -57,8 +40,7 @@ export default function RootLayout({
         <link rel="mask-icon" href="/logoPLN1.svg" color="#000000" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white min-h-screen`}
       >
         <Providers>{children}</Providers>
       </body>

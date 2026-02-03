@@ -295,9 +295,9 @@ export default function CreateTagihanPage() {
   if (!user || user.role !== "admin") {
     return (
       <div className="space-y-6">
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
           <svg
-            className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-4"
+            className="w-16 h-16 mx-auto text-gray-300 mb-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -309,10 +309,10 @@ export default function CreateTagihanPage() {
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
             />
           </svg>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Akses Ditolak
           </h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">
+          <p className="text-gray-500 mb-6">
             Anda tidak memiliki akses untuk menambah tagihan.
           </p>
           <Link
@@ -332,7 +332,7 @@ export default function CreateTagihanPage() {
       <div className="flex items-center gap-2 mb-2">
         <Link
           href={contractIdParam ? `/kontrak/${contractIdParam}` : "/tagihan"}
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          className="text-gray-500 hover:text-gray-700"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -343,16 +343,16 @@ export default function CreateTagihanPage() {
             />
           </svg>
         </Link>
-        <span className="text-gray-300 dark:text-gray-600">/</span>
-        <span className="text-sm text-gray-500 dark:text-gray-400">Tambah Tagihan</span>
+        <span className="text-gray-300">/</span>
+        <span className="text-sm text-gray-500">Tambah Tagihan</span>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-2xl font-bold text-gray-900">
             Tambah Tagihan Baru
           </h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-gray-500 mt-1">
             Tambahkan tagihan/berita acara untuk kontrak yang dipilih
           </p>
         </div>
@@ -363,13 +363,13 @@ export default function CreateTagihanPage() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-800"
+          className="p-4 rounded-lg bg-red-50 border border-red-200"
         >
           <div className="flex items-center gap-3">
-            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            <p className="text-red-800 dark:text-red-200 font-medium">{submitError}</p>
+            <p className="text-red-800 font-medium">{submitError}</p>
           </div>
         </motion.div>
       )}
@@ -378,12 +378,12 @@ export default function CreateTagihanPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800"
+        className="bg-white rounded-xl shadow-sm border border-gray-200"
       >
         <form onSubmit={handleSubmit}>
           {/* Contract Selection Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Pilih Kontrak
             </h2>
 
@@ -391,7 +391,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="contractId"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Kontrak <span className="text-red-500">*</span>
                 </label>
@@ -403,8 +403,8 @@ export default function CreateTagihanPage() {
                   disabled={!!contractIdParam}
                   className={`w-full px-3 py-2 rounded-lg border ${errors.contractId
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed`}
+                    : "border-gray-300 focus:ring-blue-500"
+                    } bg-white text-gray-900 focus:outline-none focus:ring-2 disabled:opacity-60 disabled:cursor-not-allowed`}
                 >
                   <option value="">-- Pilih Kontrak --</option>
                   {contracts
@@ -426,39 +426,39 @@ export default function CreateTagihanPage() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+                className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                    <p className="text-xs text-blue-600 mb-1">
                       Judul Pekerjaan
                     </p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
                       {selectedContract.judulPekerjaan || selectedContract.judulPerjanjian || "-"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">Vendor</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-xs text-blue-600 mb-1">Vendor</p>
+                    <p className="text-sm font-medium text-gray-900">
                       {selectedContract.vendor || selectedContract.namaVendor || "-"}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                    <p className="text-xs text-blue-600 mb-1">
                       Nilai Kontrak
                     </p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <p className="text-sm font-medium text-gray-900">
                       {formatCurrency(selectedContract.nilaiKontrak)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-blue-600 dark:text-blue-400 mb-1">
+                    <p className="text-xs text-blue-600 mb-1">
                       Sisa Anggaran
                     </p>
                     <p
                       className={`text-sm font-bold ${remainingBudget < selectedContract.nilaiKontrak * 0.1
-                        ? "text-red-600 dark:text-red-400"
-                        : "text-green-600 dark:text-green-400"
+                        ? "text-red-600"
+                        : "text-green-600"
                         }`}
                     >
                       {formatCurrency(remainingBudget)}
@@ -469,14 +469,14 @@ export default function CreateTagihanPage() {
                 {/* Progress bar */}
                 <div className="mt-4">
                   <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-600 dark:text-gray-400" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">
+                    <span className="text-gray-600" title="Persentase penggunaan anggaran: Hijau (≤50%), Kuning (50-90%), Merah (>90%)">
                       Serapan Anggaran: {selectedContract.persentaseRealisasi.toFixed(1)}%
                     </span>
-                    <span className="text-gray-600 dark:text-gray-400">
+                    <span className="text-gray-600">
                       {existingInvoices.length} tagihan
                     </span>
                   </div>
-                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${selectedContract.persentaseRealisasi > 90
                         ? "bg-red-500"
@@ -495,8 +495,8 @@ export default function CreateTagihanPage() {
           </div>
 
           {/* Invoice Details Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Detail Tagihan
             </h2>
 
@@ -505,7 +505,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="nomorTagihan"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Nomor Tagihan <span className="text-red-500">*</span>
                 </label>
@@ -518,8 +518,8 @@ export default function CreateTagihanPage() {
                   placeholder="BA/001/01/2025"
                   className={`w-full px-3 py-2 rounded-lg border ${errors.nomorTagihan
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                    : "border-gray-300 focus:ring-blue-500"
+                    } bg-white text-gray-900 focus:outline-none focus:ring-2`}
                 />
                 {errors.nomorTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.nomorTagihan}</p>
@@ -530,7 +530,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="tanggalTagihan"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Tanggal Tagihan <span className="text-red-500">*</span>
                 </label>
@@ -542,8 +542,8 @@ export default function CreateTagihanPage() {
                   onChange={handleChange}
                   className={`w-full px-3 py-2 rounded-lg border ${errors.tanggalTagihan
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                    : "border-gray-300 focus:ring-blue-500"
+                    } bg-white text-gray-900 focus:outline-none focus:ring-2`}
                 />
                 {errors.tanggalTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.tanggalTagihan}</p>
@@ -554,7 +554,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="nilaiTagihan"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Nilai Tagihan (Rp) <span className="text-red-500">*</span>
                 </label>
@@ -569,14 +569,14 @@ export default function CreateTagihanPage() {
                   step="1"
                   className={`w-full px-3 py-2 rounded-lg border ${errors.nilaiTagihan
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
-                    } bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2`}
+                    : "border-gray-300 focus:ring-blue-500"
+                    } bg-white text-gray-900 focus:outline-none focus:ring-2`}
                 />
                 {errors.nilaiTagihan && (
                   <p className="mt-1 text-sm text-red-500">{errors.nilaiTagihan}</p>
                 )}
                 {formData.nilaiTagihan && !errors.nilaiTagihan && (
-                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-1 text-xs text-gray-500">
                     {formatCurrency(parseFloat(formData.nilaiTagihan) || 0)}
                   </p>
                 )}
@@ -585,8 +585,8 @@ export default function CreateTagihanPage() {
           </div>
 
           {/* Berita Acara & XPS Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Berita Acara & XPS (Opsional)
             </h2>
 
@@ -595,7 +595,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="noBeritaAcara"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   No Berita Acara
                 </label>
@@ -606,7 +606,7 @@ export default function CreateTagihanPage() {
                   value={formData.noBeritaAcara}
                   onChange={handleChange}
                   placeholder="BA-001/2025"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -614,7 +614,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="tanggalBeritaAcara"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Tanggal Berita Acara
                 </label>
@@ -624,7 +624,7 @@ export default function CreateTagihanPage() {
                   name="tanggalBeritaAcara"
                   value={formData.tanggalBeritaAcara}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -632,7 +632,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="noXPS"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   No XPS
                 </label>
@@ -643,7 +643,7 @@ export default function CreateTagihanPage() {
                   value={formData.noXPS}
                   onChange={handleChange}
                   placeholder="XPS/001/2025"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -651,7 +651,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="tanggalXPS"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Tanggal XPS
                 </label>
@@ -661,7 +661,7 @@ export default function CreateTagihanPage() {
                   name="tanggalXPS"
                   value={formData.tanggalXPS}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
@@ -669,7 +669,7 @@ export default function CreateTagihanPage() {
               <div>
                 <label
                   htmlFor="tanggalArsip"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   Tanggal Arsip
                 </label>
@@ -679,22 +679,22 @@ export default function CreateTagihanPage() {
                   name="tanggalArsip"
                   value={formData.tanggalArsip}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           </div>
 
           {/* Keterangan Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Keterangan Tambahan
             </h2>
 
             <div>
               <label
                 htmlFor="keterangan"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-gray-700 mb-1"
               >
                 Keterangan
               </label>
@@ -705,31 +705,31 @@ export default function CreateTagihanPage() {
                 onChange={handleChange}
                 rows={3}
                 placeholder="Masukkan keterangan tambahan (opsional)"
-                className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               />
             </div>
           </div>
 
           {/* Dokumen Upload Section */}
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          <div className="p-6 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Dokumen Pendukung (Opsional)
             </h2>
 
             <div>
               <label
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Upload Dokumen
               </label>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+              <p className="text-xs text-gray-500 mb-3">
                 Format: PDF, JPG, PNG, Word, Excel. Maksimal 10MB.
               </p>
 
               {!selectedFile && !uploadedFileUrl ? (
                 <label
                   htmlFor="dokumenTagihan"
-                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg
@@ -745,7 +745,7 @@ export default function CreateTagihanPage() {
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       />
                     </svg>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500">
                       <span className="font-semibold">Klik untuk upload</span> atau drag & drop
                     </p>
                   </div>
@@ -759,7 +759,7 @@ export default function CreateTagihanPage() {
                   />
                 </label>
               ) : (
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex items-center gap-3">
                     {isUploading ? (
                       <svg
@@ -783,9 +783,9 @@ export default function CreateTagihanPage() {
                         ></path>
                       </svg>
                     ) : (
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <div className="p-2 bg-blue-100 rounded-lg">
                         <svg
-                          className="w-6 h-6 text-blue-600 dark:text-blue-400"
+                          className="w-6 h-6 text-blue-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -800,10 +800,10 @@ export default function CreateTagihanPage() {
                       </div>
                     )}
                     <div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-[200px] md:max-w-[300px]">
+                      <p className="text-sm font-medium text-gray-900 truncate max-w-[200px] md:max-w-[300px]">
                         {selectedFile?.name || 'Dokumen'}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-500">
                         {isUploading
                           ? 'Mengupload...'
                           : uploadedFileUrl
@@ -816,7 +816,7 @@ export default function CreateTagihanPage() {
                     <button
                       type="button"
                       onClick={handleRemoveFile}
-                      className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                       title="Hapus file"
                     >
                       <svg
@@ -846,7 +846,7 @@ export default function CreateTagihanPage() {
                   href={uploadedFileUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-2 inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                  className="mt-2 inline-flex items-center gap-1 text-sm text-blue-600 hover:underline"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -861,7 +861,7 @@ export default function CreateTagihanPage() {
           <div className="p-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
             <Link
               href={contractIdParam ? `/kontrak/${contractIdParam}` : "/tagihan"}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-center"
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center"
             >
               Batal
             </Link>

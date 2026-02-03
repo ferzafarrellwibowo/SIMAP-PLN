@@ -24,7 +24,7 @@ export function ProblematicProjectsTable({ projects }: ProblematicProjectsTableP
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-10 text-gray-500">
-            <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2">
+            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-2">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -51,25 +51,25 @@ export function ProblematicProjectsTable({ projects }: ProblematicProjectsTableP
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+              <tr className="border-b border-gray-200">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Proyek
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Progress
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Serapan
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   Deviasi
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                <th className="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-200">
               {projects.map((project, index) => {
                 const budgetPercentage = (project.budgetUsed / project.budgetTotal) * 100;
                 const deviation = project.progressPlanned - project.progressActual;
@@ -80,14 +80,14 @@ export function ProblematicProjectsTable({ projects }: ProblematicProjectsTableP
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="group hover:bg-gray-50/40 dark:hover:bg-gray-800/20 transition-colors duration-150"
+                    className="group hover:bg-gray-50/40 transition-colors duration-150"
                   >
                     <td className="px-4 py-4">
                       <div>
-                        <p className="font-medium text-gray-900 dark:text-gray-100">
+                        <p className="font-medium text-gray-900">
                           {project.name}
                         </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                        <p className="text-sm text-gray-500">
                           {project.unit}
                         </p>
                       </div>

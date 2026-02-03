@@ -197,8 +197,8 @@ export default function LaporanPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Kontrak</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <h1 className="text-2xl font-bold text-gray-900">Laporan Kontrak</h1>
+            <p className="text-sm text-gray-600">
               Ringkasan data kontrak dan tagihan proyek
             </p>
           </div>
@@ -265,23 +265,23 @@ export default function LaporanPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              className="bg-white dark:bg-gray-900/95 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div className={`w-4 h-4 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
                   cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
                   }`} />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-lg font-semibold text-gray-900">
                   {cat.label}
                 </h3>
               </div>
 
               <div className="space-y-4">
                 {/* Kontrak */}
-                <div className="p-4 bg-gray-50 dark:bg-gray-800/80 rounded-lg">
+                <div className="p-4 bg-gray-50 rounded-lg">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Kontrak</span>
-                    <span className="text-lg font-bold text-gray-900 dark:text-white">{cat.totalKontrak}</span>
+                    <span className="text-sm text-gray-700">Kontrak</span>
+                    <span className="text-lg font-bold text-gray-900">{cat.totalKontrak}</span>
                   </div>
                   <p className="text-xs text-gray-600">{cat.kontrakAktif} aktif</p>
                 </div>
@@ -289,16 +289,16 @@ export default function LaporanPage() {
                 {/* Nilai & Realisasi */}
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 dark:text-gray-300">Pagu</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{formatCurrency(cat.totalNilai)}</span>
+                    <span className="text-gray-700">Pagu</span>
+                    <span className="font-medium text-gray-900">{formatCurrency(cat.totalNilai)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 dark:text-gray-300">Realisasi</span>
-                    <span className="font-medium text-green-600 dark:text-green-400">{formatCurrency(cat.totalDibayar)}</span>
+                    <span className="text-gray-700">Realisasi</span>
+                    <span className="font-medium text-green-600">{formatCurrency(cat.totalDibayar)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 dark:text-gray-300">Sisa</span>
-                    <span className="font-medium text-blue-600 dark:text-blue-400">{formatCurrency(cat.sisaAnggaran)}</span>
+                    <span className="text-gray-700">Sisa</span>
+                    <span className="font-medium text-blue-600">{formatCurrency(cat.sisaAnggaran)}</span>
                   </div>
                 </div>
 
@@ -312,7 +312,7 @@ export default function LaporanPage() {
                       {cat.persentaseRealisasi.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(cat.persentaseRealisasi, 100)}%` }}
@@ -325,13 +325,13 @@ export default function LaporanPage() {
                 </div>
 
                 {/* Tagihan */}
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div className="pt-4 border-t border-gray-200">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700 dark:text-gray-300">Tagihan</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{cat.totalTagihan}</span>
+                    <span className="text-gray-700">Tagihan</span>
+                    <span className="font-medium text-gray-900">{cat.totalTagihan}</span>
                   </div>
                   <div className="flex justify-between text-xs mt-1">
-                    <span className="text-green-700 dark:text-green-400">{cat.tagihanDibayar} dibayar</span>
+                    <span className="text-green-700">{cat.tagihanDibayar} dibayar</span>
                     <span className="text-yellow-700">{cat.tagihanPending} pending</span>
                   </div>
                 </div>
@@ -345,15 +345,15 @@ export default function LaporanPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+          className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
         >
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Kontrak per Kategori</h3>
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900">Detail Kontrak per Kategori</h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[700px]">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+              <thead className="bg-gray-50">
+                <tr className="text-xs font-medium text-gray-600 uppercase tracking-wider">
                   <th className="px-4 py-3 text-center">Kategori</th>
                   <th className="px-4 py-3 text-center">Kontrak</th>
                   <th className="px-4 py-3 text-center">Aktif</th>
@@ -363,10 +363,10 @@ export default function LaporanPage() {
                   <th className="px-4 py-3 text-center">PERSENTASE</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+              <tbody className="divide-y divide-gray-200 text-sm">
                 {categoryStats.map((cat) => (
-                  <tr key={cat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                  <tr key={cat.kategori} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         <span className={`w-2 h-2 rounded-full ${cat.kategori === "investasi" ? "bg-purple-500" :
                           cat.kategori === "pemeliharaan" ? "bg-orange-500" : "bg-cyan-500"
@@ -374,15 +374,15 @@ export default function LaporanPage() {
                         {cat.label}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.totalKontrak}</td>
-                    <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{cat.kontrakAktif}</td>
-                    <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
+                    <td className="px-4 py-3 text-center text-gray-600">{cat.totalKontrak}</td>
+                    <td className="px-4 py-3 text-center text-gray-600">{cat.kontrakAktif}</td>
+                    <td className="px-4 py-3 text-center font-medium text-gray-900 whitespace-nowrap">{formatCurrency(cat.totalNilai)}</td>
                     <td className="px-4 py-3 text-center text-green-600 whitespace-nowrap">{formatCurrency(cat.totalDibayar)}</td>
                     <td className="px-4 py-3 text-center text-blue-600 whitespace-nowrap">{formatCurrency(cat.sisaAnggaran)}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi >= 100 ? "bg-blue-200 text-blue-900 dark:bg-blue-900/30 dark:text-blue-400" :
-                        cat.persentaseRealisasi >= 50 ? "bg-emerald-200 text-emerald-900 dark:bg-green-900/30 dark:text-green-400" :
-                          "bg-amber-200 text-amber-900 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${cat.persentaseRealisasi >= 100 ? "bg-blue-200 text-blue-900" :
+                        cat.persentaseRealisasi >= 50 ? "bg-emerald-200 text-emerald-900" :
+                          "bg-amber-200 text-amber-900"
                         }`}>
                         {cat.persentaseRealisasi.toFixed(1)}%
                       </span>
@@ -390,15 +390,15 @@ export default function LaporanPage() {
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-gray-100 dark:bg-gray-800 border-t-2 border-gray-300 dark:border-gray-600">
+              <tfoot className="bg-gray-100 border-t-2 border-gray-300">
                 <tr className="font-semibold text-sm">
-                  <td className="px-4 py-3 text-gray-900 dark:text-gray-100">Total</td>
-                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.totalKontrak}</td>
-                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.kontrakAktif}</td>
-                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
+                  <td className="px-4 py-3 text-gray-900">Total</td>
+                  <td className="px-4 py-3 text-center text-gray-900">{overallStats.totalKontrak}</td>
+                  <td className="px-4 py-3 text-center text-gray-900">{overallStats.kontrakAktif}</td>
+                  <td className="px-4 py-3 text-center text-gray-900 whitespace-nowrap">{formatCurrency(overallStats.totalNilai)}</td>
                   <td className="px-4 py-3 text-center text-green-600 whitespace-nowrap">{formatCurrency(overallStats.totalDibayar)}</td>
                   <td className="px-4 py-3 text-center text-blue-600 whitespace-nowrap">{formatCurrency(overallStats.sisaAnggaran)}</td>
-                  <td className="px-4 py-3 text-center text-gray-900 dark:text-gray-100">{overallStats.persentaseRealisasi.toFixed(1)}%</td>
+                  <td className="px-4 py-3 text-center text-gray-900">{overallStats.persentaseRealisasi.toFixed(1)}%</td>
                 </tr>
               </tfoot>
             </table>
@@ -407,11 +407,11 @@ export default function LaporanPage() {
       </div>
 
       {/* SECTION 2: LANGGANAN */}
-      <div className="space-y-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div className="space-y-6 pt-6 border-t border-gray-200">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Laporan Langganan</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <h2 className="text-2xl font-bold text-gray-900">Laporan Langganan</h2>
+            <p className="text-sm text-gray-600">
               Ringkasan data langganan rutin dan pembayaran
             </p>
           </div>
@@ -465,15 +465,15 @@ export default function LaporanPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
             >
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Detail Langganan per Kategori</h3>
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">Detail Langganan per Kategori</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[700px]">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
-                    <tr className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                  <thead className="bg-gray-50">
+                    <tr className="text-xs font-medium text-gray-600 uppercase tracking-wider">
                       <th className="px-4 py-3 text-center">Kategori</th>
                       <th className="px-4 py-3 text-center">Jml Langganan</th>
                       <th className="px-4 py-3 text-center">Aktif</th>
@@ -483,18 +483,18 @@ export default function LaporanPage() {
                       <th className="px-4 py-3 text-center">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                  <tbody className="divide-y divide-gray-200 text-sm">
                     {subscriptionStats.length > 0 ? subscriptionStats.map((stat) => (
-                      <tr key={stat.kategori} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                        <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                      <tr key={stat.kategori} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <span className={`w-2 h-2 rounded-full ${SUB_CATEGORY_DOT_COLORS[stat.kategori] || "bg-gray-500"}`} />
                             {stat.label}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{stat.totalSubs}</td>
-                        <td className="px-4 py-3 text-center text-gray-600 dark:text-gray-400">{stat.activeSubs}</td>
-                        <td className="px-4 py-3 text-center font-medium text-gray-900 dark:text-gray-100">{formatCurrency(stat.totalAnggaranBulanan)}</td>
+                        <td className="px-4 py-3 text-center text-gray-600">{stat.totalSubs}</td>
+                        <td className="px-4 py-3 text-center text-gray-600">{stat.activeSubs}</td>
+                        <td className="px-4 py-3 text-center font-medium text-gray-900">{formatCurrency(stat.totalAnggaranBulanan)}</td>
                         <td className="px-4 py-3 text-center text-green-600 font-medium">{formatCurrency(stat.totalTerbayar)}</td>
                         <td className="px-4 py-3 text-center align-middle">
                           <div className="flex items-center justify-center gap-2">
@@ -504,7 +504,7 @@ export default function LaporanPage() {
                                 style={{ width: `${Math.max(0, Math.min(100, stat.avgProgress))}%` }}
                               />
                             </div>
-                            <span className="text-xs text-gray-600 dark:text-gray-400">{stat.avgProgress.toFixed(0)}%</span>
+                            <span className="text-xs text-gray-600">{stat.avgProgress.toFixed(0)}%</span>
                           </div>
                         </td>
                         <td className="px-4 py-3 text-center align-middle">
@@ -532,7 +532,7 @@ export default function LaporanPage() {
                       </tr>
                     )) : (
                       <tr>
-                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                           Belum ada data langganan
                         </td>
                       </tr>

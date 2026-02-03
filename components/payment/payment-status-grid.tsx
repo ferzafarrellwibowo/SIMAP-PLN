@@ -78,26 +78,26 @@ export function MonthCard({
         "relative p-3 rounded-lg border-2 transition-all text-left w-full",
         "hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2",
         isPaid
-          ? "border-emerald-300 bg-emerald-50 dark:border-emerald-700 dark:bg-emerald-900/20 focus:ring-emerald-500"
+          ? "border-emerald-300 bg-emerald-50 focus:ring-emerald-500"
           : isGap
-          ? "border-amber-300 bg-amber-50 dark:border-amber-700 dark:bg-amber-900/20 focus:ring-amber-500"
-          : "border-red-300 bg-red-50 dark:border-red-700 dark:bg-red-900/20 focus:ring-red-500",
+          ? "border-amber-300 bg-amber-50 focus:ring-amber-500"
+          : "border-red-300 bg-red-50 focus:ring-red-500",
         selected && "ring-2 ring-offset-2 ring-blue-500"
       )}
     >
       {/* Status Icon */}
       <div className="absolute top-2 right-2">
         {isPaid ? (
-          <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <CheckCircle className="w-5 h-5 text-emerald-600" />
         ) : isGap ? (
-          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <AlertTriangle className="w-5 h-5 text-amber-600" />
         ) : (
-          <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+          <XCircle className="w-5 h-5 text-red-600" />
         )}
       </div>
 
       {/* Month Name */}
-      <div className="font-semibold text-gray-900 dark:text-gray-100">
+      <div className="font-semibold text-gray-900">
         {payment.monthName}
       </div>
 
@@ -106,10 +106,10 @@ export function MonthCard({
         className={cn(
           "text-xs mt-1",
           isPaid
-            ? "text-emerald-700 dark:text-emerald-400"
+            ? "text-emerald-700"
             : isGap
-            ? "text-amber-700 dark:text-amber-400"
-            : "text-red-700 dark:text-red-400"
+            ? "text-amber-700"
+            : "text-red-700"
         )}
       >
         {isPaid ? "Lunas" : isGap ? "Terlewat" : "Belum Bayar"}
@@ -117,7 +117,7 @@ export function MonthCard({
 
       {/* Amount if paid */}
       {isPaid && payment.amount && (
-        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+        <div className="text-xs text-gray-500 mt-1">
           Rp {payment.amount.toLocaleString("id-ID")}
         </div>
       )}
@@ -149,22 +149,22 @@ export function PaymentStatusGrid({
     <div className={cn("space-y-4", className)}>
       {/* Header with Summary */}
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+        <h3 className="font-semibold text-gray-900">
           Status Pembayaran {summary.year}
         </h3>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-emerald-600 dark:text-emerald-400 font-medium">
+          <span className="text-emerald-600 font-medium">
             {summary.paidMonths} Lunas
           </span>
           <span className="text-gray-400">/</span>
-          <span className="text-red-600 dark:text-red-400 font-medium">
+          <span className="text-red-600 font-medium">
             {summary.unpaidMonths} Belum Bayar
           </span>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="relative h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+      <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
         <div
           className="absolute inset-y-0 left-0 bg-emerald-500 transition-all duration-500"
           style={{ width: `${summary.paidPercentage}%` }}
@@ -173,9 +173,9 @@ export function PaymentStatusGrid({
 
       {/* Gap Warning */}
       {summary.hasGapsInPayment && (
-        <div className="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
-          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-          <div className="text-sm text-amber-800 dark:text-amber-200">
+        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+          <div className="text-sm text-amber-800">
             <span className="font-medium">Perhatian:</span> Ada{" "}
             {summary.gapMonths.length} bulan terlewat (
             {summary.gapMonths.map((g) => g.monthShort).join(", ")})
@@ -197,7 +197,7 @@ export function PaymentStatusGrid({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded bg-emerald-500" />
           <span>Lunas</span>
@@ -237,7 +237,7 @@ export function PaymentStatusList({
 }: PaymentStatusListProps) {
   if (payments.length === 0) {
     return (
-      <div className={cn("text-center py-8 text-gray-500 dark:text-gray-400", className)}>
+      <div className={cn("text-center py-8 text-gray-500", className)}>
         {emptyMessage}
       </div>
     );
@@ -246,7 +246,7 @@ export function PaymentStatusList({
   return (
     <div className={cn("space-y-2", className)}>
       {title && (
-        <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-3">
+        <h4 className="font-medium text-gray-900 mb-3">
           {title}
         </h4>
       )}
@@ -257,18 +257,18 @@ export function PaymentStatusList({
             className={cn(
               "flex items-center justify-between p-3 rounded-lg border",
               payment.isPaid
-                ? "border-emerald-200 bg-emerald-50 dark:border-emerald-800 dark:bg-emerald-900/20"
+                ? "border-emerald-200 bg-emerald-50"
                 : gapMonths.includes(payment.month)
-                ? "border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20"
-                : "border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20"
+                ? "border-amber-200 bg-amber-50"
+                : "border-red-200 bg-red-50"
             )}
           >
             <div>
-              <div className="font-medium text-gray-900 dark:text-gray-100">
+              <div className="font-medium text-gray-900">
                 {payment.monthName} {payment.year}
               </div>
               {payment.amount && (
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-gray-500">
                   Rp {payment.amount.toLocaleString("id-ID")}
                 </div>
               )}
@@ -301,7 +301,7 @@ export function PaymentSummaryCard({
   return (
     <Card className={cn("p-6", className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100">
+        <h3 className="font-semibold text-lg text-gray-900">
           Ringkasan Pembayaran {summary.year}
         </h3>
         <Badge
@@ -319,19 +319,19 @@ export function PaymentSummaryCard({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+        <div className="text-center p-3 bg-emerald-50 rounded-lg">
+          <div className="text-2xl font-bold text-emerald-600">
             {summary.paidMonths}
           </div>
-          <div className="text-xs text-emerald-700 dark:text-emerald-300">
+          <div className="text-xs text-emerald-700">
             Bulan Lunas
           </div>
         </div>
-        <div className="text-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-          <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+        <div className="text-center p-3 bg-red-50 rounded-lg">
+          <div className="text-2xl font-bold text-red-600">
             {summary.unpaidMonths}
           </div>
-          <div className="text-xs text-red-700 dark:text-red-300">
+          <div className="text-xs text-red-700">
             Bulan Belum Bayar
           </div>
         </div>
@@ -339,14 +339,14 @@ export function PaymentSummaryCard({
 
       {/* Gap Warning */}
       {summary.hasGapsInPayment && (
-        <div className="p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg mb-4">
-          <div className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
+          <div className="flex items-center gap-2 text-amber-800">
             <AlertTriangle className="w-4 h-4" />
             <span className="text-sm font-medium">
               {summary.gapMonths.length} bulan terlewat perlu dibayar
             </span>
           </div>
-          <div className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+          <div className="text-xs text-amber-600 mt-1">
             {summary.gapMonths.map((g) => g.monthName).join(", ")}
           </div>
         </div>
@@ -354,11 +354,11 @@ export function PaymentSummaryCard({
 
       {/* Total Amount */}
       {summary.totalPaidAmount > 0 && (
-        <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="pt-4 border-t border-gray-200">
+          <div className="text-sm text-gray-500">
             Total Terbayar
           </div>
-          <div className="text-xl font-bold text-gray-900 dark:text-gray-100">
+          <div className="text-xl font-bold text-gray-900">
             Rp {summary.totalPaidAmount.toLocaleString("id-ID")}
           </div>
         </div>

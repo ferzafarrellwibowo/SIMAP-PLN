@@ -7,9 +7,9 @@ import { useContractStore } from "@/lib/store-new";
 import type { Alert, AlertSeverity } from "@/lib/types-new";
 
 const SEVERITY_COLORS: Record<AlertSeverity, string> = {
-  info: "bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-200",
-  warning: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
-  critical: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-200",
+  info: "bg-blue-100 text-blue-800",
+  warning: "bg-yellow-100 text-yellow-800",
+  critical: "bg-red-100 text-red-800",
 };
 
 const SEVERITY_ICONS: Record<AlertSeverity, ReactNode> = {
@@ -74,7 +74,7 @@ export function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-300 relative transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/60 hover:shadow-sm dark:hover:shadow-sm hover:ring-1 dark:hover:ring-white/10 focus:outline-none focus:ring-2 focus:ring-blue-200 dark:focus:ring-white/20"
+        className="p-2 text-gray-400 hover:text-gray-600 relative transition-colors rounded-lg hover:bg-gray-100 hover:shadow-sm hover:ring-1 focus:outline-none focus:ring-2 focus:ring-blue-200"
         title="Notifikasi"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -94,20 +94,20 @@ export function NotificationDropdown() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 z-50 overflow-hidden"
+            className="absolute right-0 mt-2 w-96 max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Notifikasi</h3>
+                <h3 className="text-sm font-semibold text-gray-900">Notifikasi</h3>
                 {unreadCount > 0 && (
-                  <p className="text-xs text-gray-600 dark:text-gray-300">{unreadCount} belum dibaca</p>
+                  <p className="text-xs text-gray-600">{unreadCount} belum dibaca</p>
                 )}
               </div>
               {unreadCount > 0 && (
                 <button
                   onClick={() => markAllAlertsAsRead()}
-                  className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                  className="text-xs text-blue-600 hover:text-blue-700 font-medium"
                 >
                   Tandai semua dibaca
                 </button>
@@ -118,19 +118,19 @@ export function NotificationDropdown() {
             <div className="max-h-96 overflow-y-auto">
               {alerts.length === 0 ? (
                 <div className="p-8 text-center">
-                  <svg className="w-12 h-12 mx-auto text-gray-400 dark:text-gray-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                   </svg>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Tidak ada notifikasi</p>
+                  <p className="text-sm text-gray-600">Tidak ada notifikasi</p>
                 </div>
               ) : (
-                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                <div className="divide-y divide-gray-100">
                   {alerts.slice(0, 10).map((alert) => (
                     <div
                       key={alert.id}
                       onClick={() => handleAlertClick(alert)}
-                      className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700/60 transition-colors transition-shadow cursor-pointer rounded-lg hover:shadow-sm dark:hover:shadow-sm ${
-                        !alert.readAt ? "bg-blue-50/50 dark:bg-blue-900/20" : ""
+                      className={`p-4 hover:bg-gray-50 transition-colors transition-shadow cursor-pointer rounded-lg hover:shadow-sm ${
+                        !alert.readAt ? "bg-blue-50/50" : ""
                       }`}
                     >
                       <div className="flex gap-3">
@@ -141,8 +141,8 @@ export function NotificationDropdown() {
                           <div className="flex items-start justify-between gap-2">
                             <p className={`text-sm font-medium ${
                               !alert.readAt 
-                                ? "text-gray-900 dark:text-white" 
-                                : "text-gray-600 dark:text-gray-300"
+                                ? "text-gray-900" 
+                                : "text-gray-600"
                             }`}>
                               {alert.title}
                             </p>
@@ -150,18 +150,18 @@ export function NotificationDropdown() {
                               {alert.severity === "critical" ? "Kritis" : alert.severity === "warning" ? "Perhatian" : "Info"}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">
+                          <p className="text-sm text-gray-500 mt-0.5 line-clamp-2">
                             {alert.message}
                           </p>
                           <div className="flex items-center gap-3 mt-2">
-                            <span className="text-xs text-gray-400 dark:text-gray-500">
+                            <span className="text-xs text-gray-400">
                               {formatTimeAgo(alert.createdAt)}
                             </span>
                             {alert.contractId && (
                               <Link
                                 href={`/kontrak/${alert.contractId}`}
                                 onClick={(e) => e.stopPropagation()}
-                                className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                                className="text-xs text-blue-600 hover:text-blue-700"
                               >
                                 Lihat Kontrak →
                               </Link>
@@ -182,11 +182,11 @@ export function NotificationDropdown() {
 
             {/* Footer */}
             {alerts.length > 10 && (
-              <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-center">
+              <div className="px-4 py-3 border-t border-gray-200 text-center">
                 <Link
                   href="/notifikasi"
                   onClick={() => setIsOpen(false)}
-                  className="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                 >
                   Lihat Semua Notifikasi
                 </Link>

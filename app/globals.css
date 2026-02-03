@@ -1,14 +1,10 @@
 @import "tailwindcss";
 
 /* ============================================
-   COLOR SCHEME VARIABLES
-   Light Mode: White/Light gray background
-   Dark Mode: Navy/Slate dark background
+   COLOR SCHEME VARIABLES - LIGHT MODE ONLY
    ============================================ */
 
 :root {
-  /* ===== LIGHT MODE (DEFAULT) - Clean & Professional ===== */
-
   /* Background Colors */
   --background: #ffffff;
   --background-secondary: #f8fafc;
@@ -43,7 +39,7 @@
   --header-bg: #ffffff;
   --header-border: #e2e8f0;
 
-  /* Status Colors - Light Mode */
+  /* Status Colors */
   --status-success: #10b981;
   --status-success-bg: #d1fae5;
   --status-success-text: #065f46;
@@ -68,68 +64,6 @@
   --accent-red: #ef4444;
 }
 
-.dark {
-  /* ===== DARK MODE - Navy/Blue Theme ===== */
-
-  /* Background Colors - Dark Blue/Navy */
-  --background: #0a1628;
-  --background-secondary: #0f172a;
-  --card-bg: #1e293b;
-  --card-bg-hover: #283548;
-
-  /* Text Colors - High Contrast on Dark */
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-disabled: #64748b;
-
-  /* Border & Divider */
-  --border-primary: #334155;
-  --border-secondary: #475569;
-  --border-focus: #60a5fa;
-
-  /* Input & Form */
-  --input-bg: #1e293b;
-  --input-border: #475569;
-  --input-focus-border: #60a5fa;
-  --input-placeholder: #64748b;
-
-  /* Sidebar - Darker Navy */
-  --sidebar-bg: #0a1628;
-  --sidebar-text: #94a3b8;
-  --sidebar-text-active: #ffffff;
-  --sidebar-hover: rgba(255, 255, 255, 0.05);
-  --sidebar-active-bg: rgba(96, 165, 250, 0.15);
-
-  /* Header/Navbar */
-  --header-bg: #1e293b;
-  --header-border: #334155;
-
-  /* Status Colors - Dark Mode */
-  --status-success: #34d399;
-  --status-success-bg: #064e3b;
-  --status-success-text: #a7f3d0;
-
-  --status-warning: #fbbf24;
-  --status-warning-bg: #78350f;
-  --status-warning-text: #fef3c7;
-
-  --status-error: #f87171;
-  --status-error-bg: #7f1d1d;
-  --status-error-text: #fecaca;
-
-  --status-info: #60a5fa;
-  --status-info-bg: #1e3a8a;
-  --status-info-text: #dbeafe;
-
-  /* Accent Colors */
-  --accent-blue: #60a5fa;
-  --accent-green: #34d399;
-  --accent-yellow: #fbbf24;
-  --accent-purple: #a78bfa;
-  --accent-red: #f87171;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--text-primary);
@@ -147,219 +81,6 @@ body {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-}
-
-/* ============================================
-   BACKGROUND COLOR OVERRIDES
-   ============================================ */
-
-/* Light Mode Backgrounds */
-html:not(.dark) .bg-gray-50 {
-  background-color: #f8fafc;
-}
-
-html:not(.dark) .bg-gray-100 {
-  background-color: #f1f5f9;
-}
-
-html:not(.dark) .bg-white {
-  background-color: #ffffff;
-}
-
-/* Dark Mode Backgrounds */
-.dark .bg-gray-50 {
-  background-color: #0f172a !important;
-}
-
-.dark .bg-gray-100 {
-  background-color: #0a1628 !important;
-}
-
-.dark .bg-white {
-  background-color: #1e293b !important;
-}
-
-.dark .bg-white\/80 {
-  background-color: rgba(30, 41, 59, 0.9) !important;
-}
-
-/* ============================================
-   BORDER COLOR OVERRIDES
-   ============================================ */
-
-/* Light Mode Borders */
-html:not(.dark) .border-gray-100 {
-  border-color: #f1f5f9;
-}
-
-html:not(.dark) .border-gray-200 {
-  border-color: #e2e8f0;
-}
-
-html:not(.dark) .border-gray-300 {
-  border-color: #cbd5e1;
-}
-
-/* Dark Mode Borders */
-.dark .border-gray-100 {
-  border-color: #475569 !important;
-}
-
-.dark .border-gray-200 {
-  border-color: #334155 !important;
-}
-
-.dark .border-gray-300 {
-  border-color: #475569 !important;
-}
-
-/* ============================================
-   TEXT COLOR OVERRIDES
-   ============================================ */
-
-/* Light Mode Text Colors */
-html:not(.dark) .text-gray-900 {
-  color: #0f172a;
-}
-
-html:not(.dark) .text-gray-800 {
-  color: #1e293b;
-}
-
-html:not(.dark) .text-gray-700 {
-  color: #334155;
-}
-
-html:not(.dark) .text-gray-600 {
-  color: #475569;
-}
-
-html:not(.dark) .text-gray-500 {
-  color: #64748b;
-}
-
-html:not(.dark) .text-gray-400 {
-  color: #94a3b8;
-}
-
-/* Dark Mode Text Colors */
-.dark .text-gray-900,
-.dark .text-gray-800,
-.dark .text-black {
-  color: #f1f5f9 !important;
-}
-
-.dark .text-gray-700 {
-  color: #e2e8f0 !important;
-}
-
-.dark .text-gray-600 {
-  color: #cbd5e1 !important;
-}
-
-.dark .text-gray-500 {
-  color: #94a3b8 !important;
-}
-
-.dark .text-gray-400 {
-  color: #94a3b8 !important;
-}
-
-/* Ensure headings are always visible */
-html:not(.dark) h1,
-html:not(.dark) h2,
-html:not(.dark) h3,
-html:not(.dark) h4,
-html:not(.dark) h5,
-html:not(.dark) h6 {
-  color: #0f172a;
-}
-
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6 {
-  color: #f1f5f9 !important;
-}
-
-/* Labels */
-html:not(.dark) label {
-  color: #0f172a;
-}
-
-.dark label {
-  color: #e2e8f0 !important;
-}
-
-/* Paragraph text */
-html:not(.dark) p {
-  color: #475569;
-}
-
-.dark p {
-  color: #cbd5e1;
-}
-
-/* ============================================
-   FORM ELEMENTS (INPUT, SELECT, TEXTAREA)
-   ============================================ */
-
-/* Light Mode Forms */
-html:not(.dark) input,
-html:not(.dark) select,
-html:not(.dark) textarea {
-  background-color: #ffffff;
-  border-color: #cbd5e1;
-  color: #0f172a;
-}
-
-html:not(.dark) input::placeholder,
-html:not(.dark) textarea::placeholder {
-  color: #94a3b8;
-}
-
-html:not(.dark) input:focus,
-html:not(.dark) select:focus,
-html:not(.dark) textarea:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* Dark Mode Forms */
-.dark input,
-.dark select,
-.dark textarea {
-  background-color: #1e293b !important;
-  border-color: #475569 !important;
-  color: #f1f5f9 !important;
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #64748b !important;
-}
-
-.dark input:focus,
-.dark select:focus,
-.dark textarea:focus {
-  border-color: #60a5fa !important;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1) !important;
-}
-
-/* Select dropdown styling */
-.dark select option {
-  background-color: #1e293b;
-  color: #f1f5f9;
-}
-
-.dark select option:checked,
-.dark select option:hover {
-  background-color: #60a5fa;
-  color: #ffffff;
 }
 
 /* Custom scrollbar for Webkit (Chrome, Edge, Safari) */
@@ -382,28 +103,11 @@ html:not(.dark) textarea:focus {
   background: #94a3b8;
 }
 
-.dark ::-webkit-scrollbar-track {
-  background: #0a1628;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-  border-color: #0a1628;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
 /* Custom scrollbar for Firefox */
 @supports (scrollbar-color: auto) {
   * {
     scrollbar-width: thin;
     scrollbar-color: #cbd5e1 #f1f5f9;
-  }
-
-  .dark * {
-    scrollbar-color: #475569 #0a1628;
   }
 }
 
@@ -413,7 +117,6 @@ html:not(.dark) textarea:focus {
     opacity: 0;
     transform: translateY(10px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -424,17 +127,13 @@ html:not(.dark) textarea:focus {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Card hover effect (smoother) */
+/* Card hover effect */
 .card-hover {
   transition: box-shadow 180ms ease;
 }
 
 .card-hover:hover {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-}
-
-.dark .card-hover:hover {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* Interactive hover for clickable elements */
@@ -448,45 +147,7 @@ html:not(.dark) textarea:focus {
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
 }
 
-.dark .interactive:hover {
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* Select / dropdown hover effect for all native and custom selects */
-.custom-select,
-select {
-  transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
-  will-change: background-color, border-color, box-shadow, transform;
-}
-
-.custom-select:hover,
-select:hover {
-  border-color: #d1d5db;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transform: translateY(0);
-}
-
-.custom-select:focus-visible,
-select:focus-visible {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
-}
-
-.dark .custom-select:hover,
-.dark select:hover {
-  border-color: #64748b;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-.dark .custom-select:focus-visible,
-.dark select:focus-visible {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-/* Table row hover (smoother) */
+/* Table row hover */
 .table-row-hover {
   transition: background-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: background-color;
@@ -494,10 +155,6 @@ select:focus-visible {
 
 .table-row-hover:hover {
   background-color: rgba(0, 0, 0, 0.04);
-}
-
-.dark .table-row-hover:hover {
-  background-color: rgba(255, 255, 255, 0.04);
 }
 
 /* Progress bar animation */
@@ -513,12 +170,10 @@ select:focus-visible {
 
 /* Pulse animation for badges */
 @keyframes pulse-slow {
-
   0%,
   100% {
     opacity: 1;
   }
-
   50% {
     opacity: 0.7;
   }
@@ -533,10 +188,6 @@ select:focus-visible {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-}
-
-.dark .glass {
-  background: rgba(30, 41, 59, 0.8);
 }
 
 /* Chart container */
@@ -561,109 +212,55 @@ select:focus-visible {
 }
 
 /* ============================================
-   SIDEBAR STYLES
-   Light Mode: Dark Blue (#1e3a5f)
-   Dark Mode: Darker Navy (#0a1628)
+   SIDEBAR STYLES - Dark Blue (#1e3a5f)
    ============================================ */
 
-/* Light Mode Sidebar */
-html:not(.dark) aside {
+aside {
   background-color: #1e3a5f !important;
 }
 
-html:not(.dark) aside .text-gray-900,
-html:not(.dark) aside .text-gray-800,
-html:not(.dark) aside .text-gray-700,
-html:not(.dark) aside .text-gray-600 {
+aside .text-gray-900,
+aside .text-gray-800,
+aside .text-gray-700,
+aside .text-gray-600 {
   color: #cbd5e1 !important;
 }
 
-html:not(.dark) aside h1,
-html:not(.dark) aside h2,
-html:not(.dark) aside h3,
-html:not(.dark) aside .font-bold {
+aside h1,
+aside h2,
+aside h3,
+aside .font-bold {
   color: #ffffff !important;
 }
 
-html:not(.dark) aside a:hover {
+aside a:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-html:not(.dark) aside a[class*="bg-blue"],
-html:not(.dark) aside .bg-blue-50 {
+aside a[class*="bg-blue"],
+aside .bg-blue-50 {
   background-color: rgba(59, 130, 246, 0.15) !important;
   color: #ffffff !important;
 }
 
-html:not(.dark) aside .border-gray-200,
-html:not(.dark) aside .border-gray-300 {
+aside .border-gray-200,
+aside .border-gray-300 {
   border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Dark Mode Sidebar */
-.dark aside {
-  background-color: #0a1628 !important;
-}
-
-.dark aside .text-gray-900,
-.dark aside .text-gray-800,
-.dark aside .text-gray-700,
-.dark aside .text-gray-600,
-.dark aside .text-gray-500,
-.dark aside .text-gray-400 {
-  color: #94a3b8 !important;
-}
-
-.dark aside h1,
-.dark aside h2,
-.dark aside h3,
-.dark aside .font-bold {
-  color: #ffffff !important;
-}
-
-.dark aside a:hover {
-  background-color: rgba(255, 255, 255, 0.05) !important;
-}
-
-.dark aside a[class*="bg-blue"],
-.dark aside .bg-blue-50,
-.dark aside [class*="dark:bg-blue"] {
-  background-color: rgba(96, 165, 250, 0.15) !important;
-  color: #ffffff !important;
-}
-
-.dark aside .border-gray-200,
-.dark aside .border-gray-300,
-.dark aside [class*="dark:border"] {
-  border-color: #1e293b !important;
-}
-
 /* Sidebar user section */
-html:not(.dark) aside .bg-gray-200,
-html:not(.dark) aside [class*="bg-gray-"] {
+aside .bg-gray-200,
+aside [class*="bg-gray-"] {
   background-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-.dark aside .bg-gray-200,
-.dark aside [class*="bg-gray-"],
-.dark aside [class*="dark:bg-gray"] {
-  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ============================================
    HEADER/NAVBAR STYLES
    ============================================ */
 
-/* Light Mode Header */
-html:not(.dark) header {
+header {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
-}
-
-/* Dark Mode Header */
-.dark header {
-  background-color: #1e293b !important;
-  border-color: #334155 !important;
 }
 
 /* ============================================
@@ -680,15 +277,6 @@ html:not(.dark) header {
   background-color: #2563eb;
 }
 
-.dark .btn-primary {
-  background-color: #60a5fa;
-  color: #0a1628;
-}
-
-.dark .btn-primary:hover {
-  background-color: #3b82f6;
-}
-
 /* Secondary Button */
 .btn-secondary {
   background-color: #64748b;
@@ -697,15 +285,6 @@ html:not(.dark) header {
 
 .btn-secondary:hover {
   background-color: #475569;
-}
-
-.dark .btn-secondary {
-  background-color: #475569;
-  color: #f1f5f9;
-}
-
-.dark .btn-secondary:hover {
-  background-color: #64748b;
 }
 
 /* Success Button */
@@ -718,15 +297,6 @@ html:not(.dark) header {
   background-color: #059669;
 }
 
-.dark .btn-success {
-  background-color: #34d399;
-  color: #0a1628;
-}
-
-.dark .btn-success:hover {
-  background-color: #10b981;
-}
-
 /* Danger Button */
 .btn-danger {
   background-color: #ef4444;
@@ -737,775 +307,84 @@ html:not(.dark) header {
   background-color: #dc2626;
 }
 
-.dark .btn-danger {
-  background-color: #f87171;
-  color: #0a1628;
-}
-
-.dark .btn-danger:hover {
-  background-color: #ef4444;
-}
-
 /* ============================================
-   STATUS BADGE COLORS (Tailwind Classes)
+   LOGIN PAGE BACKGROUND (plnProf.svg) + BLUR
    ============================================ */
 
-/* Success/Green Status */
-html:not(.dark) .bg-emerald-100 {
-  background-color: #d1fae5;
-}
-
-html:not(.dark) .bg-emerald-200 {
-  background-color: #bbf7d0;
-}
-
-html:not(.dark) .text-emerald-800 {
-  color: #065f46;
-}
-
-html:not(.dark) .bg-emerald-500 {
-  background-color: #10b981;
-}
-
-.dark .bg-emerald-100 {
-  background-color: #064e3b !important;
-}
-
-.dark .text-emerald-800 {
-  color: #a7f3d0 !important;
-}
-
-.dark .bg-emerald-500 {
-  background-color: #34d399 !important;
-}
-
-/* Warning/Yellow Status */
-html:not(.dark) .bg-amber-100 {
-  background-color: #fef3c7;
-}
-
-/* stronger amber for badges in light mode */
-html:not(.dark) .bg-amber-200 {
-  background-color: #fde68a;
-}
-
-html:not(.dark) .text-amber-800 {
-  /* Darker amber text for better contrast on pale amber backgrounds */
-  color: #7a3e00;
-}
-
-html:not(.dark) .bg-amber-500 {
-  background-color: #f59e0b;
-}
-
-.dark .bg-amber-100 {
-  background-color: #78350f !important;
-}
-
-.dark .text-amber-800 {
-  color: #fef3c7 !important;
-}
-
-.dark .bg-amber-500 {
-  background-color: #fbbf24 !important;
-}
-
-/* Danger/Red Status */
-html:not(.dark) .bg-red-100 {
-  background-color: #fee2e2;
-}
-
-html:not(.dark) .bg-red-200 {
-  background-color: #fecaca;
-}
-
-html:not(.dark) .text-red-800 {
-  color: #991b1b;
-}
-
-html:not(.dark) .bg-red-500 {
-  background-color: #ef4444;
-}
-
-html:not(.dark) .text-red-600 {
-  color: #dc2626;
-}
-
-html:not(.dark) .bg-red-50 {
-  background-color: #fef2f2;
-}
-
-.dark .bg-red-100 {
-  background-color: #7f1d1d !important;
-}
-
-.dark .text-red-800 {
-  color: #fecaca !important;
-}
-
-.dark .bg-red-500 {
-  background-color: #f87171 !important;
-}
-
-.dark .text-red-600 {
-  color: #fca5a5 !important;
-}
-
-.dark .bg-red-50 {
-  background-color: #7f1d1d !important;
-}
-
-/* Info/Blue Status */
-html:not(.dark) .bg-blue-100 {
-  background-color: #dbeafe;
-}
-
-html:not(.dark) .text-blue-800 {
-  color: #1e40af;
-}
-
-html:not(.dark) .bg-blue-500 {
-  background-color: #3b82f6;
-}
-
-html:not(.dark) .text-blue-600 {
-  color: #2563eb;
-}
-
-html:not(.dark) .bg-blue-50 {
-  background-color: #eff6ff;
-}
-
-html:not(.dark) .bg-blue-200 {
-  background-color: #bfdbfe;
-}
-
-html:not(.dark) .text-blue-400 {
-  color: #60a5fa;
-}
-
-html:not(.dark) .bg-blue-700 {
-  background-color: #1d4ed8;
-}
-
-.dark .bg-blue-100 {
-  background-color: #1e3a8a !important;
-}
-
-.dark .text-blue-800 {
-  color: #dbeafe !important;
-}
-
-.dark .bg-blue-500 {
-  background-color: #60a5fa !important;
-}
-
-.dark .text-blue-600 {
-  color: #93c5fd !important;
-}
-
-.dark .text-blue-400 {
-  color: #93c5fd !important;
-}
-
-.dark .bg-blue-50 {
-  background-color: #1e3a8a !important;
-}
-
-.dark .bg-blue-200 {
-  background-color: #1e40af !important;
-}
-
-.dark .bg-blue-700 {
-  background-color: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Purple Status */
-html:not(.dark) .bg-purple-500 {
-  background-color: #8b5cf6;
-}
-
-.dark .bg-purple-500 {
-  background-color: #a78bfa !important;
-}
-
-/* Orange/Amber Status Colors */
-html:not(.dark) .bg-orange-50 {
-  background-color: #fff7ed;
-}
-
-html:not(.dark) .text-orange-800 {
-  color: #9a3412;
-}
-
-html:not(.dark) .bg-orange-500 {
-  background-color: #f97316;
-}
-
-.dark .bg-orange-50 {
-  background-color: #7c2d12 !important;
-}
-
-.dark .text-orange-800 {
-  color: #fed7aa !important;
-}
-
-.dark .bg-orange-500 {
-  background-color: #fb923c !important;
-}
-
-/* Cyan/Teal Status Colors */
-html:not(.dark) .bg-cyan-50 {
-  background-color: #ecfeff;
-}
-
-html:not(.dark) .text-cyan-800 {
-  color: #155e75;
-}
-
-html:not(.dark) .bg-cyan-500 {
-  background-color: #06b6d4;
-}
-
-.dark .bg-cyan-50 {
-  background-color: #164e63 !important;
-}
-
-.dark .text-cyan-800 {
-  color: #a5f3fc !important;
-}
-
-.dark .bg-cyan-500 {
-  background-color: #22d3ee !important;
-}
-
-/* Gray Status Colors for Neutral State */
-html:not(.dark) .bg-gray-50 {
-  background-color: #f8fafc;
-}
-
-html:not(.dark) .bg-gray-100 {
-  background-color: #f1f5f9;
-}
-
-html:not(.dark) .bg-gray-200 {
-  background-color: #e2e8f0;
-}
-
-html:not(.dark) .text-gray-800 {
-  color: #1e293b;
-}
-
-html:not(.dark) .text-gray-700 {
-  color: #334155;
-}
-
-html:not(.dark) .text-gray-600 {
-  color: #475569;
-}
-
-.dark .bg-gray-800 {
-  background-color: #1e293b !important;
-}
-
-.dark .text-gray-800 {
-  color: #f1f5f9 !important;
-}
-
-/* ============================================
-   LIGHT MODE TEXT COLOR OVERRIDES FOR CARDS
-   ============================================ */
-
-/* Blue text - Light Mode */
-html:not(.dark) .text-blue-900 {
-  color: #1e3a8a !important;
-}
-
-/* Green text - Light Mode */
-html:not(.dark) .text-green-800 {
-  color: #166534 !important;
-}
-
-html:not(.dark) .text-green-900 {
-  color: #14532d !important;
-}
-
-/* Purple text - Light Mode */
-html:not(.dark) .text-purple-700 {
-  color: #7e22ce !important;
-}
-
-html:not(.dark) .text-purple-800 {
-  color: #6b21a8 !important;
-}
-
-html:not(.dark) .text-purple-900 {
-  color: #581c87 !important;
-}
-
-/* Orange text - Light Mode */
-html:not(.dark) .text-orange-700 {
-  color: #c2410c !important;
-}
-
-html:not(.dark) .text-orange-800 {
-  color: #9a3412 !important;
-}
-
-html:not(.dark) .text-orange-900 {
-  color: #7c2d12 !important;
-}
-
-/* Cyan text - Light Mode */
-html:not(.dark) .text-cyan-700 {
-  color: #0e7490 !important;
-}
-
-html:not(.dark) .text-cyan-800 {
-  color: #155e75 !important;
-}
-
-html:not(.dark) .text-cyan-900 {
-  color: #164e63 !important;
-}
-
-/* Red text - Light Mode */
-html:not(.dark) .text-red-700 {
-  color: #b91c1c !important;
-}
-
-html:not(.dark) .text-red-600 {
-  color: #dc2626 !important;
-}
-
-/* Yellow/Amber text - Light Mode */
-html:not(.dark) .text-yellow-700 {
-  color: #a16207 !important;
-}
-
-html:not(.dark) .text-yellow-600 {
-  color: #ca8a04 !important;
-}
-
-html:not(.dark) .text-amber-700 {
-  color: #b45309 !important;
-}
-
-/* Green text additions - Light Mode */
-html:not(.dark) .text-green-700 {
-  color: #15803d !important;
-}
-
-html:not(.dark) .text-green-600 {
-  color: #16a34a !important;
-}
-
-/* ============================================
-   TABLE HOVER OVERRIDE
-   ============================================ */
-
-/* Light mode - hover should be visible BLUE tint */
-html:not(.dark) tr:hover {
-  background-color: #dbeafe !important;
-}
-
-html:not(.dark) tr:hover td {
-  color: inherit;
-}
-
-html:not(.dark) .hover\:bg-gray-50:hover {
-  background-color: #dbeafe !important;
-}
-
-html:not(.dark) .hover\:bg-gray-100:hover {
-  background-color: #bfdbfe !important;
-}
-
-/* Dark mode - hover should be visible LIGHTER slate */
-.dark tr:hover {
-  background-color: #334155 !important;
-}
-
-.dark .hover\:bg-gray-50:hover {
-  background-color: #334155 !important;
-}
-
-.dark .hover\:bg-gray-800:hover {
-  background-color: #334155 !important;
-}
-
-/* Disable hover effect on thead and tfoot rows - HIGH SPECIFICITY */
-table thead tr:hover,
-table tfoot tr:hover,
-thead tr:hover,
-tfoot tr:hover {
-  background-color: transparent !important;
-}
-
-html:not(.dark) table thead tr:hover,
-html:not(.dark) thead tr:hover,
-html:not(.dark) table thead tr {
-  background-color: #f9fafb !important;
-}
-
-html:not(.dark) table tfoot tr:hover,
-html:not(.dark) tfoot tr:hover,
-html:not(.dark) table tfoot tr {
-  background-color: #f3f4f6 !important;
-}
-
-.dark table thead tr:hover,
-.dark thead tr:hover,
-.dark table thead tr {
-  background-color: #1f2937 !important;
-}
-
-.dark table tfoot tr:hover,
-.dark tfoot tr:hover,
-.dark table tfoot tr {
-  background-color: #1f2937 !important;
-}
-
-/* Only tbody rows should have hover effect */
-html:not(.dark) table tbody tr:hover {
-  background-color: #dbeafe !important;
-}
-
-.dark table tbody tr:hover {
-  background-color: #334155 !important;
-}
-
-/* NO HOVER CLASS - completely disable hover effect */
-tr.no-hover:hover,
-.no-hover:hover {
-  background-color: inherit !important;
-}
-
-html:not(.dark) tr.no-hover:hover {
-  background-color: inherit !important;
-}
-
-.dark tr.no-hover:hover {
-  background-color: inherit !important;
-}
-
-/* ============================================
-   LOGIN PAGE GRADIENT OVERRIDE
-   ============================================ */
-
-/* Light Mode - Force light gradient on login page */
-html:not(.dark) .bg-gradient-to-br.from-white {
-  background-image: linear-gradient(to bottom right, #ffffff, #eff6ff, #e0f2fe) !important;
-}
-
-/* Dark Mode - Force dark gradient on login page */
-.dark .bg-gradient-to-br.from-white {
-  background-image: linear-gradient(to bottom right, #030712, #0f172a, #0f1729) !important;
-}
-
-/* Light Mode - Login form card should be white */
-html:not(.dark) .bg-white.dark\:bg-gray-800 {
-  background-color: #ffffff !important;
-}
-
-/* Light mode text overrides for login page */
-html:not(.dark) .text-slate-800 {
-  color: #1e293b !important;
-}
-
-html:not(.dark) .text-slate-600 {
-  color: #475569 !important;
-}
-
-html:not(.dark) .text-slate-700 {
-  color: #334155 !important;
-}
-
-html:not(.dark) .text-slate-500 {
-  color: #64748b !important;
-}
-
-/* Light mode - Demo login buttons should be light */
-html:not(.dark) .bg-slate-50 {
-  background-color: #f8fafc !important;
-}
-
-html:not(.dark) .border-slate-200 {
-  border-color: #e2e8f0 !important;
-}
-
-html:not(.dark) .text-slate-800 {
-  color: #1e293b !important;
-}
-
-/* Light mode - Ensure hover states work correctly */
-html:not(.dark) .hover\:bg-blue-50:hover {
-  background-color: #eff6ff !important;
-}
-
-html:not(.dark) .hover\:border-blue-300:hover {
-  border-color: #93c5fd !important;
-}
-
-/* Light mode - Role badges text should be dark and readable */
-html:not(.dark) .text-blue-700 {
-  color: #1d4ed8 !important;
-}
-
-html:not(.dark) .text-emerald-700 {
-  color: #047857 !important;
-}
-
-html:not(.dark) .bg-blue-100 {
-  background-color: #dbeafe !important;
-}
-
-html:not(.dark) .bg-emerald-100 {
-  background-color: #d1fae5 !important;
-}
-
-html:not(.dark) .border-blue-200 {
-  border-color: #bfdbfe !important;
-}
-
-html:not(.dark) .border-emerald-200 {
-  border-color: #a7f3d0 !important;
+.login-page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/plnProf.svg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  filter: blur(8px) saturate(0.9);
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+.login-page-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
+}
+
+.login-page-content {
+  position: relative;
+  z-index: 10;
 }
 
 /* ============================================
    ALERT POPUP CUSTOM STYLES
-   These classes override any global CSS to ensure
-   alert text is readable in both light and dark modes
    ============================================ */
 
-/* Success Alert - Light Mode */
-html:not(.dark) .alert-popup-success {
+/* Success Alert */
+.alert-popup-success {
   background-color: #ffffff !important;
   border-color: #22c55e !important;
   border-width: 2px !important;
 }
 
-html:not(.dark) .alert-popup-success .alert-popup-icon {
+.alert-popup-success .alert-popup-icon {
   color: #16a34a !important;
 }
 
-html:not(.dark) .alert-popup-success .alert-popup-text {
+.alert-popup-success .alert-popup-text {
   color: #166534 !important;
 }
 
-html:not(.dark) .alert-popup-success .alert-popup-close-btn {
+.alert-popup-success .alert-popup-close-btn {
   color: #16a34a !important;
 }
 
-html:not(.dark) .alert-popup-success .alert-popup-close-btn:hover {
+.alert-popup-success .alert-popup-close-btn:hover {
   background-color: #dcfce7 !important;
 }
 
-/* Error Alert - Light Mode */
-html:not(.dark) .alert-popup-error {
+/* Error Alert */
+.alert-popup-error {
   background-color: #ffffff !important;
   border-color: #ef4444 !important;
   border-width: 2px !important;
 }
 
-html:not(.dark) .alert-popup-error .alert-popup-icon {
+.alert-popup-error .alert-popup-icon {
   color: #dc2626 !important;
 }
 
-html:not(.dark) .alert-popup-error .alert-popup-text {
+.alert-popup-error .alert-popup-text {
   color: #991b1b !important;
 }
 
-html:not(.dark) .alert-popup-error .alert-popup-close-btn {
+.alert-popup-error .alert-popup-close-btn {
   color: #dc2626 !important;
 }
 
-html:not(.dark) .alert-popup-error .alert-popup-close-btn:hover {
+.alert-popup-error .alert-popup-close-btn:hover {
   background-color: #fee2e2 !important;
-}
-
-/* Success Alert - Dark Mode */
-.dark .alert-popup-success {
-  background-color: rgba(22, 101, 52, 0.95) !important;
-  border-color: #22c55e !important;
-  border-width: 2px !important;
-}
-
-.dark .alert-popup-success .alert-popup-icon {
-  color: #86efac !important;
-}
-
-.dark .alert-popup-success .alert-popup-text {
-  color: #dcfce7 !important;
-}
-
-.dark .alert-popup-success .alert-popup-close-btn {
-  color: #86efac !important;
-}
-
-.dark .alert-popup-success .alert-popup-close-btn:hover {
-  background-color: rgba(34, 197, 94, 0.2) !important;
-}
-
-/* Error Alert - Dark Mode */
-.dark .alert-popup-error {
-  background-color: rgba(127, 29, 29, 0.95) !important;
-  border-color: #f87171 !important;
-  border-width: 2px !important;
-}
-
-.dark .alert-popup-error .alert-popup-icon {
-  color: #fca5a5 !important;
-}
-
-.dark .alert-popup-error .alert-popup-text {
-  color: #fee2e2 !important;
-}
-
-.dark .alert-popup-error .alert-popup-close-btn {
-  color: #fca5a5 !important;
-}
-
-.dark .alert-popup-error .alert-popup-close-btn:hover {
-  background-color: rgba(239, 68, 68, 0.2) !important;
-}
-
-/* ============================================
-   BADGE TEXT COLORS - Light Mode (NGEJRENG)
-   Warna teks lebih gelap dan bold untuk kontras tinggi
-   ============================================ */
-
-/* Purple badges (AI, Investasi) - Light Mode */
-html:not(.dark) .text-purple-800,
-html:not(.dark) .text-purple-900 {
-  color: #581c87 !important;
-}
-
-html:not(.dark) .bg-purple-100 {
-  background-color: #f3e8ff !important;
-}
-
-html:not(.dark) .bg-purple-200 {
-  background-color: #e9d5ff !important;
-}
-
-/* Green badges (Aktif) - Light Mode */
-html:not(.dark) .text-green-800,
-html:not(.dark) .text-green-900 {
-  color: #14532d !important;
-}
-
-html:not(.dark) .bg-green-100 {
-  background-color: #dcfce7 !important;
-}
-
-html:not(.dark) .bg-green-200 {
-  background-color: #bbf7d0 !important;
-}
-
-/* Orange badges (Pemeliharaan) - Light Mode */
-html:not(.dark) .text-orange-800,
-html:not(.dark) .text-orange-900 {
-  color: #7c2d12 !important;
-}
-
-html:not(.dark) .bg-orange-100 {
-  background-color: #ffedd5 !important;
-}
-
-html:not(.dark) .bg-orange-200 {
-  background-color: #fed7aa !important;
-}
-
-/* Teal badges (AO) - Light Mode */
-html:not(.dark) .text-teal-800,
-html:not(.dark) .text-teal-900 {
-  color: #134e4a !important;
-}
-
-html:not(.dark) .bg-teal-100 {
-  background-color: #ccfbf1 !important;
-}
-
-html:not(.dark) .bg-teal-200 {
-  background-color: #99f6e4 !important;
-}
-
-/* Cyan badges (Administrasi) - Light Mode */
-html:not(.dark) .text-cyan-800,
-html:not(.dark) .text-cyan-900 {
-  color: #164e63 !important;
-}
-
-html:not(.dark) .bg-cyan-100 {
-  background-color: #cffafe !important;
-}
-
-html:not(.dark) .bg-cyan-200 {
-  background-color: #a5f3fc !important;
-}
-
-/* Red badges (Bermasalah, Ditolak) - Light Mode */
-html:not(.dark) .text-red-800,
-html:not(.dark) .text-red-900 {
-  color: #7f1d1d !important;
-}
-
-html:not(.dark) .bg-red-200 {
-  background-color: #fecaca !important;
-}
-
-/* Blue badges (Selesai, Diterima) - Light Mode */
-html:not(.dark) .text-blue-800,
-html:not(.dark) .text-blue-900 {
-  color: #1e3a8a !important;
-}
-
-html:not(.dark) .bg-blue-200 {
-  background-color: #bfdbfe !important;
-}
-
-/* Amber badges (Diajukan) - Light Mode */
-html:not(.dark) .text-amber-800,
-html:not(.dark) .text-amber-900 {
-  color: #78350f !important;
-}
-
-html:not(.dark) .bg-amber-200 {
-  background-color: #fde68a !important;
-}
-
-/* Emerald badges (Dibayar) - Light Mode */
-html:not(.dark) .text-emerald-800,
-html:not(.dark) .text-emerald-900 {
-  color: #065f46 !important;
-}
-
-html:not(.dark) .bg-emerald-200 {
-  background-color: #a7f3d0 !important;
-}
-
-/* ============================================
-   STATUS CARD TEXT COLORS - Ultra Dark (950)
-   For maximum contrast in light mode
-   ============================================ */
-
-/* Amber/Yellow -950 for Diajukan */
-html:not(.dark) .text-amber-950 {
-  color: #451a03 !important;
-}
-
-/* Blue -950 for Diterima */
-html:not(.dark) .text-blue-950 {
-  color: #172554 !important;
-}
-
-/* Emerald -950 for Dibayar */
-html:not(.dark) .text-emerald-950 {
-  color: #022c22 !important;
-}
-
-/* Red -950 for Ditolak */
-html:not(.dark) .text-red-950 {
-  color: #450a0a !important;
 }

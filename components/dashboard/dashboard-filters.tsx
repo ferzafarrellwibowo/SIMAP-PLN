@@ -41,7 +41,7 @@ export function DashboardFiltersComponent({
       <Card className="mb-6" hover={false}>
         <CardContent className="py-4">
           <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-            <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+            <div className="flex items-center gap-2 text-gray-700">
               <Filter className="h-5 w-5" />
               <span className="font-medium">Filter:</span>
             </div>
@@ -83,7 +83,7 @@ export function DashboardFiltersComponent({
                   <span className="text-xs font-medium text-transparent mb-1.5 select-none hidden lg:block">Reset</span>
                   <button
                     onClick={handleReset}
-                    className="h-[42px] flex items-center justify-center gap-2 px-4 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+                    className="h-[42px] flex items-center justify-center gap-2 px-4 rounded-lg text-sm font-medium text-gray-600 bg-gray-100 border border-gray-300 hover:bg-gray-200 transition-all"
                   >
                     <RotateCcw className="h-4 w-4" />
                     Reset

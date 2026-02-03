@@ -22,33 +22,33 @@ const cardConfig = [
     key: "total",
     title: "Total Proyek",
     icon: FolderKanban,
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-900/40",
-    borderColor: "border-l-blue-500",
+    color: "text-blue-700",
+    bgColor: "bg-blue-100",
+    borderColor: "border-l-blue-600",
   },
   {
     key: "running",
     title: "Proyek Berjalan",
     icon: PlayCircle,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-900/40",
-    borderColor: "border-l-emerald-500",
+    color: "text-emerald-700",
+    bgColor: "bg-emerald-100",
+    borderColor: "border-l-emerald-600",
   },
   {
     key: "completed",
     title: "Proyek Selesai",
     icon: CheckCircle2,
-    color: "text-violet-600 dark:text-violet-400",
-    bgColor: "bg-violet-50 dark:bg-violet-900/40",
-    borderColor: "border-l-violet-500",
+    color: "text-violet-700",
+    bgColor: "bg-violet-100",
+    borderColor: "border-l-violet-600",
   },
   {
     key: "problematic",
     title: "Proyek Bermasalah",
     icon: AlertTriangle,
-    color: "text-red-600 dark:text-red-400",
-    bgColor: "bg-red-50 dark:bg-red-900/40",
-    borderColor: "border-l-red-500",
+    color: "text-red-700",
+    bgColor: "bg-red-100",
+    borderColor: "border-l-red-600",
   },
 ];
 
@@ -69,11 +69,11 @@ export function SummaryCards({ total, running, completed, problematic }: Summary
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
             <Card
-              className={`border-l-4 ${config.borderColor} ${config.bgColor} overflow-hidden relative`}
+              className={`${config.bgColor} overflow-hidden relative shadow-none ring-0 border-none`}
               hover={false}
             >
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                <CardTitle className="text-sm font-medium text-gray-600">
                   {config.title}
                 </CardTitle>
                 <div className={`rounded-full p-2 ${config.bgColor}`}>
@@ -86,11 +86,11 @@ export function SummaryCards({ total, running, completed, problematic }: Summary
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 200, delay: index * 0.1 + 0.2 }}
                 >
-                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-3xl font-bold text-gray-900">
                     {value}
                   </span>
                 </motion.div>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-xs text-gray-500">
                   {config.key === "problematic" 
                     ? "Perlu perhatian segera" 
                     : `${((value / total) * 100 || 0).toFixed(1)}% dari total`}

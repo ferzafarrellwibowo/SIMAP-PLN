@@ -57,22 +57,22 @@ export default function LoginPage() {
               className="h-20 w-20"
             />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-bold text-gray-900">
             Sistem Monitoring Proyek
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+          <p className="text-sm text-gray-600 mt-1">
             PT PLN (Persero) - Dashboard Monitoring Proyek & Anggaran
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white dark:bg-gray-900/95 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username */}
             <div>
               <label
                 htmlFor="username"
-                className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
+                className="block text-sm font-medium text-gray-800 mb-2"
               >
                 Username / Email
               </label>
@@ -81,7 +81,7 @@ export default function LoginPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Masukkan username atau email"
               />
             </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2"
+                className="block text-sm font-medium text-gray-800 mb-2"
               >
                 Password
               </label>
@@ -99,7 +99,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 placeholder="Masukkan password"
               />
             </div>
@@ -109,9 +109,9 @@ export default function LoginPage() {
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+                className="p-3 rounded-lg bg-red-50 border border-red-200"
               >
-                <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+                <p className="text-sm text-red-600">{error}</p>
               </motion.div>
             )}
 
@@ -152,10 +152,10 @@ export default function LoginPage() {
           </form>
 
           {/* Demo Accounts Toggle */}
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-6 pt-6 border-t border-gray-200">
             <button
               onClick={() => setShowDemo(!showDemo)}
-              className="w-full text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2"
+              className="w-full text-sm text-gray-600 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
             >
               <svg
                 className={`w-4 h-4 transition-transform ${showDemo ? "rotate-180" : ""}`}
@@ -179,8 +179,8 @@ export default function LoginPage() {
                 animate={{ opacity: 1, height: "auto" }}
                 className="mt-4 space-y-2"
               >
-                <p className="text-xs text-gray-500 dark:text-gray-500 text-center mb-3">
-                  Password untuk semua akun: <code className="bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded">password123</code>
+                <p className="text-xs text-gray-500 text-center mb-3">
+                  Password untuk semua akun: <code className="bg-gray-100 px-2 py-0.5 rounded">password123</code>
                 </p>
                 {demoAccounts.map((account) => (
                   <button
@@ -189,18 +189,18 @@ export default function LoginPage() {
                       setUsername(account.username);
                       setPassword("password123");
                     }}
-                    className="w-full p-3 rounded-lg border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-all duration-200 text-left"
+                    className="w-full p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 text-left"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-gray-900">
                           {account.name}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-500">
                           {account.username}
                         </p>
                       </div>
-                      <span className="px-2 py-1 text-xs rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                      <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-600">
                         {ROLE_LABELS[account.role as keyof typeof ROLE_LABELS]}
                       </span>
                     </div>
@@ -212,7 +212,7 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-gray-500 dark:text-gray-400 mt-6">
+        <p className="text-center text-xs text-gray-500 mt-6">
           © 2026 PT PLN (Persero) - Sistem Monitoring Proyek
         </p>
       </motion.div>

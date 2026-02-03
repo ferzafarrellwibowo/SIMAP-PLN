@@ -439,9 +439,9 @@ export default function CreateContractPage() {
   if (!user || user.role !== "admin") {
     return (
       <div className="space-y-6">
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-12 text-center">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Akses Ditolak</h2>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">Anda tidak memiliki akses untuk menambah kontrak.</p>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Akses Ditolak</h2>
+          <p className="text-gray-500 mb-6">Anda tidak memiliki akses untuk menambah kontrak.</p>
           <Link
             href="/kontrak"
             className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
@@ -457,11 +457,11 @@ export default function CreateContractPage() {
   const renderInvestasiForm = () => (
     <>
       {/* Informasi Dasar - Investasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Informasi Perjanjian</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
             </label>
             <input
@@ -470,11 +470,11 @@ export default function CreateContractPage() {
               value={formData.tanggalPerjanjian}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Berakhir <span className="text-red-500">*</span>
             </label>
             <input
@@ -483,11 +483,11 @@ export default function CreateContractPage() {
               value={formData.tanggalBerakhir}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Judul PRK <span className="text-red-500">*</span>
             </label>
             <input
@@ -496,7 +496,7 @@ export default function CreateContractPage() {
               value={formData.judulPRK}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Pembangunan GI 150kV Cawang"
             />
           </div>
@@ -504,11 +504,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Nilai & Vendor - Investasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Nilai & Vendor</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
             </label>
             <input
@@ -519,17 +519,17 @@ export default function CreateContractPage() {
               required
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 15000000000"
             />
             {formData.nilaiPerjanjian && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiPerjanjian)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Vendor <span className="text-red-500">*</span>
             </label>
             <input
@@ -538,12 +538,12 @@ export default function CreateContractPage() {
               value={formData.namaVendor}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PT Wijaya Karya"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan/Nominal (Rp) <span className="text-red-500">*</span>
             </label>
             <input
@@ -554,11 +554,11 @@ export default function CreateContractPage() {
               required
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 3000000000"
             />
             {formData.nilaiTagihan && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihan)}
               </p>
             )}
@@ -567,11 +567,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Detail Pekerjaan - Investasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Detail Pekerjaan</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Pekerjaan <span className="text-red-500">*</span>
             </label>
             <input
@@ -580,27 +580,27 @@ export default function CreateContractPage() {
               value={formData.namaPekerjaan}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Pengadaan dan Pemasangan Trafo Daya 60 MVA GI Cawang"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Jenis AI
             </label>
-            <div className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+            <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-900">
               AI - Anggaran Investasi
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               CR / Not CR
             </label>
             <select
               name="crNotCR"
               value={formData.crNotCR}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Not CR">Not CR</option>
               <option value="CR">CR</option>
@@ -610,11 +610,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Unit - Investasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Unit</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Unit
             </label>
             <input
@@ -622,7 +622,7 @@ export default function CreateContractPage() {
               name="unit"
               value={formData.unit}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PLN UP3 Jakarta Selatan"
             />
           </div>
@@ -630,84 +630,84 @@ export default function CreateContractPage() {
       </div>
 
       {/* Field Auto-Generate - Investasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nomor Administrasi</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Nomor Administrasi</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. Perjanjian/Amandemen
             </label>
             <input
               type="text"
               disabled
               value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. PRK
             </label>
             <input
               type="text"
               disabled
               value="(tahun).KPST.21.xxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. WBS/Pos Anggaran
             </label>
             <input
               type="text"
               disabled
               value="I.1001.23.21.0805.xxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SKKI
             </label>
             <input
               type="text"
               disabled
               value="xxxx/KEU.00.03/EVP MUM/xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SE
             </label>
             <input
               type="text"
               disabled
               value="100369xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. PO
             </label>
             <input
               type="text"
               disabled
               value="310148xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div className="md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Submission ID - Vendor Invoicing Portal
             </label>
             <input
               type="text"
               disabled
               value="TRE-V/xxxx/xxxx/00000xxxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
         </div>
@@ -719,11 +719,11 @@ export default function CreateContractPage() {
   const renderPemeliharaanForm = () => (
     <>
       {/* Informasi Perjanjian - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Informasi Perjanjian</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Uraian Kegiatan/Mata Anggaran
             </label>
             <input
@@ -731,23 +731,23 @@ export default function CreateContractPage() {
               name="uraianKegiatan"
               value={formData.uraianKegiatan}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Pemeliharaan Peralatan Gardu Induk"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. Perjanjian/Amandemen
             </label>
             <input
               type="text"
               disabled
               value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
             </label>
             <input
@@ -756,11 +756,11 @@ export default function CreateContractPage() {
               value={formData.tanggalPerjanjian}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Berakhir <span className="text-red-500">*</span>
             </label>
             <input
@@ -769,11 +769,11 @@ export default function CreateContractPage() {
               value={formData.tanggalBerakhir}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Judul Perjanjian <span className="text-red-500">*</span>
             </label>
             <input
@@ -782,7 +782,7 @@ export default function CreateContractPage() {
               value={formData.judulPerjanjian}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Perjanjian Pemeliharaan Peralatan GI Cawang"
             />
           </div>
@@ -790,11 +790,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Nilai & Vendor - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Nilai & Vendor</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
             </label>
             <input
@@ -805,17 +805,17 @@ export default function CreateContractPage() {
               required
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 5000000000"
             />
             {formData.nilaiPerjanjian && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiPerjanjian)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Vendor <span className="text-red-500">*</span>
             </label>
             <input
@@ -824,12 +824,12 @@ export default function CreateContractPage() {
               value={formData.namaVendor}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PT Pembangunan Jaya"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan/Nominal STI Kantor Pusat (Rp)
             </label>
             <input
@@ -839,17 +839,17 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 2500000000"
             />
             {formData.nilaiTagihanPusat && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihanPusat)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan/Nominal Unit Induk Seindonesia Raya (Rp)
             </label>
             <input
@@ -859,11 +859,11 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 2500000000"
             />
             {formData.nilaiTagihanUnitInduk && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihanUnitInduk)}
               </p>
             )}
@@ -872,22 +872,22 @@ export default function CreateContractPage() {
       </div>
 
       {/* Berita Acara - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Berita Acara</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. Berita Acara
             </label>
             <input
               type="text"
               disabled
               value="xxxx/JKO/2024/012"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Berita Acara
             </label>
             <input
@@ -895,40 +895,40 @@ export default function CreateContractPage() {
               name="tanggalBeritaAcara"
               value={formData.tanggalBeritaAcara}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
       </div>
 
       {/* Administrasi - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Administrasi</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Administrasi</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. WBS/Pos Anggaran
             </label>
             <input
               type="text"
               disabled
               value="I.1001.23.21.0805.xxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SKKI/SKKO
             </label>
             <input
               type="text"
               disabled
               value="xxxx/KEU.00.03/EVP MUM/2024"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Request SE
             </label>
             <input
@@ -936,11 +936,11 @@ export default function CreateContractPage() {
               name="tanggalRequestSE"
               value={formData.tanggalRequestSE}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal SE Rilis
             </label>
             <input
@@ -948,52 +948,52 @@ export default function CreateContractPage() {
               name="tanggalSERilis"
               value={formData.tanggalSERilis}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SE
             </label>
             <input
               type="text"
               disabled
               value="100369xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. PO
             </label>
             <input
               type="text"
               disabled
               value="310148xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div className="md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Submission ID - Vendor Invoicing Portal
-              <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">(Auto-generate)</span>
+              <span className="ml-2 text-xs text-blue-600">(Auto-generate)</span>
             </label>
             <input
               type="text"
               disabled
               value="TRE-V/xxxx/xxxx/00000xxxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
         </div>
       </div>
 
       {/* Detail Pekerjaan - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Detail Pekerjaan</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Pekerjaan
             </label>
             <input
@@ -1001,12 +1001,12 @@ export default function CreateContractPage() {
               name="namaPekerjaan"
               value={formData.namaPekerjaan}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Pemeliharaan Trafo Daya GI Cawang"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               MSB
             </label>
             <input
@@ -1014,12 +1014,12 @@ export default function CreateContractPage() {
               name="msb"
               value={formData.msb}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: MSB-001"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Bidang
             </label>
             <input
@@ -1027,19 +1027,19 @@ export default function CreateContractPage() {
               name="bidang"
               value={formData.bidang}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Operasi & Pemeliharaan"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Status VIP
             </label>
             <select
               name="statusVIP"
               value={formData.statusVIP}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="belum_lunas">Belum Lunas</option>
               <option value="lunas">Lunas</option>
@@ -1050,18 +1050,18 @@ export default function CreateContractPage() {
       </div>
 
       {/* Periode & Request - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Periode & Request</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Periode & Request</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Periode Accrue - Bulan
             </label>
             <select
               name="periodeAccrueBulan"
               value={formData.periodeAccrueBulan}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Pilih Bulan</option>
               <option value="01">Januari</option>
@@ -1079,7 +1079,7 @@ export default function CreateContractPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Periode Accrue - Tahun
             </label>
             <input
@@ -1087,12 +1087,12 @@ export default function CreateContractPage() {
               name="periodeAccrueTahun"
               value={formData.periodeAccrueTahun}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="2024"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Requested By
             </label>
             <input
@@ -1100,7 +1100,7 @@ export default function CreateContractPage() {
               name="requestedBy"
               value={formData.requestedBy}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Budi Santoso"
             />
           </div>
@@ -1108,11 +1108,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Pembayaran - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pembayaran</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Pembayaran</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Terbayar STI Pusat (Rp)
             </label>
             <input
@@ -1122,17 +1122,17 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 0"
             />
             {formData.terbayarPusat && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.terbayarPusat)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Terbayar Unit (Rp)
             </label>
             <input
@@ -1142,24 +1142,24 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 0"
             />
             {formData.terbayarUnit && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.terbayarUnit)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Status Terbayar
             </label>
             <select
               name="statusTerbayar"
               value={formData.statusTerbayar}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Belum Terbayar">Belum Terbayar</option>
               <option value="Sebagian Terbayar">Sebagian Terbayar</option>
@@ -1167,14 +1167,14 @@ export default function CreateContractPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Rutin/Non Rutin
             </label>
             <select
               name="rutinNonRutin"
               value={formData.rutinNonRutin}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Rutin">Rutin</option>
               <option value="Non Rutin">Non Rutin</option>
@@ -1184,11 +1184,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Unit - Pemeliharaan */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Unit</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Unit</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Unit
             </label>
             <input
@@ -1196,7 +1196,7 @@ export default function CreateContractPage() {
               name="unit"
               value={formData.unit}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PLN UP3 Jakarta Selatan"
             />
           </div>
@@ -1209,11 +1209,11 @@ export default function CreateContractPage() {
   const renderAdministrasiForm = () => (
     <>
       {/* Informasi Perjanjian - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Informasi Perjanjian</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Informasi Perjanjian</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Uraian Kegiatan/Mata Anggaran
             </label>
             <input
@@ -1221,23 +1221,23 @@ export default function CreateContractPage() {
               name="uraianKegiatan"
               value={formData.uraianKegiatan}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Pengadaan ATK Kantor Pusat"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. Perjanjian/Amandemen
             </label>
             <input
               type="text"
               disabled
               value="03xxPj/STH.xx.xx/F0107xxxx00/xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Perjanjian/Amandemen <span className="text-red-500">*</span>
             </label>
             <input
@@ -1246,11 +1246,11 @@ export default function CreateContractPage() {
               value={formData.tanggalPerjanjian}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Berakhir <span className="text-red-500">*</span>
             </label>
             <input
@@ -1259,11 +1259,11 @@ export default function CreateContractPage() {
               value={formData.tanggalBerakhir}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Judul Perjanjian <span className="text-red-500">*</span>
             </label>
             <input
@@ -1272,7 +1272,7 @@ export default function CreateContractPage() {
               value={formData.judulPerjanjian}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Perjanjian Pengadaan Jasa Kebersihan"
             />
           </div>
@@ -1280,11 +1280,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Nilai & Vendor - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Nilai & Vendor</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Nilai & Vendor</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Perjanjian (Rp) <span className="text-red-500">*</span>
             </label>
             <input
@@ -1295,17 +1295,17 @@ export default function CreateContractPage() {
               required
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 500000000"
             />
             {formData.nilaiPerjanjian && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiPerjanjian)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Vendor <span className="text-red-500">*</span>
             </label>
             <input
@@ -1314,7 +1314,7 @@ export default function CreateContractPage() {
               value={formData.namaVendor}
               onChange={handleChange}
               required
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PT Jasa Bersih"
             />
           </div>
@@ -1322,11 +1322,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Tagihan - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tagihan</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Tagihan</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan Keseluruhan (Rp)
             </label>
             <input
@@ -1336,17 +1336,17 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 500000000"
             />
             {formData.nilaiTagihanKeseluruhan && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihanKeseluruhan)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan Khusus Kantor Pusat (Rp)
             </label>
             <input
@@ -1356,17 +1356,17 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 300000000"
             />
             {formData.nilaiTagihanKhususPusat && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihanKhususPusat)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nilai Tagihan Unit selain Kantor Pusat (Rp)
             </label>
             <input
@@ -1376,11 +1376,11 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 200000000"
             />
             {formData.nilaiTagihanUnitSelainPusat && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.nilaiTagihanUnitSelainPusat)}
               </p>
             )}
@@ -1389,22 +1389,22 @@ export default function CreateContractPage() {
       </div>
 
       {/* Berita Acara - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Berita Acara</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Berita Acara</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. Berita Acara
             </label>
             <input
               type="text"
               disabled
               value="xxxx/JKO/2024/012"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Berita Acara
             </label>
             <input
@@ -1412,40 +1412,40 @@ export default function CreateContractPage() {
               name="tanggalBeritaAcara"
               value={formData.tanggalBeritaAcara}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
       </div>
 
       {/* Administrasi - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Administrasi</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Administrasi</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. WBS/Pos Anggaran
             </label>
             <input
               type="text"
               disabled
               value="I.1001.23.21.0805.xxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SKKI/SKKO
             </label>
             <input
               type="text"
               disabled
               value="xxxx/KEU.00.03/EVP MUM/xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal Request
             </label>
             <input
@@ -1453,11 +1453,11 @@ export default function CreateContractPage() {
               name="tanggalRequestSE"
               value={formData.tanggalRequestSE}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Tanggal SE Release
             </label>
             <input
@@ -1465,51 +1465,51 @@ export default function CreateContractPage() {
               name="tanggalSERilis"
               value={formData.tanggalSERilis}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. SE
             </label>
             <input
               type="text"
               disabled
               value="100369xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               No. PO
             </label>
             <input
               type="text"
               disabled
               value="310148xxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
           <div className="md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Submission ID
             </label>
             <input
               type="text"
               disabled
               value="TRE-V/xxxx/xxxx/00000xxxxx"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-500"
             />
           </div>
         </div>
       </div>
 
       {/* Detail Pekerjaan - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Detail Pekerjaan</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Detail Pekerjaan</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="md:col-span-2 lg:col-span-3">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Nama Pekerjaan
             </label>
             <input
@@ -1517,12 +1517,12 @@ export default function CreateContractPage() {
               name="namaPekerjaan"
               value={formData.namaPekerjaan}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Jasa Kebersihan Gedung Kantor Pusat"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Beban Tahun
             </label>
             <input
@@ -1530,12 +1530,12 @@ export default function CreateContractPage() {
               name="bebanTahun"
               value={formData.bebanTahun}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="2026"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Bidang
             </label>
             <input
@@ -1543,12 +1543,12 @@ export default function CreateContractPage() {
               name="bidang"
               value={formData.bidang}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Umum & Administrasi"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               PIC
             </label>
             <input
@@ -1556,7 +1556,7 @@ export default function CreateContractPage() {
               name="picName"
               value={formData.picName}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Budi Santoso"
             />
           </div>
@@ -1564,11 +1564,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Pembayaran - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pembayaran</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Pembayaran</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Terbayar Pusat (Rp)
             </label>
             <input
@@ -1578,24 +1578,24 @@ export default function CreateContractPage() {
               onChange={handleChange}
               min="0"
               step="1000"
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: 0"
             />
             {formData.terbayarPusat && (
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-500">
                 {formatCurrencyText(formData.terbayarPusat)}
               </p>
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Status Bayar
             </label>
             <select
               name="statusBayar"
               value={formData.statusBayar}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Belum Dibayar">Belum Dibayar</option>
               <option value="Sebagian Dibayar">Sebagian Dibayar</option>
@@ -1603,14 +1603,14 @@ export default function CreateContractPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Rutin/Non Rutin
             </label>
             <select
               name="rutinNonRutin"
               value={formData.rutinNonRutin}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="Rutin">Rutin</option>
               <option value="Non Rutin">Non Rutin</option>
@@ -1620,11 +1620,11 @@ export default function CreateContractPage() {
       </div>
 
       {/* Entry & Unit - Administrasi */}
-      <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Entry & Unit</h2>
+      <div className="mb-6 pb-6 border-b border-gray-200">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Entry & Unit</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Entry By
             </label>
             <input
@@ -1632,12 +1632,12 @@ export default function CreateContractPage() {
               name="entryBy"
               value={formData.entryBy}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Admin"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
               Unit
             </label>
             <input
@@ -1645,7 +1645,7 @@ export default function CreateContractPage() {
               name="unit"
               value={formData.unit}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: Kantor Pusat"
             />
           </div>
@@ -1659,16 +1659,16 @@ export default function CreateContractPage() {
       {/* Header */}
       <div className="text-center">
         <div className="flex items-center gap-2 mb-2 justify-center">
-          <Link href="/kontrak" className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <Link href="/kontrak" className="text-gray-500 hover:text-gray-700">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
           </Link>
-          <span className="text-gray-300 dark:text-gray-600">/</span>
-          <span className="text-sm text-gray-500 dark:text-gray-400">Tambah Kontrak</span>
+          <span className="text-gray-300">/</span>
+          <span className="text-sm text-gray-500">Tambah Kontrak</span>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Tambah Kontrak Baru</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900">Tambah Kontrak Baru</h1>
+        <p className="text-sm text-gray-500 mt-1">
           Lengkapi formulir di bawah untuk menambahkan kontrak baru
         </p>
       </div>
@@ -1678,13 +1678,13 @@ export default function CreateContractPage() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/30 dark:border-red-800"
+          className="p-4 rounded-lg bg-red-50 border border-red-200"
         >
           <div className="flex items-center gap-3">
-            <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-            <p className="text-red-800 dark:text-red-200 font-medium">{errorMessage}</p>
+            <p className="text-red-800 font-medium">{errorMessage}</p>
           </div>
         </motion.div>
       )}
@@ -1694,18 +1694,18 @@ export default function CreateContractPage() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         onSubmit={handleSubmit}
-        className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6"
+        className="bg-white rounded-xl shadow-sm border border-gray-200 p-6"
       >
         {/* Kategori Selection */}
-        <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Kategori Kontrak</h2>
+        <div className="mb-6 pb-6 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Kategori Kontrak</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {(["investasi", "pemeliharaan", "administrasi"] as ContractCategory[]).map((cat) => (
               <label
                 key={cat}
                 className={`flex items-center justify-center p-4 border-2 rounded-lg cursor-pointer transition-all ${formData.kategori === cat
-                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/30"
-                  : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
                   }`}
               >
                 <input
@@ -1717,8 +1717,8 @@ export default function CreateContractPage() {
                   className="sr-only"
                 />
                 <span className={`text-sm font-medium ${formData.kategori === cat
-                  ? "text-blue-700 dark:text-blue-300"
-                  : "text-gray-700 dark:text-gray-300"
+                  ? "text-blue-700"
+                  : "text-gray-700"
                   }`}>
                   {CONTRACT_CATEGORY_LABELS[cat]}
                 </span>
@@ -1734,22 +1734,22 @@ export default function CreateContractPage() {
 
         {/* Keterangan */}
         <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Keterangan/Konfirmasi</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Keterangan/Konfirmasi</h2>
           <textarea
             name="keterangan"
             value={formData.keterangan}
             onChange={handleChange}
             rows={4}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Tambahkan catatan atau keterangan tambahan..."
           />
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-end gap-3 pt-6 border-t border-gray-200">
           <Link
             href="/kontrak"
-            className="px-6 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
           >
             Batal
           </Link>
