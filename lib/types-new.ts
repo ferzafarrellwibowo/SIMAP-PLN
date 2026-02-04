@@ -127,13 +127,16 @@ export interface Contract {
   msb?: string;                   // MSB
   periodeAccrueBulan?: string;    // Periode Accrue - Bulan
   periodeAccrueTahun?: string;    // Periode Accrue - Tahun
+  periodeAccrue?: string;         // Periode Accrue (combined)
   requestedBy?: string;           // Requested By
   tanggalRequestSE?: string;      // Tanggal Request SE
   tanggalSERilis?: string;        // Tanggal SE Rilis
   terbayarPusat?: number;         // Terbayar STI Pusat
   terbayarUnit?: number;          // Terbayar Unit
+  terbayarSTIPusat?: number;      // Alias for terbayarPusat
   statusTerbayar?: string;        // Status Terbayar (Belum Terbayar, Sebagian Terbayar, Lunas)
   rutinNonRutin?: string;         // Rutin/Non Rutin
+  nilaiTagihanSTIPusat?: number;  // Nilai Tagihan STI Pusat
 
   // ============================================
   // FIELD KHUSUS KATEGORI ADMINISTRASI
@@ -173,6 +176,10 @@ export interface Contract {
   // Optional
   keterangan?: string;
   dokumenKontrak?: string;        // URL/path dokumen
+
+  // Contract Version History
+  previousContractId?: string;    // ID kontrak sebelumnya (untuk tracking history)
+  versionNumber?: number;         // Nomor versi kontrak (1, 2, 3, dst)
 }
 
 // ============================================

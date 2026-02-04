@@ -86,6 +86,9 @@ function mapInvestmentContract(row: any) {
     createdBy: row.created_by,
     updatedAt: row.updated_at,
     updatedBy: row.updated_by,
+    // Version tracking fields
+    previousContractId: row.previous_contract_id,
+    versionNumber: row.version_number || 1,
   };
 }
 
@@ -164,6 +167,9 @@ function mapMaintenanceContract(row: any) {
     // Timestamps
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    // Version tracking fields
+    previousContractId: row.previous_contract_id,
+    versionNumber: row.version_number || 1,
   };
 }
 
@@ -291,6 +297,9 @@ function mapAdministrationContract(row: any) {
     // Timestamps
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    // Version tracking fields
+    previousContractId: row.previous_contract_id,
+    versionNumber: row.version_number || 1,
   };
 }
 
@@ -439,6 +448,9 @@ export async function POST(request: Request) {
         uraian_kegiatan: body.uraianKegiatan,
         keterangan: body.keterangan,
         created_by: body.createdBy,
+        // Version tracking fields
+        previous_contract_id: body.previousContractId,
+        version_number: body.versionNumber || 1,
       };
     } else {
       // Maintenance or Administration contract data mapping
@@ -457,21 +469,48 @@ export async function POST(request: Request) {
         unit: body.unit,
         keterangan: body.keterangan,
         created_by: body.createdBy,
+        // Version tracking fields
+        previous_contract_id: body.previousContractId,
+        version_number: body.versionNumber || 1,
       };
     }
 
-    const { data, error } = await supabaseServer
-      .from(tableName)
-      .insert([contractData])
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating contract:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    // Try inserting contract. If the DB schema doesn't have version tracking columns,
+    // retry without them (backward compatible for environments missing migration).
+    async function insertContract(dataObj: Record<string, unknown>) {
+      return await supabaseServer
+        .from(tableName)
+        .insert([dataObj])
+        .select()
+        .single();
     }
 
-    return NextResponse.json({ data }, { status: 201 });
+    let insertResult = await insertContract(contractData as Record<string, unknown>);
+
+    if (insertResult.error) {
+      const errMsg = (insertResult.error.message || String(insertResult.error)).toLowerCase();
+
+      // If the error indicates missing columns for version tracking, remove them and retry
+      if ((errMsg.includes('previous_contract_id') || errMsg.includes('version_number') || errMsg.includes('column') && errMsg.includes('does not exist'))
+          && (contractData as any).previous_contract_id !== undefined) {
+        // Remove version-tracking fields and retry
+        delete (contractData as any).previous_contract_id;
+        delete (contractData as any).version_number;
+
+        const retryResult = await insertContract(contractData as Record<string, unknown>);
+        if (retryResult.error) {
+          console.error('Error creating contract after retry (without version fields):', retryResult.error);
+          return NextResponse.json({ error: retryResult.error.message || 'Failed to create new contract version' }, { status: 500 });
+        }
+
+        return NextResponse.json({ data: retryResult.data }, { status: 201 });
+      }
+
+      console.error('Error creating contract:', insertResult.error);
+      return NextResponse.json({ error: insertResult.error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ data: insertResult.data }, { status: 201 });
   } catch (error: unknown) {
     console.error('Server error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

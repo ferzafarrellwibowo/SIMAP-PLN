@@ -7,6 +7,9 @@ import Link from "next/link";
 import { useContractStore, CONTRACT_CATEGORY_LABELS, CONTRACT_CATEGORY_COLORS, CONTRACT_STATUS_LABELS, CONTRACT_STATUS_COLORS, JENIS_ANGGARAN_LABELS, JENIS_ANGGARAN_COLORS, INVOICE_STATUS_LABELS, INVOICE_STATUS_COLORS } from "@/lib/store-new";
 import { useAuth } from "@/lib/auth-new";
 import AlertPopup from "@/components/ui/alert-popup";
+import UpdateContractModal from "@/components/kontrak/update-contract-modal";
+import ContractHistoryList from "@/components/kontrak/contract-history-list";
+import type { Contract } from "@/lib/types-new";
 
 
 function formatCurrency(value: number | undefined | null): string {
@@ -28,13 +31,15 @@ export default function KontrakDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
-  const { getContractById, getInvoicesByContract, updateContract } = useContractStore();
+  const { getContractById, getInvoicesByContract, updateContract, getContractHistory } = useContractStore();
 
   const contractId = params.id as string;
   const contract = useMemo(() => getContractById(contractId), [contractId, getContractById]);
   const invoices = useMemo(() => getInvoicesByContract(contractId), [contractId, getInvoicesByContract]);
+  const contractHistory = useMemo(() => getContractHistory(contractId), [contractId, getContractHistory]);
 
   const [isEditingProgress, setIsEditingProgress] = useState(false);
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [progressValue, setProgressValue] = useState((contract?.progressPekerjaan || 0).toString());
   const [isSavingProgress, setIsSavingProgress] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -66,6 +71,12 @@ export default function KontrakDetailPage() {
     } finally {
       setIsSavingProgress(false);
     }
+  };
+
+  const handleUpdateSuccess = (newContract: Contract) => {
+    setSuccessMessage("Kontrak berhasil diperbarui. Versi baru telah dibuat.");
+    // Navigate to the new contract
+    router.push(`/kontrak/${newContract.id}`);
   };
 
   const handleCancelEdit = () => {
@@ -129,6 +140,12 @@ export default function KontrakDetailPage() {
 
         {user?.role === "admin" && (
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsUpdateModalOpen(true)}
+              className="px-4 py-2 rounded-lg text-sm font-medium transition-colors border-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+            >
+              Update Kontrak
+            </button>
             <Link
               href={`/tagihan/create?contractId=${contract.id}`}
               className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-colors ${contract.persentaseRealisasi >= 100
@@ -806,6 +823,21 @@ export default function KontrakDetailPage() {
           </div>
         )}
       </motion.div>
+
+      {/* Contract History - shown only if there are previous versions */}
+      {contractHistory.length > 0 && (
+        <div className="lg:col-span-1">
+          <ContractHistoryList history={contractHistory} currentContract={contract} />
+        </div>
+      )}
+
+      {/* Update Contract Modal */}
+      <UpdateContractModal
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+        contract={contract}
+        onSuccess={handleUpdateSuccess}
+      />
     </div>
   );
 }

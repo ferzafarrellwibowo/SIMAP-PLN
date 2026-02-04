@@ -376,6 +376,7 @@ interface ContractStoreContextType {
   getInvoiceById: (id: string) => Invoice | undefined;
   getInvoicesByContract: (contractId: string) => Invoice[];
   getDashboardSummary: () => DashboardSummary;
+  getContractHistory: (contractId: string) => Contract[];  // Get previous versions of a contract
 
   // Filters
   filterContracts: (filters: ContractFilters) => Contract[];
@@ -385,6 +386,7 @@ interface ContractStoreContextType {
   createContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>;
   addContract: (contract: Omit<Contract, "id" | "createdAt" | "updatedAt" | "totalTagihanDibayar" | "sisaAnggaran" | "persentaseRealisasi" | "progressPekerjaan">) => Promise<Contract>; // Alias
   updateContract: (id: string, updates: Partial<Contract>) => Promise<Contract>;
+  updateContractWithNewVersion: (id: string, updates: Partial<Contract>) => Promise<Contract>;  // Create new version with new noPerjanjian
 
   createInvoice: (invoice: Omit<Invoice, "id" | "createdAt" | "updatedAt">) => Promise<Invoice>;
   updateInvoice: (id: string, updates: Partial<Invoice>) => Promise<Invoice>;
@@ -623,6 +625,28 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
     [invoices]
   );
 
+  // Get contract history (previous versions)
+  const getContractHistory = useCallback(
+    (contractId: string): Contract[] => {
+      const history: Contract[] = [];
+      let currentContract = contracts.find((c) => c.id === contractId);
+      
+      // Traverse backwards through previousContractId chain
+      while (currentContract?.previousContractId) {
+        const previousContract = contracts.find((c) => c.id === currentContract?.previousContractId);
+        if (previousContract) {
+          history.push(previousContract);
+          currentContract = previousContract;
+        } else {
+          break;
+        }
+      }
+      
+      return history;
+    },
+    [contracts]
+  );
+
   // Filter contracts
   const filterContracts = useCallback(
     (filters: ContractFilters): Contract[] => {
@@ -843,7 +867,212 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
 
         const { data } = await response.json();
 
-        // Transform snake_case to camelCase
+        // Transform snake_case to camelCase - use 'as Contract' for flexibility since API returns full object
+        const transformedData = {
+          id: data.id,
+          no: data.no,
+          uraianKegiatan: data.uraian_kegiatan,
+          noPerjanjian: data.no_perjanjian,
+          tanggalPerjanjian: data.tanggal_perjanjian,
+          tanggalBerakhir: data.tanggal_berakhir,
+          judulPekerjaan: data.judul_pekerjaan || data.nama_pekerjaan,
+          nilaiKontrak: data.nilai_kontrak || data.nilai_perjanjian,
+          vendor: data.vendor || data.nama_vendor,
+          nilaiTagihanKontrakPusat: data.nilai_tagihan_kontrak_pusat,
+          nilaiTagihanUnitInduk: data.nilai_tagihan_unit_induk,
+          nilaiBeritaAcara: data.nilai_berita_acara,
+          noBeritaAcara: data.no_berita_acara,
+          tanggalBeritaAcara: data.tanggal_berita_acara,
+          noBeritaAcaraSKRelasi: data.no_berita_acara_sk_relasi,
+          tanggalArsip: data.tanggal_arsip,
+          noXPS: data.no_xps,
+          tanggalXPS: data.tanggal_xps,
+          kategori: data.kategori,
+          jenisAnggaran: data.jenis_anggaran || data.jenis_ai || 'AO',
+          unit: data.unit,
+          unitSektorK: data.unit_sektor_k,
+          noSKWE: data.no_sk_we,
+          posAngg: data.pos_angg,
+          noSKUSKKO: data.no_sku_skko,
+          requestTanggalSERelasi: data.request_tanggal_se_relasi,
+          noSE: data.no_se,
+          noPO: data.no_po,
+          submissionId: data.submission_id,
+          jenisPekerjaan: data.jenis_pekerjaan,
+          bebanTahun: data.beban_tahun,
+          batasPaguTerbayar: data.batas_pagu_terbayar,
+          unitTerbayar: data.unit_terbayar,
+          konfirmasiNonRutin: data.konfirmasi_non_rutin,
+          bidang: data.bidang,
+          picId: data.pic_id,
+          picName: data.pic_name,
+          entryBy: data.entry_by,
+          status: data.status,
+          totalTagihanDibayar: data.total_tagihan_dibayar || data.terbayar,
+          sisaAnggaran: data.sisa_anggaran,
+          persentaseRealisasi: data.persentase_realisasi,
+          progressPekerjaan: data.progress_pekerjaan || 0,
+          oldFlag: data.old_flag,
+          clickCB: data.click_cb,
+          createdAt: data.created_at,
+          createdBy: data.created_by,
+          updatedAt: data.updated_at,
+          updatedBy: data.updated_by,
+          keterangan: data.keterangan,
+          dokumenKontrak: data.dokumen_kontrak,
+          // Required fields for Contract type
+          judulPRK: data.judul_prk || data.judul_pekerjaan,
+          nilaiPerjanjian: data.nilai_perjanjian || data.nilai_kontrak || 0,
+          namaVendor: data.nama_vendor || data.vendor,
+          nilaiTagihan: data.nilai_tagihan || 0,
+          terbayar: data.terbayar || data.total_tagihan_dibayar || 0,
+          statusVIP: data.status_vip || 'belum_lunas',
+          namaPekerjaan: data.nama_pekerjaan || data.judul_pekerjaan,
+          jenisAI: data.jenis_ai || data.jenis_anggaran || 'AO',
+          crNotCR: data.cr_not_cr || 'Not CR',
+          // Version tracking
+          previousContractId: data.previous_contract_id,
+          versionNumber: data.version_number || 1,
+        } as Contract;
+
+        // Update local state
+        setContracts((prev) =>
+          prev.map((c) => (c.id === id ? transformedData : c))
+        );
+
+        return transformedData;
+      } catch (error) {
+        console.error('Error updating contract:', error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  // Update contract with new version - Creates new contract with new noPerjanjian but keeps noPRK
+  const updateContractWithNewVersion = useCallback(
+    async (oldContractId: string, updates: Partial<Contract>) => {
+      try {
+        const oldContract = contracts.find((c) => c.id === oldContractId);
+        if (!oldContract) {
+          throw new Error('Contract not found');
+        }
+
+        // Calculate new version number
+        let versionNumber = 1;
+        let currentContract: Contract | undefined = oldContract;
+        while (currentContract?.previousContractId) {
+          versionNumber++;
+          currentContract = contracts.find((c) => c.id === currentContract?.previousContractId);
+        }
+        versionNumber++; // Increment for new version
+
+        // Generate new noPerjanjian with increment
+        const generateNewNoPerjanjian = () => {
+          const year = new Date().getFullYear();
+          const randomNum = Math.floor(Math.random() * 9000) + 1000;
+          return `03${randomNum}Pj/STH.01.01/F0107${randomNum}00/${year}`;
+        };
+
+        // Build a minimal, validated payload for creating the new contract version.
+        // Avoid spreading the entire old contract to prevent sending unexpected large numeric fields.
+        const basePayload: Record<string, unknown> = {
+          kategori: oldContract.kategori,
+          previousContractId: oldContractId,
+          versionNumber,
+          createdBy: oldContract.createdBy || 'Admin',
+        };
+
+        const newNoPerjanjian = generateNewNoPerjanjian();
+
+        let payload: Record<string, unknown> = { ...basePayload };
+
+        if (oldContract.kategori === 'investasi') {
+          payload = {
+            ...payload,
+            noPerjanjian: newNoPerjanjian,
+            tanggalPerjanjian: (updates as any).tanggalPerjanjian || oldContract.tanggalPerjanjian || null,
+            tanggalBerakhir: (updates as any).tanggalBerakhir || oldContract.tanggalBerakhir || null,
+            judulPRK: (updates as any).judulPRK || (updates as any).uraianKegiatan || oldContract.judulPRK || '',
+            namaPekerjaan: (updates as any).namaPekerjaan || oldContract.namaPekerjaan || '',
+            noPRK: oldContract.noPRK || null,
+            nilaiPerjanjian: Number((updates as any).nilaiPerjanjian ?? (updates as any).nilaiKontrak ?? oldContract.nilaiPerjanjian ?? oldContract.nilaiKontrak ?? 0),
+            nilaiTagihan: Number((updates as any).nilaiTagihan ?? 0),
+            terbayar: Number((updates as any).terbayar ?? 0),
+            namaVendor: (updates as any).namaVendor || oldContract.namaVendor || oldContract.vendor || '',
+            jenisAI: (updates as any).jenisAI || oldContract.jenisAI || 'AI',
+            crNotCR: (updates as any).crNotCR || oldContract.crNotCR || 'Not CR',
+            status: (updates as any).status || 'aktif',
+            statusVIP: (updates as any).statusVIP || oldContract.statusVIP || 'belum_lunas',
+            noWBSPosAnggaran: (updates as any).noWBSPosAnggaran || oldContract.noWBSPosAnggaran || '',
+            noSKKI: (updates as any).noSKKI || oldContract.noSKKI || '',
+            noSE: (updates as any).noSE || oldContract.noSE || '',
+            noPO: (updates as any).noPO || oldContract.noPO || '',
+            submissionIdVIP: (updates as any).submissionIdVIP || oldContract.submissionIdVIP || oldContract.submissionId || '',
+            unit: (updates as any).unit || oldContract.unit || '',
+            uraianKegiatan: (updates as any).uraianKegiatan || (updates as any).judulPRK || oldContract.uraianKegiatan || '',
+            keterangan: (updates as any).keterangan || oldContract.keterangan || '',
+          };
+        } else if (oldContract.kategori === 'pemeliharaan') {
+          payload = {
+            ...payload,
+            noPerjanjian: newNoPerjanjian,
+            tanggalPerjanjian: (updates as any).tanggalPerjanjian || oldContract.tanggalPerjanjian || null,
+            tanggalBerakhir: (updates as any).tanggalBerakhir || oldContract.tanggalBerakhir || null,
+            judulPerjanjian: (updates as any).judulPerjanjian || oldContract.judulPerjanjian || '',
+            uraianKegiatan: (updates as any).uraianKegiatan || oldContract.uraianKegiatan || '',
+            nilaiKontrak: Number((updates as any).nilaiPerjanjian ?? oldContract.nilaiPerjanjian ?? oldContract.nilaiKontrak ?? 0),
+            nilaiTagihan: Number((updates as any).nilaiTagihanKontrakPusat ?? (updates as any).nilaiTagihanPusat ?? 0),
+            namaVendor: (updates as any).namaVendor || oldContract.namaVendor || oldContract.vendor || '',
+            msb: (updates as any).msb || oldContract.msb || '',
+            bidang: (updates as any).bidang || oldContract.bidang || '',
+            statusVIP: (updates as any).statusVIP || oldContract.statusVIP || 'belum_lunas',
+            periodeAccrueBulan: (updates as any).periodeAccrueBulan || oldContract.periodeAccrueBulan || '',
+            periodeAccrueTahun: (updates as any).periodeAccrueTahun || oldContract.periodeAccrueTahun || new Date().getFullYear().toString(),
+            terbayarPusat: Number((updates as any).terbayarPusat ?? oldContract.terbayarPusat ?? 0),
+            terbayarUnit: Number((updates as any).terbayarUnit ?? oldContract.terbayarUnit ?? 0),
+            unit: (updates as any).unit || oldContract.unit || '',
+            keterangan: (updates as any).keterangan || oldContract.keterangan || '',
+          };
+        } else {
+          // administrasi
+          payload = {
+            ...payload,
+            noPerjanjian: newNoPerjanjian,
+            tanggalPerjanjian: (updates as any).tanggalPerjanjian || oldContract.tanggalPerjanjian || null,
+            tanggalBerakhir: (updates as any).tanggalBerakhir || oldContract.tanggalBerakhir || null,
+            judulPerjanjian: (updates as any).judulPerjanjian || oldContract.judulPerjanjian || '',
+            uraianKegiatan: (updates as any).uraianKegiatan || oldContract.uraianKegiatan || '',
+            nilaiPerjanjian: Number((updates as any).nilaiPerjanjian ?? oldContract.nilaiPerjanjian ?? oldContract.nilaiKontrak ?? 0),
+            nilaiTagihan: Number((updates as any).nilaiTagihanKeseluruhan ?? oldContract.nilaiTagihanKeseluruhan ?? 0),
+            namaVendor: (updates as any).namaVendor || oldContract.namaVendor || oldContract.vendor || '',
+            unit: (updates as any).unit || oldContract.unit || '',
+            bebanTahun: (updates as any).bebanTahun || oldContract.bebanTahun || new Date().getFullYear().toString(),
+            picName: (updates as any).picName || oldContract.picName || '',
+            keterangan: (updates as any).keterangan || oldContract.keterangan || '',
+          };
+        }
+
+        // Ensure numeric values are safe integers where applicable
+        if (typeof payload.versionNumber === 'number' && !Number.isSafeInteger(payload.versionNumber)) {
+          payload.versionNumber = Number(String(payload.versionNumber).slice(0, 9));
+        }
+
+        // Call API to create new contract
+        const response = await fetch('/api/contracts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Failed to create new contract version');
+        }
+
+        const { data } = await response.json();
+
+        // Transform the response data
         const transformedData: Contract = {
           id: data.id,
           no: data.no,
@@ -884,9 +1113,9 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           picName: data.pic_name,
           entryBy: data.entry_by,
           status: data.status,
-          totalTagihanDibayar: data.total_tagihan_dibayar,
-          sisaAnggaran: data.sisa_anggaran,
-          persentaseRealisasi: data.persentase_realisasi,
+          totalTagihanDibayar: data.total_tagihan_dibayar || 0,
+          sisaAnggaran: data.sisa_anggaran || 0,
+          persentaseRealisasi: data.persentase_realisasi || 0,
           progressPekerjaan: data.progress_pekerjaan || 0,
           oldFlag: data.old_flag,
           clickCB: data.click_cb,
@@ -896,20 +1125,35 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
           updatedBy: data.updated_by,
           keterangan: data.keterangan,
           dokumenKontrak: data.dokumen_kontrak,
+          previousContractId: oldContractId,
+          versionNumber: versionNumber,
+          // Keep investment-specific fields
+          judulPRK: data.judul_prk || oldContract.judulPRK,
+          namaPekerjaan: data.nama_pekerjaan || oldContract.namaPekerjaan,
+          noPRK: oldContract.noPRK, // Ensure noPRK stays the same
+          nilaiPerjanjian: data.nilai_perjanjian,
+          nilaiTagihan: data.nilai_tagihan,
+          namaVendor: data.nama_vendor,
+          terbayar: data.terbayar,
+          jenisAI: data.jenis_ai,
+          crNotCR: data.cr_not_cr,
+          statusVIP: data.status_vip,
+          noWBSPosAnggaran: data.no_wbs_pos_anggaran,
+          noSKKI: data.no_skki,
+          requestTanggalSE: data.request_tanggal_se,
+          submissionIdVIP: data.submission_id_vip,
         };
 
-        // Update local state
-        setContracts((prev) =>
-          prev.map((c) => (c.id === id ? transformedData : c))
-        );
+        // Add new contract to local state
+        setContracts((prev) => [...prev, transformedData]);
 
         return transformedData;
       } catch (error) {
-        console.error('Error updating contract:', error);
+        console.error('Error creating new contract version:', error);
         throw error;
       }
     },
-    []
+    [contracts]
   );
 
   // Create invoice - DENGAN SUPABASE
@@ -1075,12 +1319,14 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       getContractById,
       getInvoiceById,
       getInvoicesByContract,
+      getContractHistory,
       getDashboardSummary,
       filterContracts,
       filterInvoices,
       createContract,
       addContract: createContract, // Alias untuk createContract
       updateContract,
+      updateContractWithNewVersion,
       createInvoice,
       updateInvoice,
       updateInvoiceStatus,
@@ -1096,11 +1342,13 @@ export function ContractStoreProvider({ children }: { children: ReactNode }) {
       getContractById,
       getInvoiceById,
       getInvoicesByContract,
+      getContractHistory,
       getDashboardSummary,
       filterContracts,
       filterInvoices,
       createContract,
       updateContract,
+      updateContractWithNewVersion,
       createInvoice,
       updateInvoice,
       updateInvoiceStatus,
