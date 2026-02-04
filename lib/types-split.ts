@@ -244,28 +244,134 @@ export interface ContractMaintenance {
 
 // ============================================
 // CONTRACT ADMINISTRATION (Administrasi - AO)
+// Kolom sesuai dengan requirement:
+// 1. Uraian Kegiatan/Mata Anggaran
+// 2. No. Perjanjian/Amandemen
+// 3. Tanggal Perjanjian/Amandemen
+// 4. Tanggal Berakhir
+// 5. Judul Perjanjian
+// 6. Nilai Perjanjian
+// 7. Nama Vendor
+// 8. Nilai Tagihan Keseluruhan
+// 9. Nilai Tagihan Khusus Kantor Pusat
+// 10. Nilai Tagihan Unit selain Kantor Pusat
+// 11. No. Berita Acara
+// 12. Tanggal Berita Acara
+// 13. No. WBS/Pos Anggaran
+// 14. No. SKKI/SKKO
+// 15. Tanggal Request
+// 16. Tanggal SE release
+// 17. No. SE
+// 18. No. PO
+// 19. Submission ID
+// 20. Nama Pekerjaan
+// 21. Beban Tahun
+// 22. Terbayar Pusat
+// 23. Status Bayar
+// 24. Keterangan
+// 25. Entry By
+// 26. Keterangan/Konfirmasi
+// 27. Rutin/Non Rutin
+// 28. PIC
+// 29. Bidang
 // ============================================
 
-export interface ContractAdministration extends BaseContract {
+export interface ContractAdministration {
+  // Primary Key
+  id: string;
+  no: number;
   kategori: "administrasi";
   
-  // Pekerjaan
-  judulPekerjaan: string;
+  // 1. Uraian Kegiatan/Mata Anggaran
   uraianKegiatan?: string;
-  jenisPekerjaan?: string;
   
-  // Nilai
-  nilaiKontrak: number;
-  nilaiTagihan: number;
-  totalTagihanDibayar: number;
-  sisaAnggaran: number;
-  persentaseRealisasi: number;
+  // 2. No. Perjanjian/Amandemen
+  noPerjanjian: string;
   
-  // Vendor
-  vendor: string;
+  // 3. Tanggal Perjanjian/Amandemen
+  tanggalPerjanjian: string;
   
-  // Jenis
-  jenisAnggaran: JenisAnggaran;
+  // 4. Tanggal Berakhir
+  tanggalBerakhir: string;
+  
+  // 5. Judul Perjanjian
+  judulPerjanjian: string;
+  
+  // 6. Nilai Perjanjian
+  nilaiPerjanjian: number;
+  
+  // 7. Nama Vendor
+  namaVendor: string;
+  
+  // 8. Nilai Tagihan Keseluruhan
+  nilaiTagihanKeseluruhan: number;
+  
+  // 9. Nilai Tagihan Khusus Kantor Pusat
+  nilaiTagihanKantorPusat: number;
+  
+  // 10. Nilai Tagihan Unit selain Kantor Pusat
+  nilaiTagihanUnitSelainPusat: number;
+  
+  // 11. No. Berita Acara
+  noBeritaAcara?: string;
+  
+  // 12. Tanggal Berita Acara
+  tanggalBeritaAcara?: string;
+  
+  // 13. No. WBS/Pos Anggaran
+  noWBSPosAnggaran?: string;
+  
+  // 14. No. SKKI/SKKO
+  noSKKISKKO?: string;
+  
+  // 15. Tanggal Request
+  tanggalRequest?: string;
+  
+  // 16. Tanggal SE release
+  tanggalSERelease?: string;
+  
+  // 17. No. SE
+  noSE?: string;
+  
+  // 18. No. PO
+  noPO?: string;
+  
+  // 19. Submission ID
+  submissionId?: string;
+  
+  // 20. Nama Pekerjaan
+  namaPekerjaan?: string;
+  
+  // 21. Beban Tahun
+  bebanTahun?: string;
+  
+  // 22. Terbayar Pusat
+  terbayarPusat: number;
+  
+  // 23. Status Bayar
+  statusBayar?: string;
+  
+  // 24. Keterangan
+  keterangan?: string;
+  
+  // 25. Entry By
+  entryBy?: string;
+  
+  // 26. Keterangan/Konfirmasi
+  keteranganKonfirmasi?: string;
+  
+  // 27. Rutin/Non Rutin
+  rutinNonRutin?: string;
+  
+  // 28. PIC
+  pic?: string;
+  
+  // 29. Bidang
+  bidang?: string;
+  
+  // Metadata
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ============================================
@@ -473,16 +579,38 @@ export interface CreateMaintenanceContractData {
 }
 
 export interface CreateAdministrationContractData {
+  // Required fields
   noPerjanjian: string;
   tanggalPerjanjian: string;
   tanggalBerakhir: string;
-  judulPekerjaan: string;
+  judulPerjanjian: string;
+  nilaiPerjanjian: number;
+  namaVendor: string;
+  
+  // Optional fields
   uraianKegiatan?: string;
-  nilaiKontrak: number;
-  vendor: string;
-  jenisAnggaran: JenisAnggaran;
-  unit: string;
+  nilaiTagihanKeseluruhan?: number;
+  nilaiTagihanKantorPusat?: number;
+  nilaiTagihanUnitSelainPusat?: number;
+  noBeritaAcara?: string;
+  tanggalBeritaAcara?: string;
+  noWBSPosAnggaran?: string;
+  noSKKISKKO?: string;
+  tanggalRequest?: string;
+  tanggalSERelease?: string;
+  noSE?: string;
+  noPO?: string;
+  submissionId?: string;
+  namaPekerjaan?: string;
+  bebanTahun?: string;
+  terbayarPusat?: number;
+  statusBayar?: string;
   keterangan?: string;
+  entryBy?: string;
+  keteranganKonfirmasi?: string;
+  rutinNonRutin?: string;
+  pic?: string;
+  bidang?: string;
 }
 
 export interface CreateInvoiceData {

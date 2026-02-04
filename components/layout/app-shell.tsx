@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth, ROLE_LABELS, ROLE_COLORS } from "@/lib/auth";
+import { useAuth, ROLE_LABELS, ROLE_COLORS } from "@/lib/auth-new";
 
 interface SidebarProps {
   children: ReactNode;

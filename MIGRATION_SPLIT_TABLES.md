@@ -85,7 +85,7 @@ Jika Anda memiliki data di tabel `contracts` lama yang ingin dipindahkan:
 | submission_id_vip | TEXT | Auto-generate |
 | ... | ... | Dan field lainnya |
 
-### contract_maintenance & contract_administration
+### contract_maintenance
 
 | Kolom | Tipe | Keterangan |
 |-------|------|------------|
@@ -94,17 +94,51 @@ Jika Anda memiliki data di tabel `contracts` lama yang ingin dipindahkan:
 | no_perjanjian | TEXT | Nomor perjanjian (unique) |
 | tanggal_perjanjian | DATE | Tanggal perjanjian |
 | tanggal_berakhir | DATE | Tanggal berakhir |
-| judul_pekerjaan | TEXT | Judul pekerjaan |
+| judul_perjanjian | TEXT | Judul perjanjian |
 | uraian_kegiatan | TEXT | Uraian kegiatan |
-| nilai_kontrak | BIGINT | Nilai kontrak |
-| nilai_tagihan | BIGINT | Nilai tagihan |
-| total_tagihan_dibayar | BIGINT | Total yang sudah dibayar |
-| sisa_anggaran | BIGINT | Otomatis dihitung |
-| persentase_realisasi | NUMERIC | Otomatis dihitung |
-| vendor | TEXT | Nama vendor |
-| status | TEXT | aktif/selesai/bermasalah |
-| jenis_anggaran | TEXT | AI atau AO |
+| nilai_perjanjian | BIGINT | Nilai perjanjian |
+| nama_vendor | TEXT | Nama vendor |
+| nilai_tagihan_sti_pusat | BIGINT | Nilai tagihan STI pusat |
+| nilai_tagihan_unit_induk | BIGINT | Nilai tagihan unit induk |
 | ... | ... | Dan field lainnya |
+
+### contract_administration
+
+| Kolom | Tipe | Keterangan |
+|-------|------|------------|
+| id | UUID | Primary Key |
+| no | SERIAL | Nomor urut |
+| uraian_kegiatan | TEXT | Uraian Kegiatan/Mata Anggaran |
+| no_perjanjian | TEXT | No. Perjanjian/Amandemen (unique) |
+| tanggal_perjanjian | DATE | Tanggal Perjanjian/Amandemen |
+| tanggal_berakhir | DATE | Tanggal Berakhir |
+| judul_perjanjian | TEXT | Judul Perjanjian |
+| nilai_perjanjian | BIGINT | Nilai Perjanjian |
+| nama_vendor | TEXT | Nama Vendor |
+| nilai_tagihan_keseluruhan | BIGINT | Nilai Tagihan Keseluruhan |
+| nilai_tagihan_kantor_pusat | BIGINT | Nilai Tagihan Khusus Kantor Pusat |
+| nilai_tagihan_unit_selain_pusat | BIGINT | Nilai Tagihan Unit selain Kantor Pusat |
+| no_berita_acara | TEXT | No. Berita Acara |
+| tanggal_berita_acara | DATE | Tanggal Berita Acara |
+| no_wbs_pos_anggaran | TEXT | No. WBS/Pos Anggaran |
+| no_skki_skko | TEXT | No. SKKI/SKKO |
+| tanggal_request | DATE | Tanggal Request |
+| tanggal_se_release | DATE | Tanggal SE release |
+| no_se | TEXT | No. SE |
+| no_po | TEXT | No. PO |
+| submission_id | TEXT | Submission ID |
+| nama_pekerjaan | TEXT | Nama Pekerjaan |
+| beban_tahun | TEXT | Beban Tahun |
+| terbayar_pusat | BIGINT | Terbayar Pusat |
+| status_bayar | TEXT | Status Bayar |
+| keterangan | TEXT | Keterangan |
+| entry_by | TEXT | Entry By |
+| keterangan_konfirmasi | TEXT | Keterangan/Konfirmasi |
+| rutin_non_rutin | TEXT | Rutin/Non Rutin |
+| pic | TEXT | PIC |
+| bidang | TEXT | Bidang |
+| created_at | TIMESTAMPTZ | Timestamp dibuat |
+| updated_at | TIMESTAMPTZ | Timestamp diupdate |
 
 ## Perubahan Kode Aplikasi
 

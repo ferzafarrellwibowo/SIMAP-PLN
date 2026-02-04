@@ -10,6 +10,10 @@ import type { User, UserRole } from "./types-new";
 
 // Storage key for persisting auth state
 const AUTH_STORAGE_KEY = "simap_auth_user";
+const AUTH_EXPIRY_KEY = "simap_auth_expiry";
+
+// Session expiry time in milliseconds (15 minutes)
+const SESSION_EXPIRY_MS = 15 * 60 * 1000;
 
 // ============================================
 // PERMISSION DEFINITIONS
@@ -115,7 +119,21 @@ function getStoredUser(): User | null {
   if (typeof window === "undefined") return null;
   try {
     const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (stored) {
+    const expiry = localStorage.getItem(AUTH_EXPIRY_KEY);
+    
+    if (stored && expiry) {
+      const expiryTime = parseInt(expiry, 10);
+      const now = Date.now();
+      
+      // Check if session has expired
+      if (now > expiryTime) {
+        // Session expired, clear storage
+        localStorage.removeItem(AUTH_STORAGE_KEY);
+        localStorage.removeItem(AUTH_EXPIRY_KEY);
+        console.log("Session expired, redirecting to login...");
+        return null;
+      }
+      
       return JSON.parse(stored) as User;
     }
   } catch (error) {
@@ -124,17 +142,35 @@ function getStoredUser(): User | null {
   return null;
 }
 
-// Helper function to store user in localStorage
+// Helper function to store user in localStorage with expiry
 function storeUser(user: User | null): void {
   if (typeof window === "undefined") return;
   try {
     if (user) {
       localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      // Set expiry time to 15 minutes from now
+      const expiryTime = Date.now() + SESSION_EXPIRY_MS;
+      localStorage.setItem(AUTH_EXPIRY_KEY, expiryTime.toString());
     } else {
       localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(AUTH_EXPIRY_KEY);
     }
   } catch (error) {
     console.error("Error storing auth to localStorage:", error);
+  }
+}
+
+// Helper function to refresh session expiry (call on user activity)
+function refreshSessionExpiry(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (stored) {
+      const expiryTime = Date.now() + SESSION_EXPIRY_MS;
+      localStorage.setItem(AUTH_EXPIRY_KEY, expiryTime.toString());
+    }
+  } catch (error) {
+    console.error("Error refreshing session expiry:", error);
   }
 }
 
@@ -150,6 +186,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const validUser = MOCK_USERS.find((u) => u.id === storedUser.id);
       if (validUser) {
         setUser(validUser);
+        // Refresh session expiry on page load (if still valid)
+        refreshSessionExpiry();
       } else {
         // Clear invalid stored user
         storeUser(null);
@@ -157,6 +195,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setIsLoading(false);
   }, []);
+
+  // Set up activity listeners to refresh session on user interaction
+  useEffect(() => {
+    if (!user) return;
+
+    const handleActivity = () => {
+      refreshSessionExpiry();
+    };
+
+    // Listen to user activity events
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    // Check session expiry periodically (every minute)
+    const intervalId = setInterval(() => {
+      const storedUser = getStoredUser();
+      if (!storedUser) {
+        // Session expired, logout
+        setUser(null);
+      }
+    }, 60 * 1000); // Check every 1 minute
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+      clearInterval(intervalId);
+    };
+  }, [user]);
 
   const login = useCallback(async (usernameOrEmail: string, password: string): Promise<boolean> => {
     // Simulate API call delay

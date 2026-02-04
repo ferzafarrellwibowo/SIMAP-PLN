@@ -279,19 +279,38 @@ export async function createAdministrationContract(
   contractData: CreateAdministrationContractData
 ): Promise<ContractAdministration> {
   const insertData = {
+    // Required fields
     no_perjanjian: contractData.noPerjanjian,
     tanggal_perjanjian: contractData.tanggalPerjanjian,
     tanggal_berakhir: contractData.tanggalBerakhir,
-    judul_pekerjaan: contractData.judulPekerjaan,
+    judul_perjanjian: contractData.judulPerjanjian,
+    nilai_perjanjian: contractData.nilaiPerjanjian,
+    nama_vendor: contractData.namaVendor,
+    
+    // Optional fields with defaults
     uraian_kegiatan: contractData.uraianKegiatan,
-    nilai_kontrak: contractData.nilaiKontrak,
-    nilai_tagihan: 0,
-    total_tagihan_dibayar: 0,
-    vendor: contractData.vendor,
-    status: "aktif",
-    jenis_anggaran: contractData.jenisAnggaran,
-    unit: contractData.unit,
+    nilai_tagihan_keseluruhan: contractData.nilaiTagihanKeseluruhan || 0,
+    nilai_tagihan_kantor_pusat: contractData.nilaiTagihanKantorPusat || 0,
+    nilai_tagihan_unit_selain_pusat: contractData.nilaiTagihanUnitSelainPusat || 0,
+    no_berita_acara: contractData.noBeritaAcara,
+    tanggal_berita_acara: contractData.tanggalBeritaAcara,
+    no_wbs_pos_anggaran: contractData.noWBSPosAnggaran,
+    no_skki_skko: contractData.noSKKISKKO,
+    tanggal_request: contractData.tanggalRequest,
+    tanggal_se_release: contractData.tanggalSERelease,
+    no_se: contractData.noSE,
+    no_po: contractData.noPO,
+    submission_id: contractData.submissionId,
+    nama_pekerjaan: contractData.namaPekerjaan,
+    beban_tahun: contractData.bebanTahun,
+    terbayar_pusat: contractData.terbayarPusat || 0,
+    status_bayar: contractData.statusBayar || "belum_terbayar",
     keterangan: contractData.keterangan,
+    entry_by: contractData.entryBy,
+    keterangan_konfirmasi: contractData.keteranganKonfirmasi,
+    rutin_non_rutin: contractData.rutinNonRutin,
+    pic: contractData.pic,
+    bidang: contractData.bidang,
   };
 
   const { data, error } = await supabase
@@ -557,54 +576,97 @@ function mapAdministrationContract(row: any): ContractAdministration {
     id: row.id,
     no: row.no,
     kategori: "administrasi",
-    noPerjanjian: row.no_perjanjian,
-    tanggalPerjanjian: row.tanggal_perjanjian,
-    tanggalBerakhir: row.tanggal_berakhir,
-    judulPekerjaan: row.judul_pekerjaan,
+    
+    // 1. Uraian Kegiatan/Mata Anggaran
     uraianKegiatan: row.uraian_kegiatan,
-    jenisPekerjaan: row.jenis_pekerjaan,
-    nilaiKontrak: row.nilai_kontrak || 0,
-    nilaiTagihan: row.nilai_tagihan || 0,
-    totalTagihanDibayar: row.total_tagihan_dibayar || 0,
-    sisaAnggaran: row.sisa_anggaran || 0,
-    persentaseRealisasi: row.persentase_realisasi || 0,
-    vendor: row.vendor,
-    status: row.status || "aktif",
-    jenisAnggaran: row.jenis_anggaran || "AO",
+    
+    // 2. No. Perjanjian/Amandemen
+    noPerjanjian: row.no_perjanjian,
+    
+    // 3. Tanggal Perjanjian/Amandemen
+    tanggalPerjanjian: row.tanggal_perjanjian,
+    
+    // 4. Tanggal Berakhir
+    tanggalBerakhir: row.tanggal_berakhir,
+    
+    // 5. Judul Perjanjian
+    judulPerjanjian: row.judul_perjanjian,
+    
+    // 6. Nilai Perjanjian
+    nilaiPerjanjian: row.nilai_perjanjian || 0,
+    
+    // 7. Nama Vendor
+    namaVendor: row.nama_vendor,
+    
+    // 8. Nilai Tagihan Keseluruhan
+    nilaiTagihanKeseluruhan: row.nilai_tagihan_keseluruhan || 0,
+    
+    // 9. Nilai Tagihan Khusus Kantor Pusat
+    nilaiTagihanKantorPusat: row.nilai_tagihan_kantor_pusat || 0,
+    
+    // 10. Nilai Tagihan Unit selain Kantor Pusat
+    nilaiTagihanUnitSelainPusat: row.nilai_tagihan_unit_selain_pusat || 0,
+    
+    // 11. No. Berita Acara
     noBeritaAcara: row.no_berita_acara,
+    
+    // 12. Tanggal Berita Acara
     tanggalBeritaAcara: row.tanggal_berita_acara,
-    nilaiBeritaAcara: row.nilai_berita_acara,
-    noBeritaAcaraSKRelasi: row.no_berita_acara_sk_relasi,
-    tanggalArsip: row.tanggal_arsip,
-    noXPS: row.no_xps,
-    tanggalXPS: row.tanggal_xps,
-    unit: row.unit,
-    unitSektorK: row.unit_sektor_k,
-    noSKWE: row.no_skwe,
-    posAngg: row.pos_angg,
-    noSKUSKKO: row.no_sku_skko,
+    
+    // 13. No. WBS/Pos Anggaran
+    noWBSPosAnggaran: row.no_wbs_pos_anggaran,
+    
+    // 14. No. SKKI/SKKO
+    noSKKISKKO: row.no_skki_skko,
+    
+    // 15. Tanggal Request
+    tanggalRequest: row.tanggal_request,
+    
+    // 16. Tanggal SE release
+    tanggalSERelease: row.tanggal_se_release,
+    
+    // 17. No. SE
     noSE: row.no_se,
+    
+    // 18. No. PO
     noPO: row.no_po,
+    
+    // 19. Submission ID
     submissionId: row.submission_id,
-    requestTanggalSE: row.request_tanggal_se,
-    requestTanggalSERelasi: row.request_tanggal_se_relasi,
+    
+    // 20. Nama Pekerjaan
+    namaPekerjaan: row.nama_pekerjaan,
+    
+    // 21. Beban Tahun
     bebanTahun: row.beban_tahun,
-    batasPaguTerbayar: row.batas_pagu_terbayar,
-    unitTerbayar: row.unit_terbayar,
-    konfirmasiNonRutin: row.konfirmasi_non_rutin,
-    bidang: row.bidang,
-    picId: row.pic_id,
-    picName: row.pic_name,
-    entryBy: row.entry_by,
-    progressPekerjaan: row.progress_pekerjaan || 0,
-    oldFlag: row.old_flag,
-    clickCB: row.click_cb,
+    
+    // 22. Terbayar Pusat
+    terbayarPusat: row.terbayar_pusat || 0,
+    
+    // 23. Status Bayar
+    statusBayar: row.status_bayar,
+    
+    // 24. Keterangan
     keterangan: row.keterangan,
-    dokumenKontrak: row.dokumen_kontrak,
+    
+    // 25. Entry By
+    entryBy: row.entry_by,
+    
+    // 26. Keterangan/Konfirmasi
+    keteranganKonfirmasi: row.keterangan_konfirmasi,
+    
+    // 27. Rutin/Non Rutin
+    rutinNonRutin: row.rutin_non_rutin,
+    
+    // 28. PIC
+    pic: row.pic,
+    
+    // 29. Bidang
+    bidang: row.bidang,
+    
+    // Metadata
     createdAt: row.created_at,
-    createdBy: row.created_by,
     updatedAt: row.updated_at,
-    updatedBy: row.updated_by,
   };
 }
 
@@ -709,19 +771,36 @@ function mapAdministrationToDb(contract: Partial<ContractAdministration>): Recor
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result: Record<string, any> = {};
 
+  // Mapping sesuai struktur tabel baru contract_administration
+  if (contract.uraianKegiatan !== undefined) result.uraian_kegiatan = contract.uraianKegiatan;
   if (contract.noPerjanjian !== undefined) result.no_perjanjian = contract.noPerjanjian;
   if (contract.tanggalPerjanjian !== undefined) result.tanggal_perjanjian = contract.tanggalPerjanjian;
   if (contract.tanggalBerakhir !== undefined) result.tanggal_berakhir = contract.tanggalBerakhir;
-  if (contract.judulPekerjaan !== undefined) result.judul_pekerjaan = contract.judulPekerjaan;
-  if (contract.uraianKegiatan !== undefined) result.uraian_kegiatan = contract.uraianKegiatan;
-  if (contract.nilaiKontrak !== undefined) result.nilai_kontrak = contract.nilaiKontrak;
-  if (contract.nilaiTagihan !== undefined) result.nilai_tagihan = contract.nilaiTagihan;
-  if (contract.totalTagihanDibayar !== undefined) result.total_tagihan_dibayar = contract.totalTagihanDibayar;
-  if (contract.vendor !== undefined) result.vendor = contract.vendor;
-  if (contract.status !== undefined) result.status = contract.status;
-  if (contract.jenisAnggaran !== undefined) result.jenis_anggaran = contract.jenisAnggaran;
-  if (contract.unit !== undefined) result.unit = contract.unit;
+  if (contract.judulPerjanjian !== undefined) result.judul_perjanjian = contract.judulPerjanjian;
+  if (contract.nilaiPerjanjian !== undefined) result.nilai_perjanjian = contract.nilaiPerjanjian;
+  if (contract.namaVendor !== undefined) result.nama_vendor = contract.namaVendor;
+  if (contract.nilaiTagihanKeseluruhan !== undefined) result.nilai_tagihan_keseluruhan = contract.nilaiTagihanKeseluruhan;
+  if (contract.nilaiTagihanKantorPusat !== undefined) result.nilai_tagihan_kantor_pusat = contract.nilaiTagihanKantorPusat;
+  if (contract.nilaiTagihanUnitSelainPusat !== undefined) result.nilai_tagihan_unit_selain_pusat = contract.nilaiTagihanUnitSelainPusat;
+  if (contract.noBeritaAcara !== undefined) result.no_berita_acara = contract.noBeritaAcara;
+  if (contract.tanggalBeritaAcara !== undefined) result.tanggal_berita_acara = contract.tanggalBeritaAcara;
+  if (contract.noWBSPosAnggaran !== undefined) result.no_wbs_pos_anggaran = contract.noWBSPosAnggaran;
+  if (contract.noSKKISKKO !== undefined) result.no_skki_skko = contract.noSKKISKKO;
+  if (contract.tanggalRequest !== undefined) result.tanggal_request = contract.tanggalRequest;
+  if (contract.tanggalSERelease !== undefined) result.tanggal_se_release = contract.tanggalSERelease;
+  if (contract.noSE !== undefined) result.no_se = contract.noSE;
+  if (contract.noPO !== undefined) result.no_po = contract.noPO;
+  if (contract.submissionId !== undefined) result.submission_id = contract.submissionId;
+  if (contract.namaPekerjaan !== undefined) result.nama_pekerjaan = contract.namaPekerjaan;
+  if (contract.bebanTahun !== undefined) result.beban_tahun = contract.bebanTahun;
+  if (contract.terbayarPusat !== undefined) result.terbayar_pusat = contract.terbayarPusat;
+  if (contract.statusBayar !== undefined) result.status_bayar = contract.statusBayar;
   if (contract.keterangan !== undefined) result.keterangan = contract.keterangan;
+  if (contract.entryBy !== undefined) result.entry_by = contract.entryBy;
+  if (contract.keteranganKonfirmasi !== undefined) result.keterangan_konfirmasi = contract.keteranganKonfirmasi;
+  if (contract.rutinNonRutin !== undefined) result.rutin_non_rutin = contract.rutinNonRutin;
+  if (contract.pic !== undefined) result.pic = contract.pic;
+  if (contract.bidang !== undefined) result.bidang = contract.bidang;
 
   return result;
 }

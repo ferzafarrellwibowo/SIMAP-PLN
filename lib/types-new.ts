@@ -135,6 +135,20 @@ export interface Contract {
   statusTerbayar?: string;        // Status Terbayar (Belum Terbayar, Sebagian Terbayar, Lunas)
   rutinNonRutin?: string;         // Rutin/Non Rutin
 
+  // ============================================
+  // FIELD KHUSUS KATEGORI ADMINISTRASI
+  // ============================================
+
+  nilaiTagihanKeseluruhan?: number;      // Nilai Tagihan Keseluruhan
+  nilaiTagihanKantorPusat?: number;      // Nilai Tagihan Kantor Pusat
+  nilaiTagihanUnitSelainPusat?: number;  // Nilai Tagihan Unit Selain Pusat
+  noSKKISKKO?: string;                   // No. SKKI/SKKO
+  tanggalRequest?: string;               // Tanggal Request
+  tanggalSERelease?: string;             // Tanggal SE Release
+  statusBayar?: "belum_terbayar" | "sebagian_terbayar" | "lunas"; // Status Bayar
+  keteranganKonfirmasi?: string;         // Keterangan/Konfirmasi
+  pic?: string;                          // PIC
+
   // PIC
   picId?: string;
   picName?: string;

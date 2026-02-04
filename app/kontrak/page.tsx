@@ -55,7 +55,8 @@ export default function KontrakTabbedPage() {
   const { contracts } = useContractStore();
   const searchParams = useSearchParams();
   
-  const initialKategori = searchParams.get("kategori") as ContractCategory | null;
+  // Support both 'kategori' and 'tab' query parameters for back navigation
+  const initialKategori = (searchParams.get("tab") || searchParams.get("kategori")) as ContractCategory | null;
   
   // Active tab state
   const [activeTab, setActiveTab] = useState<ContractCategory>(initialKategori || "investasi");
@@ -388,7 +389,48 @@ export default function KontrakTabbedPage() {
                               <span className="font-medium">Requested By:</span> {contract.requestedBy || "-"}
                             </p>
                             <p>
-                              <span className="font-medium">Periode Accrue:</span> {contract.periodeAccrue || "-"}
+                              <span className="font-medium">Periode Accrue:</span> {(contract.periodeAccrueBulan && contract.periodeAccrueTahun) ? `${contract.periodeAccrueBulan}/${contract.periodeAccrueTahun}` : contract.periodeAccrueBulan || contract.periodeAccrueTahun || "-"}
+                            </p>
+                          </>
+                        )}
+                        {activeTab === "administrasi" && (
+                          <>
+                            <p>
+                              <span className="font-medium">Bidang:</span> {contract.bidang || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">PIC:</span> {contract.pic || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">No. SE:</span> {contract.noSE || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">No. PO:</span> {contract.noPO || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Beban Tahun:</span> {contract.bebanTahun || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Rutin/Non Rutin:</span> {contract.rutinNonRutin || "-"}
+                            </p>
+                            <p>
+                              <span className="font-medium">Status Bayar:</span>{" "}
+                              <span className={`inline-flex px-1.5 py-0.5 text-xs font-medium rounded ${
+                                contract.statusBayar === "lunas" 
+                                  ? "bg-green-100 text-green-700" 
+                                  : contract.statusBayar === "sebagian_terbayar" 
+                                  ? "bg-amber-100 text-amber-700" 
+                                  : "bg-red-100 text-red-700"
+                              }`}>
+                                {contract.statusBayar === "lunas" 
+                                  ? "Lunas"
+                                  : contract.statusBayar === "sebagian_terbayar"
+                                  ? "Sebagian Terbayar"
+                                  : "Belum Terbayar"}
+                              </span>
+                            </p>
+                            <p>
+                              <span className="font-medium">Terbayar Pusat:</span> {formatCurrency(contract.terbayarPusat || 0)}
                             </p>
                           </>
                         )}

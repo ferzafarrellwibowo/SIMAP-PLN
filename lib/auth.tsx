@@ -4,8 +4,15 @@
 
 "use client";
 
-import React, { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import type { User, UserRole } from "./types";
+
+// Storage keys
+const AUTH_STORAGE_KEY = "auth_user";
+const AUTH_EXPIRY_KEY = "auth_expiry";
+
+// Session expiry time in milliseconds (15 minutes)
+const SESSION_EXPIRY_MS = 15 * 60 * 1000;
 
 // ============================================
 // PERMISSION DEFINITIONS
@@ -122,9 +129,111 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// Helper function to check if session is valid
+function isSessionValid(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const expiry = localStorage.getItem(AUTH_EXPIRY_KEY);
+    if (!expiry) return false;
+    return Date.now() < parseInt(expiry, 10);
+  } catch {
+    return false;
+  }
+}
+
+// Helper function to get stored user if session is valid
+function getStoredUser(): User | null {
+  if (typeof window === "undefined") return null;
+  try {
+    if (!isSessionValid()) {
+      // Session expired, clear storage
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(AUTH_EXPIRY_KEY);
+      return null;
+    }
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch {
+    return null;
+  }
+}
+
+// Helper function to store user with expiry
+function storeUserWithExpiry(user: User | null): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (user) {
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+      localStorage.setItem(AUTH_EXPIRY_KEY, (Date.now() + SESSION_EXPIRY_MS).toString());
+    } else {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.removeItem(AUTH_EXPIRY_KEY);
+    }
+  } catch (error) {
+    console.error("Error storing auth:", error);
+  }
+}
+
+// Helper function to refresh session expiry
+function refreshSessionExpiry(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (stored) {
+      localStorage.setItem(AUTH_EXPIRY_KEY, (Date.now() + SESSION_EXPIRY_MS).toString());
+    }
+  } catch (error) {
+    console.error("Error refreshing session:", error);
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Restore user from localStorage on mount (with expiry check)
+  useEffect(() => {
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      // Verify user exists in mock users
+      const validUser = MOCK_USERS.find((u) => u.id === storedUser.id);
+      if (validUser) {
+        setUser(validUser);
+        refreshSessionExpiry(); // Refresh on page load
+      } else {
+        storeUserWithExpiry(null);
+      }
+    }
+    setIsLoading(false);
+  }, []);
+
+  // Set up activity listeners to refresh session
+  useEffect(() => {
+    if (!user) return;
+
+    const handleActivity = () => {
+      refreshSessionExpiry();
+    };
+
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      window.addEventListener(event, handleActivity, { passive: true });
+    });
+
+    // Periodic session check
+    const intervalId = setInterval(() => {
+      if (!isSessionValid()) {
+        setUser(null);
+      }
+    }, 60 * 1000);
+
+    return () => {
+      events.forEach(event => {
+        window.removeEventListener(event, handleActivity);
+      });
+      clearInterval(intervalId);
+    };
+  }, [user]);
 
   const login = useCallback(async (username: string, password: string): Promise<boolean> => {
     setIsLoading(true);
@@ -139,10 +248,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (foundUser && password === "password123") {
       setUser(foundUser);
-      // Store in localStorage for persistence
-      if (typeof window !== "undefined") {
-        localStorage.setItem("auth_user", JSON.stringify(foundUser));
-      }
+      storeUserWithExpiry(foundUser);
       setIsLoading(false);
       return true;
     }
@@ -153,9 +259,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("auth_user");
-    }
+    storeUserWithExpiry(null);
   }, []);
 
   const hasPermission = useCallback(
@@ -188,20 +292,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [user]
   );
-
-  // Restore user from localStorage on mount
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("auth_user");
-      if (stored) {
-        try {
-          setUser(JSON.parse(stored));
-        } catch {
-          localStorage.removeItem("auth_user");
-        }
-      }
-    }
-  }, []);
 
   return (
     <AuthContext.Provider

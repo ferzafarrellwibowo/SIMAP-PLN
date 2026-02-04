@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useAuth, ROLE_LABELS } from "@/lib/auth";
+import { useAuth, ROLE_LABELS } from "@/lib/auth-new";
 
 export default function LoginPage() {
   const router = useRouter();
