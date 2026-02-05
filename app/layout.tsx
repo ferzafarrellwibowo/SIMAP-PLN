@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <head>
         {/* Favicon: sediakan beberapa link agar browser dapat memilih ukuran terbaik */}
         {/* SVG (scalable) */}
@@ -41,6 +41,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white min-h-screen`}
+        suppressHydrationWarning
       >
         <Providers>{children}</Providers>
       </body>

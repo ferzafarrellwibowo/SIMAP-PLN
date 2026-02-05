@@ -84,16 +84,17 @@ export default function KontrakTabbedPage() {
 
   // Group contracts by category
   const contractsByCategory = useMemo(() => {
+    const contractList = contracts || [];
     return {
-      investasi: contracts.filter((c) => c.kategori === "investasi"),
-      pemeliharaan: contracts.filter((c) => c.kategori === "pemeliharaan"),
-      administrasi: contracts.filter((c) => c.kategori === "administrasi"),
+      investasi: contractList.filter((c) => c.kategori === "investasi"),
+      pemeliharaan: contractList.filter((c) => c.kategori === "pemeliharaan"),
+      administrasi: contractList.filter((c) => c.kategori === "administrasi"),
     };
   }, [contracts]);
 
   // Filter contracts for active tab
   const filteredContracts = useMemo(() => {
-    const categoryContracts = contractsByCategory[activeTab];
+    const categoryContracts = contractsByCategory[activeTab] || [];
     
     return categoryContracts.filter((c) => {
       const judulPekerjaan = c.judulPekerjaan || c.judulPerjanjian || "";
