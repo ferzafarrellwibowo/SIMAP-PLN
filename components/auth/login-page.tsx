@@ -33,9 +33,8 @@ export default function LoginPage() {
 
   const demoAccounts = [
     { username: "admin", role: "admin", name: "Ferza Farrell Wibowo" },
-    { username: "siti.pic", role: "pic", name: "Siti Rahayu (PIC)" },
-    { username: "dewi.keuangan", role: "keuangan", name: "Dewi Lestari (Keuangan)" },
-    { username: "ahmad.manajer", role: "manajer", name: "Falih Akmal Dewanda (Manajer)" },
+    { username: "manajer", role: "viewer", name: "Falih Akmal Dewanda (Manajer)" },
+    { username: "vendor.wijaya", role: "vendor", name: "Andi Pratama (Vendor - PT Wijaya Karya)" },
   ];
 
   return (

@@ -435,6 +435,7 @@ export async function POST(request: Request) {
         nilai_tagihan: body.nilaiTagihan || 0,
         terbayar: body.terbayar || 0,
         nama_vendor: body.namaVendor || body.vendor,
+          vendor_email: body.vendorEmail,
         jenis_ai: body.jenisAI || body.jenisAnggaran || 'AI',
         cr_not_cr: body.crNotCR || 'Not CR',
         status: body.status || 'aktif',
@@ -464,6 +465,7 @@ export async function POST(request: Request) {
         nilai_tagihan: body.nilaiTagihan || 0,
         total_tagihan_dibayar: 0,
         vendor: body.vendor,
+          vendor_email: body.vendorEmail,
         status: body.status || 'aktif',
         jenis_anggaran: body.jenisAnggaran || 'AO',
         unit: body.unit,
@@ -479,7 +481,7 @@ export async function POST(request: Request) {
     // retry without them (backward compatible for environments missing migration).
     async function insertContract(dataObj: Record<string, unknown>) {
       return await supabaseServer
-        .from(tableName)
+        .from(tableName as string)
         .insert([dataObj])
         .select()
         .single();
@@ -510,6 +512,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: insertResult.error.message }, { status: 500 });
     }
 
+    // --- MOCK VENDOR ACCOUNT CREATION & EMAIL ---
+    if (body.vendorEmail) {
+      console.log("======================================");
+      console.log("[MOCK LOGIC] Mendaftarkan Akun Vendor:", body.vendorEmail);
+      console.log("Role: vendor, Aktif sampai: ", body.tanggalBerakhir);
+      console.log("Mengirim Email ke:", body.vendorEmail);
+      console.log("Isi Email: Halo ", body.namaVendor || body.vendor, " ini adalah link login sementara Anda...");
+      console.log("======================================");
+    }
+    // --------------------------------------------
     return NextResponse.json({ data: insertResult.data }, { status: 201 });
   } catch (error: unknown) {
     console.error('Server error:', error);

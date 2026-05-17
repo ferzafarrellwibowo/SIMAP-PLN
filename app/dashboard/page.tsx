@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { StatusPieChart } from "@/components/dashboard/status-chart";
@@ -137,11 +138,19 @@ const categoryConfig = [
 export default function DashboardPage() {
   const { user } = useAuth();
   const { contracts } = useContractStore();
+  const router = useRouter();
+
+  // Redirect vendor to their portal
+  useEffect(() => {
+    if (user?.role === "vendor") {
+      router.replace("/vendor");
+    }
+  }, [user, router]);
 
   // Summary statistics
   const summary = useMemo(() => {
     const total = contracts.length;
-    const running = contracts.filter((c) => c.status === "aktif" || c.status === "berjalan").length;
+    const running = contracts.filter((c) => c.status === "aktif").length;
     const completed = contracts.filter((c) => c.status === "selesai").length;
     const problematic = contracts.filter((c) => c.status === "bermasalah").length;
     return { total, running, completed, problematic };

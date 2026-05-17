@@ -58,6 +58,8 @@ export default function TagihanPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
   const [pendingStatus, setPendingStatus] = useState<InvoiceStatus | null>(null);
   const [dibayarOleh, setDibayarOleh] = useState("");
+  const [paymentProofUrl, setPaymentProofUrl] = useState("");
+  const [rejectionReason, setRejectionReason] = useState("");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -129,6 +131,11 @@ export default function TagihanPage() {
       return;
     }
 
+    if (newStatus === "ditolak") {
+      setPendingStatus(newStatus);
+      return;
+    }
+
     setIsUpdating(true);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -137,6 +144,8 @@ export default function TagihanPage() {
       setSelectedInvoice(null);
       setPendingStatus(null);
       setDibayarOleh("");
+      setPaymentProofUrl("");
+      setRejectionReason("");
       setSuccessMessage("Status tagihan berhasil diperbarui.");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
@@ -163,7 +172,34 @@ export default function TagihanPage() {
       setSelectedInvoice(null);
       setPendingStatus(null);
       setDibayarOleh("");
+      setPaymentProofUrl("");
       setSuccessMessage("Status tagihan berhasil diperbarui.");
+      setTimeout(() => setSuccessMessage(null), 3000);
+    } catch (error) {
+      console.error('Error updating status:', error);
+      setErrorMessage('Gagal mengubah status tagihan');
+      setTimeout(() => setErrorMessage(null), 5000);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleConfirmDitolak = async (invoiceId: string) => {
+    if (!rejectionReason.trim()) {
+      setErrorMessage('Harap isi alasan penolakan');
+      setTimeout(() => setErrorMessage(null), 3000);
+      return;
+    }
+
+    setIsUpdating(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      await updateInvoiceStatus(invoiceId, "ditolak");
+      setSelectedInvoice(null);
+      setPendingStatus(null);
+      setRejectionReason("");
+      setSuccessMessage("Status tagihan berhasil ditolak.");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
@@ -178,6 +214,8 @@ export default function TagihanPage() {
     setSelectedInvoice(null);
     setPendingStatus(null);
     setDibayarOleh("");
+    setPaymentProofUrl("");
+    setRejectionReason("");
   };
 
   const canEditStatus = user?.role === "admin";
@@ -451,11 +489,48 @@ export default function TagihanPage() {
                                       className="text-xs px-2 py-1 w-full border border-green-300 rounded bg-white text-gray-900"
                                       autoFocus
                                     />
+                                    <input
+                                      type="text"
+                                      value={paymentProofUrl}
+                                      onChange={(e) => setPaymentProofUrl(e.target.value)}
+                                      placeholder="URL Bukti Bayar..."
+                                      className="text-xs px-2 py-1 w-full border border-green-300 rounded bg-white text-gray-900"
+                                    />
                                     <div className="flex gap-1">
                                       <button
                                         onClick={() => handleConfirmDibayar(invoice.id)}
                                         disabled={isUpdating || !dibayarOleh.trim()}
                                         className="flex-1 text-xs px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
+                                      >
+                                        OK
+                                      </button>
+                                      <button
+                                        onClick={handleCancelEdit}
+                                        className="px-2 py-1 text-xs text-red-500 hover:bg-red-50 rounded"
+                                      >
+                                        ✕
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              if (pendingStatus === "ditolak") {
+                                return (
+                                  <div className="flex flex-col gap-1">
+                                    <input
+                                      type="text"
+                                      value={rejectionReason}
+                                      onChange={(e) => setRejectionReason(e.target.value)}
+                                      placeholder="Alasan penolakan..."
+                                      className="text-xs px-2 py-1 w-full border border-red-300 rounded bg-white text-gray-900"
+                                      autoFocus
+                                    />
+                                    <div className="flex gap-1">
+                                      <button
+                                        onClick={() => handleConfirmDitolak(invoice.id)}
+                                        disabled={isUpdating || !rejectionReason.trim()}
+                                        className="flex-1 text-xs px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50"
                                       >
                                         OK
                                       </button>
@@ -579,19 +654,51 @@ export default function TagihanPage() {
                         if (selectedInvoice === invoice.id) {
                           if (pendingStatus === "dibayar") {
                             return (
-                              <div className="flex gap-2">
+                              <div className="flex flex-col gap-2 w-full">
+                                <div className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    value={dibayarOleh}
+                                    onChange={(e) => setDibayarOleh(e.target.value)}
+                                    placeholder="Nama pembayar..."
+                                    className="flex-1 text-sm px-3 py-1.5 border border-green-300 rounded-lg bg-white"
+                                    autoFocus
+                                  />
+                                  <button
+                                    onClick={() => handleConfirmDibayar(invoice.id)}
+                                    disabled={isUpdating || !dibayarOleh.trim()}
+                                    className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50"
+                                  >
+                                    OK
+                                  </button>
+                                  <button onClick={handleCancelEdit} className="px-2 text-red-500">✕</button>
+                                </div>
                                 <input
                                   type="text"
-                                  value={dibayarOleh}
-                                  onChange={(e) => setDibayarOleh(e.target.value)}
-                                  placeholder="Nama pembayar..."
-                                  className="flex-1 text-sm px-3 py-1.5 border border-green-300 rounded-lg bg-white"
+                                  value={paymentProofUrl}
+                                  onChange={(e) => setPaymentProofUrl(e.target.value)}
+                                  placeholder="URL Bukti Bayar..."
+                                  className="w-full text-sm px-3 py-1.5 border border-green-300 rounded-lg bg-white"
+                                />
+                              </div>
+                            );
+                          }
+
+                          if (pendingStatus === "ditolak") {
+                            return (
+                              <div className="flex gap-2 w-full">
+                                <input
+                                  type="text"
+                                  value={rejectionReason}
+                                  onChange={(e) => setRejectionReason(e.target.value)}
+                                  placeholder="Alasan penolakan..."
+                                  className="flex-1 text-sm px-3 py-1.5 border border-red-300 rounded-lg bg-white"
                                   autoFocus
                                 />
                                 <button
-                                  onClick={() => handleConfirmDibayar(invoice.id)}
-                                  disabled={isUpdating || !dibayarOleh.trim()}
-                                  className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg disabled:opacity-50"
+                                  onClick={() => handleConfirmDitolak(invoice.id)}
+                                  disabled={isUpdating || !rejectionReason.trim()}
+                                  className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg disabled:opacity-50"
                                 >
                                   OK
                                 </button>

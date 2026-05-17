@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "./supabaseClient";
-import type { ContractMaintenance } from "./types-split";
+import { supabase } from "../supabaseClient";
+import type { ContractMaintenance } from "../types-split";
 
 // ============================================
 // HOOK: useMaintenanceContracts

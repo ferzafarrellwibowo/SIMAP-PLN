@@ -287,10 +287,12 @@ export default function PembayaranDetailPage() {
             </p>
           </div>
         </div>
-        {subscription.catatan && (
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {(subscription as any).catatan && (
           <div className="mt-4 pt-4 border-t border-gray-200">
             <p className="text-sm text-gray-500">Catatan</p>
-            <p className="text-gray-700">{subscription.catatan}</p>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            <p className="text-gray-700">{(subscription as any).catatan}</p>
           </div>
         )}
       </div>
@@ -307,7 +309,7 @@ export default function PembayaranDetailPage() {
             ) : paidCount > 0 ? (
               <Badge variant="info">Dalam Proses</Badge>
             ) : (
-              <Badge variant="destructive">Belum Bayar</Badge>
+              <Badge variant="danger">Belum Bayar</Badge>
             )}
           </div>
         </div>
@@ -422,7 +424,7 @@ export default function PembayaranDetailPage() {
               ) : yearSummary?.gapMonths.includes(selectedMonth.bulan) ? (
                 <Badge variant="warning">Terlewat</Badge>
               ) : (
-                <Badge variant="destructive">Belum Bayar</Badge>
+                <Badge variant="danger">Belum Bayar</Badge>
               )}
             </div>
             <p className="text-sm text-gray-500 mt-1">

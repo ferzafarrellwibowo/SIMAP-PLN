@@ -8,7 +8,7 @@
 // Hanya 2 role: Admin (Operator) dan Viewer (Manajer)
 // ============================================
 
-export type UserRole = "admin" | "viewer";
+export type UserRole = "admin" | "viewer" | "vendor";
 
 export interface User {
   id: string;
@@ -19,6 +19,82 @@ export interface User {
   unit: string;
   createdAt: string;
   lastLogin?: string;
+  // Vendor-specific fields
+  contractId?: string;           // ID kontrak terkait (untuk vendor)
+  vendorCompany?: string;        // Nama perusahaan vendor
+  isActive?: boolean;            // Status aktif akun vendor
+  activatedAt?: string;          // Tanggal aktivasi
+  expiresAt?: string;            // Tanggal berakhir (= tanggal berakhir kontrak)
+}
+
+// ============================================
+// VENDOR ACCOUNT
+// ============================================
+
+export interface VendorAccount {
+  id: string;
+  userId: string;
+  contractId: string;
+  email: string;
+  vendorName: string;
+  vendorCompany: string;
+  isActive: boolean;
+  activatedAt?: string;
+  expiresAt: string;              // = tanggalBerakhir kontrak
+  createdAt: string;
+  temporaryPassword?: string;     // Only shown once during creation
+}
+
+// ============================================
+// APPROVAL REQUESTS
+// ============================================
+
+export type ApprovalStatus = "pending" | "approved" | "rejected" | "negotiation";
+export type ApprovalType = 
+  | "update_kontrak"       // Approve Update Kontrak
+  | "invoice_payment"      // Kelola Invoice (Bayar/Tolak)
+  | "update_progress"      // Approve Update Progress
+  | "perpanjangan_kontrak"; // Review Pengajuan Perpanjangan
+
+export interface ApprovalRequest {
+  id: string;
+  type: ApprovalType;
+  contractId: string;
+  invoiceId?: string;            // For invoice-related approvals
+  requestedBy: string;           // User ID yang mengajukan
+  requestedByName: string;
+  requestedAt: string;
+  
+  // Status
+  status: ApprovalStatus;
+  reviewedBy?: string;           // Admin yang mereview
+  reviewedByName?: string;
+  reviewedAt?: string;
+  
+  // Details based on type
+  title: string;
+  description: string;
+  
+  // For update_kontrak - revision/negotiation
+  proposedValue?: number;        // Nilai kontrak yang diajukan
+  currentValue?: number;         // Nilai kontrak saat ini
+  negotiatedValue?: number;      // Nilai hasil negosiasi
+  
+  // For invoice_payment
+  paymentProof?: string;         // Bukti pembayaran (URL/path)
+  rejectionReason?: string;      // Alasan penolakan
+  
+  // For update_progress
+  proposedProgress?: number;     // Progress yang diajukan
+  currentProgress?: number;      // Progress saat ini
+  
+  // For perpanjangan_kontrak
+  proposedEndDate?: string;      // Tanggal akhir yang diajukan
+  currentEndDate?: string;       // Tanggal akhir saat ini
+  negotiatedEndDate?: string;    // Tanggal akhir hasil negosiasi
+  
+  createdAt: string;
+  updatedAt: string;
 }
 
 // ============================================
@@ -46,6 +122,7 @@ export interface Contract {
   judulPRK: string;               // Judul PRK
   nilaiPerjanjian: number;        // Nilai Perjanjian
   namaVendor: string;             // Nama Vendor
+  vendorEmail?: string;           // Email Vendor (untuk akun temporary)
   nilaiTagihan: number;           // Nilai Tagihan/Nominal
 
   // Field Auto-Generate

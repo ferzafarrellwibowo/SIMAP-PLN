@@ -88,7 +88,7 @@ export default function CreateContractPage() {
     tanggalBerakhir: "",
     judulPRK: "",
     nilaiPerjanjian: "",
-    namaVendor: "",
+    namaVendor: "", vendorEmail: "",
     nilaiTagihan: "",
     namaPekerjaan: "",
     jenisAI: "AI" as JenisAnggaran,
@@ -402,7 +402,7 @@ export default function CreateContractPage() {
           // Pembayaran
           terbayarPusat: parseFloat(formData.terbayarPusat || "0"),
           terbayar: parseFloat(formData.terbayarPusat || "0"),
-          statusBayar: formData.statusBayar,
+          statusBayar: formData.statusBayar as "belum_terbayar" | "sebagian_terbayar" | "lunas",
           statusTerbayar: formData.statusBayar,
           rutinNonRutin: formData.rutinNonRutin,
 
@@ -423,6 +423,28 @@ export default function CreateContractPage() {
         };
 
         await createContract(newContract);
+      }
+
+      // Create vendor account if email is provided
+      if (formData.vendorEmail) {
+        try {
+          await fetch("/api/vendor-accounts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: formData.vendorEmail,
+              vendorName: formData.namaVendor || formData.vendor,
+              vendorCompany: formData.namaVendor || formData.vendor,
+              contractId: "NEW", // Will be updated with actual ID
+              contractTitle: formData.judulPRK || formData.judulPerjanjian || formData.namaPekerjaan,
+              tanggalPerjanjian: formData.tanggalPerjanjian,
+              tanggalBerakhir: formData.tanggalBerakhir,
+              sendEmail: true,
+            }),
+          });
+        } catch (emailError) {
+          console.warn("Vendor account creation failed (non-blocking):", emailError);
+        }
       }
 
       // Redirect to contract list
@@ -541,6 +563,22 @@ export default function CreateContractPage() {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Contoh: PT Wijaya Karya"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Vendor
+            </label>
+            <input
+              type="email"
+              name="vendorEmail"
+              value={formData.vendorEmail}
+              onChange={handleChange}
+              placeholder="vendor@example.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Jika diisi, akun temporary akan dibuat dan dikirim ke email vendor
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -825,8 +863,24 @@ export default function CreateContractPage() {
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: PT Pembangunan Jaya"
+              placeholder="Contoh: PT Wijaya Karya"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Vendor
+            </label>
+            <input
+              type="email"
+              name="vendorEmail"
+              value={formData.vendorEmail}
+              onChange={handleChange}
+              placeholder="vendor@example.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Jika diisi, akun temporary akan dibuat dan dikirim ke email vendor
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1315,8 +1369,24 @@ export default function CreateContractPage() {
               onChange={handleChange}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Contoh: PT Jasa Bersih"
+              placeholder="Contoh: PT Wijaya Karya"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Vendor
+            </label>
+            <input
+              type="email"
+              name="vendorEmail"
+              value={formData.vendorEmail}
+              onChange={handleChange}
+              placeholder="vendor@example.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Jika diisi, akun temporary akan dibuat dan dikirim ke email vendor
+            </p>
           </div>
         </div>
       </div>
