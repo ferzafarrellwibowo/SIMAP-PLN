@@ -213,9 +213,10 @@ export default function LoginPage() {
                           <p className="text-xs text-slate-500">{user.email}</p>
                         </div>
                         <span className={`text-xs px-3 py-1.5 rounded-full font-semibold ${user.role === "admin" ? "bg-blue-100 text-blue-700 border border-blue-200" :
+                          user.role === "vendor" ? "bg-amber-100 text-amber-700 border border-amber-200" :
                           "bg-emerald-100 text-emerald-700 border border-emerald-200"
                           }`}>
-                          {user.role === "admin" ? "Admin" : "Viewer"}
+                          {user.role === "admin" ? "Admin" : user.role === "vendor" ? "Vendor" : "Viewer"}
                         </span>
                       </button>
                     ))}
